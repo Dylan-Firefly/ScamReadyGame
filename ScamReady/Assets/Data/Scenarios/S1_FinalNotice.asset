@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
+  m_Name: S1_FinalNotice
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
+  id: S1_FinalNotice
+  title: Final Notice
+  setup: You know your tuition payment is coming up, but you are unsure of the due
+    date. Check your email and decide how to respond.
+  gameDateText: 5 October  |  10:17 AM
+  email:
+    id: S1_InitialEmail
+    sender: University Student Fees
+    from: studentfees@university.edu.au
+    replyTo: payment.support@university-fees.com.au
+    subject: FINAL NOTICE - Outstanding Tuition Fee
+    body: 'Dear Student,
+
+
+      Our records indicate that an outstanding tuition
+      balance of AUD 4,820.00 remains unpaid on your student account.
+
+
+      Your
+      payment was due on 3 October.
+
+
+      To prevent a temporary restriction being
+      placed on your enrolment and further review of your student record, payment
+      must be arranged before 3:00 PM today.
+
+
+      Due to an issue with the online
+      student payment system, this outstanding balance cannot currently be processed
+      through the Student Portal.
+
+
+      Please reply to this email with your Student
+      ID and quote Case ID UFS-20481. Our payment team will provide alternative payment
+      instructions.
+
+
+      Failure to respond before the deadline may result in
+      further administrative action.
+
+
+      Regards,
+
+      Student Fees and Payments
+
+      University
+      Administration'
+    proceedLabel: Reply and request payment instructions
+    stopContactLabel: Return to desktop and verify
+    ignoreLabel: Leave the email unanswered
+    rejectLabel: Reject / report this email
