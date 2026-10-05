@@ -75,7 +75,4 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 /LocalEditLog
-/ProjectSettings
-
-/[Aa]ssets/[Rr]esources
-/[Aa]ssets/[Rr]esources/*
+# /ProjectSettings
