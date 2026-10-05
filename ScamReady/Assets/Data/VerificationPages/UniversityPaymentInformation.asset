@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce98cae6db03ce47aba606ce2c97e07, type: 3}
+  m_Name: UniversityPaymentInformation
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Verification.VerificationPageDefinition
+  id: "UNIVERSITY_PAGE_PAYMENT_PROCESS"
+  entryLabel: "University Fees & Payments"
+  siteName: "Official University Website"
+  address: "https://www.university.edu.au/students/fees/payments"
+  title: "Paying Tuition Fees"
+  body: "Check your current tuition balance and payment due date through the Student Portal.\n\nTuition payments should be made through the official payment options listed in your Student Portal. The portal payment service is available.\n\nIf you receive an unexpected payment request, verify it independently using an official university channel before paying or providing personal information.\n\nDo not use an unsolicited email reply to obtain alternative bank details. For payment questions, use the Fees and Payments contact details published on the official university website."

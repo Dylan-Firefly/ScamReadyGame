@@ -63,3 +63,6 @@ MonoBehaviour:
     stopContactLabel: Return to desktop and verify
     ignoreLabel: Leave the email unanswered
     rejectLabel: Reject / report this email
+  verificationPages:
+  - {fileID: 11400000, guid: 0fb44e770c7b4fcf984b1d96e4550a5d, type: 2}
+  - {fileID: 11400000, guid: d302f4413e4f4c4d8532b9cba9f4c2e4, type: 2}

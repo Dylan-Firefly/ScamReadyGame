@@ -183,8 +183,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8368838349240084341}
-  - {fileID: 1940568713036861471}
-  - {fileID: 6383579855056245669}
+  - {fileID: 7863000000000001002}
+  - {fileID: 7863000000000001004}
   - {fileID: 5076477276108970421}
   - {fileID: 6252755181472798041}
   m_Father: {fileID: 0}
@@ -579,7 +579,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 3965777959482464062}
+    m_TransformParent: {fileID: 7863000000000001002}
     m_Modifications:
     - target: {fileID: 1451607784584501266, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}
       propertyPath: m_Pivot.x
@@ -709,7 +709,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 3965777959482464062}
+    m_TransformParent: {fileID: 7863000000000001004}
     m_Modifications:
     - target: {fileID: 57153011812455403, guid: b131acf0cc1385d4b8b2c2800e8f9e25, type: 3}
       propertyPath: m_AnchorMax.x
@@ -865,3 +865,76 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1451607784584501266, guid: b131acf0cc1385d4b8b2c2800e8f9e25, type: 3}
   m_PrefabInstance: {fileID: 5526529826391739319}
   m_PrefabAsset: {fileID: 0}
+
+--- !u!1 &7863000000000001001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7863000000000001002}
+  m_Layer: 5
+  m_Name: EmailUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7863000000000001002
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7863000000000001001}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1940568713036861471}
+  m_Father: {fileID: 3965777959482464062}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &7863000000000001003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7863000000000001004}
+  m_Layer: 5
+  m_Name: BrowserUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7863000000000001004
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7863000000000001003}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6383579855056245669}
+  m_Father: {fileID: 3965777959482464062}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}

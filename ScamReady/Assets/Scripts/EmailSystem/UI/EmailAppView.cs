@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace ScamReady.Email
 {
-    /// <summary>绑定收件箱列表与详情。挂在常驻桌面上，避免窗口关闭后丢失订阅。</summary>
+    /// <summary>绑定收件箱列表与详情。挂在常驻 EmailUI 上，关闭 EmailWindow 时保留订阅。</summary>
     public sealed class EmailAppView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;

@@ -3,13 +3,23 @@ using ScamReady.Responses;
 
 namespace ScamReady.Scenarios
 {
+    public enum ScenarioApp
+    {
+        Desktop,
+        Email,
+        Browser
+    }
+
     public enum ScenarioEventType
     {
         EmailReceived,
         EmailOpened,
         EmailClosed,
         ContactStopped,
-        ResponseChosen
+        ResponseChosen,
+        BrowserOpened,
+        BrowserClosed,
+        VerificationPageOpened
     }
 
     /// <summary>记录操作顺序，后续查验与反馈模块可在此基础上扩展。</summary>
@@ -36,7 +46,10 @@ namespace ScamReady.Scenarios
         private readonly string emailId;
 
         public string ScenarioId { get; }
-        public bool IsEmailOpen { get; private set; }
+        public ScenarioApp ActiveApp { get; private set; }
+        public bool IsEmailOpen => ActiveApp == ScenarioApp.Email;
+        public bool IsBrowserOpen => ActiveApp == ScenarioApp.Browser;
+        public string CurrentVerificationPageId { get; private set; }
         public bool HasReadEmail { get; private set; }
         public bool HasUnreadEmail => !HasReadEmail;
         public ContactResponse? Decision { get; private set; }
@@ -53,7 +66,8 @@ namespace ScamReady.Scenarios
         internal bool OpenEmail(double elapsedSeconds)
         {
             if (IsEmailOpen) return false;
-            IsEmailOpen = true;
+            if (IsBrowserOpen) Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
+            ActiveApp = ScenarioApp.Email;
             HasReadEmail = true;
             Record(ScenarioEventType.EmailOpened, emailId, elapsedSeconds);
             return true;
@@ -62,7 +76,7 @@ namespace ScamReady.Scenarios
         internal bool CloseEmail(bool stopContact, double elapsedSeconds)
         {
             if (!IsEmailOpen) return false;
-            IsEmailOpen = false;
+            ActiveApp = ScenarioApp.Desktop;
             Record(stopContact ? ScenarioEventType.ContactStopped : ScenarioEventType.EmailClosed,
                 emailId, elapsedSeconds);
             return true;
@@ -73,6 +87,38 @@ namespace ScamReady.Scenarios
             if (!IsEmailOpen || Decision.HasValue) return false;
             Decision = response;
             Record(ScenarioEventType.ResponseChosen, response.ToString(), elapsedSeconds);
+            return true;
+        }
+
+        internal bool OpenBrowser(double elapsedSeconds)
+        {
+            if (IsBrowserOpen) return false;
+            if (IsEmailOpen) CloseEmail(false, elapsedSeconds);
+            ActiveApp = ScenarioApp.Browser;
+            Record(ScenarioEventType.BrowserOpened, ScenarioId, elapsedSeconds);
+            return true;
+        }
+
+        internal bool CloseBrowser(double elapsedSeconds)
+        {
+            if (!IsBrowserOpen) return false;
+            ActiveApp = ScenarioApp.Desktop;
+            Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
+            return true;
+        }
+
+        internal bool OpenBrowserHome()
+        {
+            if (!IsBrowserOpen || CurrentVerificationPageId == null) return false;
+            CurrentVerificationPageId = null;
+            return true;
+        }
+
+        internal bool OpenVerificationPage(string pageId, double elapsedSeconds)
+        {
+            if (!IsBrowserOpen || CurrentVerificationPageId == pageId) return false;
+            CurrentVerificationPageId = pageId;
+            Record(ScenarioEventType.VerificationPageOpened, pageId, elapsedSeconds);
             return true;
         }
 

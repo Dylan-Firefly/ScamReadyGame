@@ -10,6 +10,8 @@ namespace ScamReady.UI
     {
         [SerializeField] private ScenarioController controller;
         [SerializeField] private Button emailButton;
+        [SerializeField, Tooltip("绑定 DesktopPanel/BrowserShortcut 的按钮。")]
+        private Button browserButton;
         [SerializeField] private Button notificationButton;
         [SerializeField] private Button restartButton;
         [SerializeField] private GameObject unreadBadge;
@@ -22,6 +24,7 @@ namespace ScamReady.UI
         {
             controller.Changed += Refresh;
             emailButton.onClick.AddListener(controller.OpenEmail);
+            browserButton.onClick.AddListener(controller.OpenBrowser);
             notificationButton.onClick.AddListener(controller.OpenEmail);
             restartButton.onClick.AddListener(controller.Restart);
             Refresh();
@@ -31,6 +34,7 @@ namespace ScamReady.UI
         {
             controller.Changed -= Refresh;
             emailButton.onClick.RemoveListener(controller.OpenEmail);
+            browserButton.onClick.RemoveListener(controller.OpenBrowser);
             notificationButton.onClick.RemoveListener(controller.OpenEmail);
             restartButton.onClick.RemoveListener(controller.Restart);
         }
@@ -39,7 +43,11 @@ namespace ScamReady.UI
         {
             dateText.text = controller.Definition.GameDateText;
             setupText.text = controller.Definition.Setup;
-            setupPanel.SetActive(controller.Session == null || !controller.Session.IsEmailOpen);
+            bool onDesktop = controller.Session == null || controller.Session.ActiveApp == ScenarioApp.Desktop;
+            setupPanel.SetActive(onDesktop);
+            emailButton.gameObject.SetActive(onDesktop);
+            browserButton.gameObject.SetActive(onDesktop);
+            notificationButton.gameObject.SetActive(onDesktop);
             bool unread = controller.Session != null && controller.Session.HasUnreadEmail;
             unreadBadge.SetActive(unread);
             notificationText.text = unread
