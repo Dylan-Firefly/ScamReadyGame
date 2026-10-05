@@ -66,3 +66,18 @@ MonoBehaviour:
   verificationPages:
   - {fileID: 11400000, guid: 0fb44e770c7b4fcf984b1d96e4550a5d, type: 2}
   - {fileID: 11400000, guid: d302f4413e4f4c4d8532b9cba9f4c2e4, type: 2}
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 0fb44e770c7b4fcf984b1d96e4550a5d, type: 2}
+    evidence: {fileID: 11400000, guid: c702b85d5c1c4effb5d6ffdc38d9823d, type: 2}
+    content: "Tuition fee: AUD 4,820.00\nDue date: 12 October\nStatus: Payment Pending\nOverdue: No"
+  - page: {fileID: 11400000, guid: d302f4413e4f4c4d8532b9cba9f4c2e4, type: 2}
+    evidence: {fileID: 11400000, guid: ce72c006f5384efa92ee6d4367b227f7, type: 2}
+    content: "Check the balance and due date in your Student Portal. Use the official portal payment options. The payment service is available."
+  requiredEvidence:
+  - {fileID: 11400000, guid: c702b85d5c1c4effb5d6ffdc38d9823d, type: 2}
+  - {fileID: 11400000, guid: ce72c006f5384efa92ee6d4367b227f7, type: 2}
+  reminder:
+    id: S1_P01_FINAL_REMINDER
+    triggerEvidenceCount: 1
+    title: FINAL REMINDER
+    body: "Your case remains unresolved. Payment arrangements must be made before 3:00 PM today to avoid further administrative action."

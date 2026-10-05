@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ScamReady.Evidence;
 using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
@@ -20,6 +22,11 @@ namespace ScamReady.Verification
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text bodyText;
         [SerializeField] private UnityEngine.UI.ScrollRect bodyScroll;
+        [SerializeField, Tooltip("绑定 EvidenceSpot Prefab 的组件，按本关页面配置生成卡片。")]
+        private EvidenceSpotView evidenceSpotPrefab;
+        [SerializeField, Tooltip("绑定 BodyScrollView/Viewport/Content，卡片显示在正文之后。")]
+        private Transform evidenceContainer;
+        private readonly List<EvidenceSpotView> evidenceSpots = new List<EvidenceSpotView>();
         private ScenarioSession displayedSession;
         private VerificationPageDefinition displayedPage;
 
@@ -38,6 +45,25 @@ namespace ScamReady.Verification
 
         private void OnDisable() => controller.Changed -= Refresh;
 
+        private void RebuildEvidenceSpots(VerificationPageDefinition page)
+        {
+            // 销毁在帧末执行，先隐藏旧卡片，避免布局暂时计算出重复高度。
+            foreach (var spot in evidenceSpots)
+            {
+                spot.gameObject.SetActive(false);
+                Destroy(spot.gameObject);
+            }
+            evidenceSpots.Clear();
+            if (page == null) return;
+            foreach (var placement in controller.Definition.EvidencePlacements)
+            {
+                if (placement.Page != page || placement.Evidence == null) continue;
+                var spot = Instantiate(evidenceSpotPrefab, evidenceContainer);
+                spot.Bind(controller, placement);
+                evidenceSpots.Add(spot);
+            }
+        }
+
         private void Refresh()
         {
             var pages = controller.Definition.VerificationPages;
@@ -49,6 +75,8 @@ namespace ScamReady.Verification
             bool pageChanged = displayedSession != session || displayedPage != page;
             displayedSession = session;
             displayedPage = page;
+            if (pageChanged) RebuildEvidenceSpots(page);
+            foreach (var spot in evidenceSpots) spot.Refresh();
 
             window.SetActive(session != null && session.IsBrowserOpen);
             homePanel.SetActive(page == null);

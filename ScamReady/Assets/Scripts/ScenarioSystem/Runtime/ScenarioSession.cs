@@ -19,7 +19,11 @@ namespace ScamReady.Scenarios
         ResponseChosen,
         BrowserOpened,
         BrowserClosed,
-        VerificationPageOpened
+        VerificationPageOpened,
+        EvidenceCollected,
+        EvidenceSummaryOpened,
+        ReminderTriggered,
+        ReminderDismissed
     }
 
     /// <summary>记录操作顺序，后续查验与反馈模块可在此基础上扩展。</summary>
@@ -43,7 +47,9 @@ namespace ScamReady.Scenarios
     public sealed class ScenarioSession
     {
         private readonly List<ScenarioEvent> history = new List<ScenarioEvent>();
+        private readonly List<string> collectedEvidenceIds = new List<string>();
         private readonly string emailId;
+        private string reminderId;
 
         public string ScenarioId { get; }
         public ScenarioApp ActiveApp { get; private set; }
@@ -54,12 +60,20 @@ namespace ScamReady.Scenarios
         public bool HasUnreadEmail => !HasReadEmail;
         public ContactResponse? Decision { get; private set; }
         public IReadOnlyList<ScenarioEvent> History { get; }
+        public IReadOnlyList<string> CollectedEvidenceIds { get; }
+        public IReadOnlyList<string> DecisionEvidenceIds { get; private set; }
+        public int? DecisionSequenceIndex { get; private set; }
+        public bool IsEvidenceSummaryOpen { get; private set; }
+        public bool HasTriggeredReminder { get; private set; }
+        public bool IsReminderVisible { get; private set; }
 
         internal ScenarioSession(string scenarioId, string emailId)
         {
             ScenarioId = scenarioId;
             this.emailId = emailId;
             History = history.AsReadOnly();
+            CollectedEvidenceIds = collectedEvidenceIds.AsReadOnly();
+            DecisionEvidenceIds = new List<string>().AsReadOnly();
             Record(ScenarioEventType.EmailReceived, emailId, 0);
         }
 
@@ -86,6 +100,11 @@ namespace ScamReady.Scenarios
         {
             if (!IsEmailOpen || Decision.HasValue) return false;
             Decision = response;
+            // 保存独立副本，最终选择后的收集不会改变当时的查验依据。
+            DecisionEvidenceIds = new List<string>(collectedEvidenceIds).AsReadOnly();
+            DecisionSequenceIndex = history.Count + 1;
+            IsEvidenceSummaryOpen = false;
+            IsReminderVisible = false;
             Record(ScenarioEventType.ResponseChosen, response.ToString(), elapsedSeconds);
             return true;
         }
@@ -125,6 +144,49 @@ namespace ScamReady.Scenarios
         private void Record(ScenarioEventType type, string targetId, double elapsedSeconds)
         {
             history.Add(new ScenarioEvent(history.Count + 1, elapsedSeconds, type, targetId));
+        }
+
+        public bool HasCollectedEvidence(string id) => collectedEvidenceIds.Contains(id);
+
+        internal bool CollectEvidence(string id, double elapsedSeconds)
+        {
+            if (!IsBrowserOpen || HasCollectedEvidence(id)) return false;
+            collectedEvidenceIds.Add(id);
+            Record(ScenarioEventType.EvidenceCollected, id, elapsedSeconds);
+            return true;
+        }
+
+        internal bool OpenEvidenceSummary(double elapsedSeconds)
+        {
+            if (IsEvidenceSummaryOpen) return false;
+            IsEvidenceSummaryOpen = true;
+            Record(ScenarioEventType.EvidenceSummaryOpened, ScenarioId, elapsedSeconds);
+            return true;
+        }
+
+        internal bool CloseEvidenceSummary()
+        {
+            if (!IsEvidenceSummaryOpen) return false;
+            IsEvidenceSummaryOpen = false;
+            return true;
+        }
+
+        internal bool TriggerReminder(string id, double elapsedSeconds)
+        {
+            if (HasTriggeredReminder || Decision.HasValue) return false;
+            reminderId = id;
+            HasTriggeredReminder = true;
+            IsReminderVisible = true;
+            Record(ScenarioEventType.ReminderTriggered, id, elapsedSeconds);
+            return true;
+        }
+
+        internal bool DismissReminder(double elapsedSeconds)
+        {
+            if (!IsReminderVisible) return false;
+            IsReminderVisible = false;
+            Record(ScenarioEventType.ReminderDismissed, reminderId, elapsedSeconds);
+            return true;
         }
     }
 }
