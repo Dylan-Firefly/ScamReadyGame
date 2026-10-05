@@ -1,5 +1,6 @@
 using System;
 using ScamReady.Evidence;
+using ScamReady.Feedback;
 using ScamReady.Responses;
 using ScamReady.Verification;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace ScamReady.Scenarios
 
         public EmailScenarioDefinition Definition => definition;
         public ScenarioSession Session { get; private set; }
+        public ScenarioEvaluation Result { get; private set; }
         public event Action Changed;
 
         public VerificationPageDefinition CurrentVerificationPage
@@ -40,6 +42,7 @@ namespace ScamReady.Scenarios
 
             startedAt = Time.realtimeSinceStartupAsDouble;
             Session = new ScenarioSession(definition.Id, definition.Email.Id);
+            Result = null;
             Changed?.Invoke();
         }
 
@@ -60,7 +63,10 @@ namespace ScamReady.Scenarios
 
         public void ChooseResponse(ContactResponse response)
         {
-            if (Session != null && Session.ChooseResponse(response, ElapsedSeconds)) Changed?.Invoke();
+            if (Session == null || !Session.ChooseResponse(response, ElapsedSeconds)) return;
+            // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
+            Result = ScenarioEvaluator.Evaluate(definition, Session);
+            Changed?.Invoke();
         }
 
         public void OpenBrowser()

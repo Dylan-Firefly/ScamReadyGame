@@ -38,6 +38,7 @@ namespace ScamReady.Evidence
         private void Refresh()
         {
             var session = controller.Session;
+            openButton.gameObject.SetActive(session == null || !session.IsComplete);
             int count = session == null ? 0 : session.CollectedEvidenceIds.Count;
             resetScroll |= session != displayedSession || count != displayedCount;
             displayedSession = session;

@@ -7,7 +7,8 @@ namespace ScamReady.Scenarios
     {
         Desktop,
         Email,
-        Browser
+        Browser,
+        Result
     }
 
     public enum ScenarioEventType
@@ -59,6 +60,7 @@ namespace ScamReady.Scenarios
         public bool HasReadEmail { get; private set; }
         public bool HasUnreadEmail => !HasReadEmail;
         public ContactResponse? Decision { get; private set; }
+        public bool IsComplete => Decision.HasValue;
         public IReadOnlyList<ScenarioEvent> History { get; }
         public IReadOnlyList<string> CollectedEvidenceIds { get; }
         public IReadOnlyList<string> DecisionEvidenceIds { get; private set; }
@@ -79,7 +81,7 @@ namespace ScamReady.Scenarios
 
         internal bool OpenEmail(double elapsedSeconds)
         {
-            if (IsEmailOpen) return false;
+            if (IsComplete || IsEmailOpen) return false;
             if (IsBrowserOpen) Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
             ActiveApp = ScenarioApp.Email;
             HasReadEmail = true;
@@ -98,11 +100,14 @@ namespace ScamReady.Scenarios
 
         internal bool ChooseResponse(ContactResponse response, double elapsedSeconds)
         {
-            if (!IsEmailOpen || Decision.HasValue) return false;
+            if (!IsEmailOpen || IsComplete) return false;
+            if (response != ContactResponse.Proceed && response != ContactResponse.Ignore
+                && response != ContactResponse.Reject) return false;
             Decision = response;
             // 保存独立副本，最终选择后的收集不会改变当时的查验依据。
             DecisionEvidenceIds = new List<string>(collectedEvidenceIds).AsReadOnly();
             DecisionSequenceIndex = history.Count + 1;
+            ActiveApp = ScenarioApp.Result;
             IsEvidenceSummaryOpen = false;
             IsReminderVisible = false;
             Record(ScenarioEventType.ResponseChosen, response.ToString(), elapsedSeconds);
@@ -111,7 +116,7 @@ namespace ScamReady.Scenarios
 
         internal bool OpenBrowser(double elapsedSeconds)
         {
-            if (IsBrowserOpen) return false;
+            if (IsComplete || IsBrowserOpen) return false;
             if (IsEmailOpen) CloseEmail(false, elapsedSeconds);
             ActiveApp = ScenarioApp.Browser;
             Record(ScenarioEventType.BrowserOpened, ScenarioId, elapsedSeconds);
@@ -158,7 +163,7 @@ namespace ScamReady.Scenarios
 
         internal bool OpenEvidenceSummary(double elapsedSeconds)
         {
-            if (IsEvidenceSummaryOpen) return false;
+            if (IsComplete || IsEvidenceSummaryOpen) return false;
             IsEvidenceSummaryOpen = true;
             Record(ScenarioEventType.EvidenceSummaryOpened, ScenarioId, elapsedSeconds);
             return true;

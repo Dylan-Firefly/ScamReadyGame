@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ScamReady.Email;
 using ScamReady.Evidence;
+using ScamReady.Feedback;
 using ScamReady.Verification;
 using UnityEngine;
 
@@ -22,6 +23,7 @@ namespace ScamReady.Scenarios
         [SerializeField, Tooltip("充分查验所需的关键证据，影响后续评估，不锁定拒绝按钮。")]
         private EvidenceDefinition[] requiredEvidence = new EvidenceDefinition[0];
         [SerializeField] private ReminderConfig reminder = new ReminderConfig();
+        [SerializeField] private ScenarioFeedbackConfig feedback = new ScenarioFeedbackConfig();
 
         public string Id => id;
         public string Title => title;
@@ -32,5 +34,6 @@ namespace ScamReady.Scenarios
         public IReadOnlyList<EvidencePlacement> EvidencePlacements => evidencePlacements;
         public IReadOnlyList<EvidenceDefinition> RequiredEvidence => requiredEvidence;
         public ReminderConfig Reminder => reminder;
+        public ScenarioFeedbackConfig Feedback => feedback;
     }
 }
