@@ -1,5 +1,6 @@
 using ScamReady.Responses;
 using ScamReady.Scenarios;
+using ScamReady.Verification;
 using TMPro;
 using UnityEngine;
 
@@ -22,9 +23,11 @@ namespace ScamReady.Email
         [SerializeField] private TMP_Text stopContactLabel;
         [SerializeField] private TMP_Text ignoreLabel;
         [SerializeField] private TMP_Text rejectLabel;
+        private ScenarioController controller;
 
         public void Connect(ScenarioController controller)
         {
+            this.controller = controller;
             proceedButton.onClick.AddListener(() => controller.ChooseResponse(ContactResponse.Proceed));
             stopContactButton.onClick.AddListener(controller.StopContact);
             ignoreButton.onClick.AddListener(() => controller.ChooseResponse(ContactResponse.Ignore));
@@ -45,9 +48,7 @@ namespace ScamReady.Email
             replyToText.text = "Reply-To: " + email.ReplyTo;
             replyToText.gameObject.SetActive(!string.IsNullOrEmpty(email.ReplyTo));
             subjectText.text = email.Subject;
-            // 文案视为普通内容，避免邮件里的尖括号被 TMP 当作富文本标签。
-            bodyText.richText = false;
-            bodyText.text = email.Body;
+            BrowserLinkText.SetText(bodyText, email.Body, controller.OpenLink);
         }
 
         private void RefreshResponseLabels(EmailData email)

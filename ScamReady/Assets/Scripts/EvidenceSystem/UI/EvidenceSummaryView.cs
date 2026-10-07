@@ -1,5 +1,6 @@
 using System.Text;
 using ScamReady.Scenarios;
+using ScamReady.Verification;
 using TMPro;
 using UnityEngine;
 
@@ -24,7 +25,6 @@ namespace ScamReady.Evidence
         {
             openButton.onClick.AddListener(controller.OpenEvidenceSummary);
             closeButton.onClick.AddListener(controller.CloseEvidenceSummary);
-            summaryText.richText = false;
         }
 
         private void OnEnable()
@@ -57,7 +57,7 @@ namespace ScamReady.Evidence
             displayedSession = session;
             displayedCount = count;
             emptyState.SetActive(count == 0);
-            summaryText.text = BuildSummaryText(session);
+            BrowserLinkText.SetText(summaryText, BuildSummaryText(session), controller.OpenLink);
         }
 
         private string BuildSummaryText(ScenarioSession session)

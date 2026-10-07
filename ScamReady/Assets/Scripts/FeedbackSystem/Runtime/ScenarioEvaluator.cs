@@ -32,7 +32,8 @@ namespace ScamReady.Feedback
             else outcome = snapshot.Count == 0
                 ? ScenarioOutcome.ReportUnverified : ScenarioOutcome.ReportPartial;
 
-            return new ScenarioEvaluation(response, outcome, snapshot.Count, collectedRequired, requiredIds.Count);
+            return new ScenarioEvaluation(response, outcome, snapshot.Count, collectedRequired,
+                requiredIds.Count, session.DecisionUnsafeLinkCount);
         }
     }
 }

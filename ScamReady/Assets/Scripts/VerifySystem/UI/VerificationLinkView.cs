@@ -15,14 +15,15 @@ namespace ScamReady.Verification
 
         private void Awake() => button.onClick.AddListener(OpenPage);
 
-        public void Bind(VerificationPageDefinition definition, Action<VerificationPageDefinition> onSelected)
+        public void Bind(VerificationPageDefinition definition, Action<VerificationPageDefinition> onSelected,
+            Action<string> onOpenLink)
         {
             page = definition;
             selected = onSelected;
             gameObject.SetActive(page != null);
             if (page == null) return;
             label.text = page.EntryLabel;
-            addressText.text = page.Address;
+            BrowserLinkText.SetText(addressText, page.Address, onOpenLink);
         }
 
         private void OpenPage() => selected?.Invoke(page);

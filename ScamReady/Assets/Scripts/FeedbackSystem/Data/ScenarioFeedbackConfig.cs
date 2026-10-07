@@ -17,6 +17,10 @@ namespace ScamReady.Feedback
             "Safe, with some verification", "You collected {evidenceCount} evidence item(s), but have not collected all required evidence.");
         [SerializeField] private FeedbackMessage reportVerified = new FeedbackMessage(
             "Safe, with a supported decision", "You collected {evidenceCount} evidence item(s) and all {requiredCount} required items before rejecting the scam.");
+        [SerializeField, TextArea(2, 5), Tooltip("打开风险链接后未提交信息的补充反馈。留空则不追加；支持 {unsafeLinkCount}。")]
+        private string unsafeLinkWarning = "You opened {unsafeLinkCount} untrusted link(s). Opening the message's link was a risky step. You avoided submitting the requested information. Next time, verify through a trusted website or app you open independently.";
+
+        public string UnsafeLinkWarning => unsafeLinkWarning;
 
         public FeedbackMessage GetMessage(ScenarioOutcome outcome)
         {
@@ -36,7 +40,7 @@ namespace ScamReady.Feedback
     public sealed class FeedbackMessage
     {
         [SerializeField] private string title;
-        [SerializeField, TextArea(3, 10), Tooltip("可使用 {evidenceCount}、{requiredCount}、{collectedRequiredCount} 显示决策时的数量。")]
+        [SerializeField, TextArea(3, 10), Tooltip("支持 {evidenceCount}、{requiredCount}、{collectedRequiredCount}、{unsafeLinkCount}。")]
         private string body;
 
         public string Title => title;

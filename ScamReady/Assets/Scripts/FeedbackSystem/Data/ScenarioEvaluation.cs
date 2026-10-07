@@ -19,17 +19,19 @@ namespace ScamReady.Feedback
         public int EvidenceCount { get; }
         public int CollectedRequiredEvidenceCount { get; }
         public int RequiredEvidenceCount { get; }
+        public int UnsafeLinkCount { get; }
         public bool HasCompleteVerification => RequiredEvidenceCount > 0
             && CollectedRequiredEvidenceCount == RequiredEvidenceCount;
 
         internal ScenarioEvaluation(ContactResponse response, ScenarioOutcome outcome,
-            int evidenceCount, int collectedRequiredEvidenceCount, int requiredEvidenceCount)
+            int evidenceCount, int collectedRequiredEvidenceCount, int requiredEvidenceCount, int unsafeLinkCount)
         {
             Response = response;
             Outcome = outcome;
             EvidenceCount = evidenceCount;
             CollectedRequiredEvidenceCount = collectedRequiredEvidenceCount;
             RequiredEvidenceCount = requiredEvidenceCount;
+            UnsafeLinkCount = unsafeLinkCount;
         }
     }
 }

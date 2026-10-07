@@ -26,6 +26,9 @@ namespace ScamReady.Verification
         private EvidenceSpotView evidenceSpotPrefab;
         [SerializeField, Tooltip("绑定 BodyScrollView/Viewport/Content，卡片显示在正文之后。")]
         private Transform evidenceContainer;
+        [SerializeField] private GameObject processPanel;
+        [SerializeField] private UnityEngine.UI.Button processButton;
+        [SerializeField] private TMP_Text processText;
         private readonly List<EvidenceSpotView> evidenceSpots = new List<EvidenceSpotView>();
         private ScenarioSession displayedSession;
         private VerificationPageDefinition displayedPage;
@@ -34,7 +37,7 @@ namespace ScamReady.Verification
         {
             closeButton.onClick.AddListener(controller.CloseBrowser);
             homeButton.onClick.AddListener(controller.OpenBrowserHome);
-            bodyText.richText = false;
+            if (processButton != null) processButton.onClick.AddListener(controller.SubmitBrowserInformation);
         }
 
         private void OnEnable()
@@ -76,7 +79,8 @@ namespace ScamReady.Verification
         {
             var pages = controller.Definition.VerificationPages;
             for (int i = 0; i < links.Length; i++)
-                links[i].Bind(i < pages.Count ? pages[i] : null, controller.OpenVerificationPage);
+                links[i].Bind(i < pages.Count && pages[i] != null && !pages[i].IsUnsafe ? pages[i] : null,
+                    controller.OpenVerificationPage, controller.OpenLink);
         }
 
         private bool RefreshContent()
@@ -91,6 +95,7 @@ namespace ScamReady.Verification
 
             RefreshNavigation(page);
             RefreshPageContent(page);
+            RefreshProcessAction(page);
             if (page == null) ShowHomePage();
             else ShowInformationPage();
             return pageChanged;
@@ -99,7 +104,7 @@ namespace ScamReady.Verification
         private void RefreshNavigation(VerificationPageDefinition page)
         {
             homeButton.interactable = page != null;
-            addressText.text = page == null ? "Official sources" : page.Address;
+            BrowserLinkText.SetText(addressText, page == null ? "Official sources" : page.Address, controller.OpenLink);
         }
 
         private void RefreshPageContent(VerificationPageDefinition page)
@@ -107,7 +112,30 @@ namespace ScamReady.Verification
             if (page == null) return;
             siteText.text = page.SiteName;
             titleText.text = page.Title;
-            bodyText.text = page.Body;
+            BrowserLinkText.SetText(bodyText, page.Body, controller.OpenLink);
+        }
+
+        private void RefreshProcessAction(VerificationPageDefinition page)
+        {
+            bool visible = page != null && page.IsUnsafe;
+            if (!visible)
+            {
+                HideProcessAction();
+                return;
+            }
+            if (processText != null) processText.text = page.ProcessLabel;
+            if (processButton != null) processButton.interactable = controller.Session != null && !controller.Session.IsComplete;
+            ShowProcessAction();
+        }
+
+        private void ShowProcessAction()
+        {
+            if (processPanel != null && !processPanel.activeSelf) processPanel.SetActive(true);
+        }
+
+        private void HideProcessAction()
+        {
+            if (processPanel != null && processPanel.activeSelf) processPanel.SetActive(false);
         }
 
         private void ShowHomePage()

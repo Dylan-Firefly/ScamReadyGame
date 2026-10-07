@@ -2012,7 +2012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0667d204e15e8d14da324ad3f135dfb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioController
-  definition: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
+  definition: {fileID: 11400000, guid: 1bb4639c29135ad4f849607b329efcf3, type: 2}
 --- !u!4 &2068168511
 Transform:
   m_ObjectHideFlags: 0

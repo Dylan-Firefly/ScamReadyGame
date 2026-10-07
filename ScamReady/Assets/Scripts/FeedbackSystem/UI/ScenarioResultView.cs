@@ -58,7 +58,11 @@ namespace ScamReady.Feedback
             var message = controller.Definition.Feedback.GetMessage(result.Outcome);
             scenarioText.text = "Scenario complete  |  " + controller.Definition.Title;
             titleText.text = message.Title;
-            bodyText.text = FormatFeedbackBody(message.Body, result);
+            string body = message.Body;
+            string warning = controller.Definition.Feedback.UnsafeLinkWarning;
+            if (result.UnsafeLinkCount > 0 && result.Outcome != ScenarioOutcome.Proceed
+                && !string.IsNullOrWhiteSpace(warning)) body += "\n\n" + warning;
+            bodyText.text = FormatFeedbackBody(body, result);
             RefreshDecisionSummary(result);
         }
 
@@ -67,7 +71,8 @@ namespace ScamReady.Feedback
             return (body ?? string.Empty)
                 .Replace("{evidenceCount}", result.EvidenceCount.ToString())
                 .Replace("{requiredCount}", result.RequiredEvidenceCount.ToString())
-                .Replace("{collectedRequiredCount}", result.CollectedRequiredEvidenceCount.ToString());
+                .Replace("{collectedRequiredCount}", result.CollectedRequiredEvidenceCount.ToString())
+                .Replace("{unsafeLinkCount}", result.UnsafeLinkCount.ToString());
         }
 
         private void RefreshDecisionSummary(ScenarioEvaluation result)

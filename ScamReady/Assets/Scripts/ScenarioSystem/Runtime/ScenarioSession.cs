@@ -24,7 +24,9 @@ namespace ScamReady.Scenarios
         EvidenceCollected,
         EvidenceSummaryOpened,
         ReminderTriggered,
-        ReminderDismissed
+        ReminderDismissed,
+        UnsafeLinkOpened,
+        InformationSubmitted
     }
 
     /// <summary>记录操作顺序，后续查验与反馈模块可在此基础上扩展。</summary>
@@ -65,6 +67,7 @@ namespace ScamReady.Scenarios
         public IReadOnlyList<string> CollectedEvidenceIds { get; }
         public IReadOnlyList<string> DecisionEvidenceIds { get; private set; }
         public int? DecisionSequenceIndex { get; private set; }
+        public int DecisionUnsafeLinkCount { get; private set; }
         public bool IsEvidenceSummaryOpen { get; private set; }
         public bool HasTriggeredReminder { get; private set; }
         public bool IsReminderVisible { get; private set; }
@@ -103,15 +106,38 @@ namespace ScamReady.Scenarios
             if (!IsEmailOpen || IsComplete) return false;
             if (response != ContactResponse.Proceed && response != ContactResponse.Ignore
                 && response != ContactResponse.Reject) return false;
+            CompleteDecision(response, elapsedSeconds);
+            return true;
+        }
+
+        internal bool SubmitInformation(string pageId, double elapsedSeconds)
+        {
+            if (!IsBrowserOpen || IsComplete || CurrentVerificationPageId != pageId) return false;
+            Record(ScenarioEventType.InformationSubmitted, pageId, elapsedSeconds);
+            CompleteDecision(ContactResponse.Proceed, elapsedSeconds);
+            return true;
+        }
+
+        internal bool RecordUnsafeLinkOpened(string pageId, double elapsedSeconds)
+        {
+            if (!IsBrowserOpen || IsComplete || CurrentVerificationPageId != pageId) return false;
+            Record(ScenarioEventType.UnsafeLinkOpened, pageId, elapsedSeconds);
+            return true;
+        }
+
+        private void CompleteDecision(ContactResponse response, double elapsedSeconds)
+        {
             Decision = response;
             // 保存独立副本，最终选择后的收集不会改变当时的查验依据。
             DecisionEvidenceIds = new List<string>(collectedEvidenceIds).AsReadOnly();
+            // 风险操作数量与证据一样，在最终决定时冻结；不会因事后行为升级或改写。
+            foreach (var action in history)
+                if (action.Type == ScenarioEventType.UnsafeLinkOpened) DecisionUnsafeLinkCount++;
             DecisionSequenceIndex = history.Count + 1;
             ActiveApp = ScenarioApp.Result;
             IsEvidenceSummaryOpen = false;
             IsReminderVisible = false;
             Record(ScenarioEventType.ResponseChosen, response.ToString(), elapsedSeconds);
-            return true;
         }
 
         internal bool OpenBrowser(double elapsedSeconds)

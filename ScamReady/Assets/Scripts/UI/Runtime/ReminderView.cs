@@ -1,4 +1,5 @@
 using ScamReady.Scenarios;
+using ScamReady.Verification;
 using TMPro;
 using UnityEngine;
 
@@ -34,8 +35,7 @@ namespace ScamReady.UI
         private void RefreshContent()
         {
             titleText.text = controller.Definition.Reminder.Title;
-            bodyText.richText = false;
-            bodyText.text = controller.Definition.Reminder.Body;
+            BrowserLinkText.SetText(bodyText, controller.Definition.Reminder.Body, controller.OpenLink);
         }
 
         private void SetVisible(bool visible)
