@@ -17,6 +17,9 @@ namespace ScamReady.Email
         [Header("Audio")]
         [SerializeField] private UIAudioPlayer audioPlayer;
 
+        [Header("Animation")]
+        [SerializeField] private UIWindowAnimator windowAnimator;
+
         // 用于避免同一 ScenarioSession 在多次 Refresh 时重复播放邮件提示音。
         private object lastSession;
 
@@ -29,6 +32,11 @@ namespace ScamReady.Email
             if (audioPlayer == null)
             {
                 audioPlayer = GetComponentInParent<UIAudioPlayer>();
+            }
+
+            if (windowAnimator == null)
+            {
+                windowAnimator = window.GetComponent<UIWindowAnimator>();
             }
         }
 
@@ -76,7 +84,7 @@ namespace ScamReady.Email
         {
             if (window.activeSelf) return;
 
-            window.SetActive(true);
+            windowAnimator.PlayOpen();
             audioPlayer?.PlayOpen();
         }
 
@@ -86,7 +94,7 @@ namespace ScamReady.Email
             if (!window.activeSelf) return;
 
             audioPlayer?.PlayClose();
-            window.SetActive(false);
+            windowAnimator.PlayClose();
         }
     }
 }

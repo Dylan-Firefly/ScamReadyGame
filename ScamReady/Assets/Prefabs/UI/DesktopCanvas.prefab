@@ -361,6 +361,8 @@ GameObject:
   - component: {fileID: 1724490703651060645}
   - component: {fileID: 4794708356640039488}
   - component: {fileID: 3230404001806708223}
+  - component: {fileID: 568405924937481793}
+  - component: {fileID: 686271378924324774}
   m_Layer: 5
   m_Name: BrowserWindow
   m_TagString: Untagged
@@ -429,6 +431,35 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &568405924937481793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389779626089942061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32c4a18a7c64244ebeafb4fefe874bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.UI.UIWindowAnimator
+  target: {fileID: 1724490703651060645}
+  canvasGroup: {fileID: 686271378924324774}
+  startScale: 0.92
+  openDuration: 0.18
+  closeDuration: 0.12
+--- !u!225 &686271378924324774
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 389779626089942061}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &457158582860162326
 GameObject:
   m_ObjectHideFlags: 0
@@ -9072,6 +9103,7 @@ MonoBehaviour:
   inboxItem: {fileID: 5427588008025114577}
   detail: {fileID: 7717241027243485319}
   audioPlayer: {fileID: 0}
+  windowAnimator: {fileID: 0}
 --- !u!1 &7863000000000001003
 GameObject:
   m_ObjectHideFlags: 0
@@ -9142,6 +9174,7 @@ MonoBehaviour:
   processButton: {fileID: 8300000000000000005}
   processText: {fileID: 8300000000000000010}
   audioPlayer: {fileID: 0}
+  windowAnimator: {fileID: 0}
 --- !u!1 &7889959206931224483
 GameObject:
   m_ObjectHideFlags: 0
@@ -11822,6 +11855,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 864613604362528484}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7846981615052620016, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5682460451535941245}
+    - targetCorrespondingSourceObject: {fileID: 7846981615052620016, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6903526454017008718}
     - targetCorrespondingSourceObject: {fileID: 3508670886917717433, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2287872595175854117}
@@ -11964,6 +12003,35 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7846981615052620016, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}
   m_PrefabInstance: {fileID: 1066065997289834509}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5682460451535941245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074443993495292157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c32c4a18a7c64244ebeafb4fefe874bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.UI.UIWindowAnimator
+  target: {fileID: 1940568713036861471}
+  canvasGroup: {fileID: 6903526454017008718}
+  startScale: 0.92
+  openDuration: 0.18
+  closeDuration: 0.12
+--- !u!225 &6903526454017008718
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074443993495292157}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!224 &7362432265211949668 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7559274672152410729, guid: 11cbf9d49a217d74f86f42a74dab174b, type: 3}

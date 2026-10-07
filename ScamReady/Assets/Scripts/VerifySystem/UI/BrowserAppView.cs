@@ -36,6 +36,9 @@ namespace ScamReady.Verification
         [Header("Audio")]
         [SerializeField] private UIAudioPlayer audioPlayer;
 
+        [Header("Animation")]
+        [SerializeField] private UIWindowAnimator windowAnimator;
+
         private VerificationPageDefinition displayedPage;
 
         private void Awake()
@@ -48,6 +51,11 @@ namespace ScamReady.Verification
             if (audioPlayer == null)
             {
                 audioPlayer = GetComponentInParent<UIAudioPlayer>();
+            }
+
+            if (windowAnimator == null)
+            {
+                windowAnimator = window.GetComponent<UIWindowAnimator>();
             }
         }
 
@@ -174,7 +182,7 @@ namespace ScamReady.Verification
         {
             if (window.activeSelf) return;
 
-            window.SetActive(true);
+            windowAnimator.PlayOpen();
             audioPlayer?.PlayOpen();
         }
 
@@ -184,9 +192,9 @@ namespace ScamReady.Verification
             if (!window.activeSelf) return;
 
             audioPlayer?.PlayClose();
-            window.SetActive(false);
+            windowAnimator.PlayClose();
         }
-    
+
 
         private void ResetScroll()
         {
