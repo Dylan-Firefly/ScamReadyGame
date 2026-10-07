@@ -4071,8 +4071,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.UI.UIAudioPlayer
   audioSource: {fileID: 8156875327245821133}
   clickClip: {fileID: 8300000, guid: b534b0e27dd148d46b3f5db961397adc, type: 3}
-  openClip: {fileID: 0}
-  closeClip: {fileID: 0}
+  openClip: {fileID: 8300000, guid: aeeb50bbb703de94fa4c296d0ad7aafa, type: 3}
+  closeClip: {fileID: 8300000, guid: 0976213711281ec449ffaa65a636cd45, type: 3}
   notificationClip: {fileID: 8300000, guid: 4c328e3b63d8eb0488af862fd714833c, type: 3}
   evidenceCollectedClip: {fileID: 8300000, guid: f45bfaed024039b4381e664c31dcbbdf, type: 3}
   successClip: {fileID: 8300000, guid: 032299830f300a740889c99740bac288, type: 3}
@@ -9141,6 +9141,7 @@ MonoBehaviour:
   processPanel: {fileID: 8300000000000000001}
   processButton: {fileID: 8300000000000000005}
   processText: {fileID: 8300000000000000010}
+  audioPlayer: {fileID: 0}
 --- !u!1 &7889959206931224483
 GameObject:
   m_ObjectHideFlags: 0
