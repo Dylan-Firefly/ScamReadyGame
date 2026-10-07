@@ -1,4 +1,6 @@
 using System;
+using ScamReady.Evidence;
+using ScamReady.Feedback;
 using ScamReady.Responses;
 using ScamReady.Verification;
 using UnityEngine;
@@ -14,6 +16,7 @@ namespace ScamReady.Scenarios
 
         public EmailScenarioDefinition Definition => definition;
         public ScenarioSession Session { get; private set; }
+        public ScenarioEvaluation Result { get; private set; }
         public event Action Changed;
 
         public VerificationPageDefinition CurrentVerificationPage
@@ -21,7 +24,7 @@ namespace ScamReady.Scenarios
             get
             {
                 if (Session == null || Session.CurrentVerificationPageId == null) return null;
-                foreach (var page in definition.VerificationPages)
+                foreach (var page in BrowserPages())
                     if (page != null && page.Id == Session.CurrentVerificationPageId) return page;
                 return null;
             }
@@ -39,6 +42,7 @@ namespace ScamReady.Scenarios
 
             startedAt = Time.realtimeSinceStartupAsDouble;
             Session = new ScenarioSession(definition.Id, definition.Email.Id);
+            Result = null;
             Changed?.Invoke();
         }
 
@@ -59,7 +63,17 @@ namespace ScamReady.Scenarios
 
         public void ChooseResponse(ContactResponse response)
         {
-            if (Session != null && Session.ChooseResponse(response, ElapsedSeconds)) Changed?.Invoke();
+            if (Session == null || !Session.IsEmailOpen || Session.IsComplete) return;
+            // 配有链接的邮件先进入页面；打开链接不等于已经提交信息。
+            if (response == ContactResponse.Proceed && !string.IsNullOrWhiteSpace(definition.Email.ProceedLink))
+            {
+                OpenLink(definition.Email.ProceedLink);
+                return;
+            }
+            if (!Session.ChooseResponse(response, ElapsedSeconds)) return;
+            // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
+            Result = ScenarioEvaluator.Evaluate(definition, Session);
+            Changed?.Invoke();
         }
 
         public void OpenBrowser()
@@ -80,15 +94,90 @@ namespace ScamReady.Scenarios
         public void OpenVerificationPage(VerificationPageDefinition page)
         {
             if (Session == null || page == null || string.IsNullOrWhiteSpace(page.Id)) return;
-            // 只允许打开当前关卡配置的页面，避免其他关卡的入口混入会话。
+            // 主页只提供可信入口，邮件带来的页面必须通过链接访问。
             foreach (var available in definition.VerificationPages)
             {
-                if (available != page) continue;
+                if (available != page || page.IsUnsafe) continue;
                 if (Session.OpenVerificationPage(page.Id, ElapsedSeconds)) Changed?.Invoke();
                 return;
             }
         }
 
+        public void OpenLink(string address)
+        {
+            if (Session == null || Session.IsComplete || string.IsNullOrWhiteSpace(address)) return;
+            foreach (var page in BrowserPages())
+            {
+                if (page == null || string.IsNullOrWhiteSpace(page.Id)
+                    || !string.Equals(page.Address, address, StringComparison.Ordinal)) continue;
+                double elapsed = ElapsedSeconds;
+                Session.CloseEvidenceSummary();
+                if (Session.IsReminderVisible) Session.DismissReminder(elapsed);
+                Session.OpenBrowser(elapsed);
+                Session.OpenVerificationPage(page.Id, elapsed);
+                if (page.IsUnsafe) Session.RecordUnsafeLinkOpened(page.Id, elapsed);
+                Changed?.Invoke();
+                return;
+            }
+            Debug.LogWarning("链接未配置对应的本关页面：" + address, this);
+        }
+
+        public void SubmitBrowserInformation()
+        {
+            var page = CurrentVerificationPage;
+            if (Session == null || page == null || !page.IsUnsafe
+                || !Session.SubmitInformation(page.Id, ElapsedSeconds)) return;
+            Result = ScenarioEvaluator.Evaluate(definition, Session);
+            Changed?.Invoke();
+        }
+
+        private System.Collections.Generic.IEnumerable<VerificationPageDefinition> BrowserPages()
+        {
+            foreach (var page in definition.VerificationPages) yield return page;
+            foreach (var page in definition.LinkedPages) yield return page;
+        }
+
         private double ElapsedSeconds => Time.realtimeSinceStartupAsDouble - startedAt;
+
+        public EvidencePlacement FindEvidencePlacement(string id)
+        {
+            foreach (var placement in definition.EvidencePlacements)
+                if (placement.Evidence != null && placement.Evidence.Id == id) return placement;
+            return null;
+        }
+
+        public void CollectEvidence(EvidencePlacement placement)
+        {
+            if (Session == null || placement == null || placement.Evidence == null
+                || string.IsNullOrWhiteSpace(placement.Evidence.Id)
+                || placement.Page != CurrentVerificationPage) return;
+
+            foreach (var available in definition.EvidencePlacements)
+            {
+                if (available != placement) continue;
+                if (!Session.CollectEvidence(placement.Evidence.Id, ElapsedSeconds)) return;
+                var reminder = definition.Reminder;
+                if (reminder != null && !string.IsNullOrWhiteSpace(reminder.Id)
+                    && Session.CollectedEvidenceIds.Count >= reminder.TriggerEvidenceCount)
+                    Session.TriggerReminder(reminder.Id, ElapsedSeconds);
+                Changed?.Invoke();
+                return;
+            }
+        }
+
+        public void OpenEvidenceSummary()
+        {
+            if (Session != null && Session.OpenEvidenceSummary(ElapsedSeconds)) Changed?.Invoke();
+        }
+
+        public void CloseEvidenceSummary()
+        {
+            if (Session != null && Session.CloseEvidenceSummary()) Changed?.Invoke();
+        }
+
+        public void DismissReminder()
+        {
+            if (Session != null && Session.DismissReminder(ElapsedSeconds)) Changed?.Invoke();
+        }
     }
 }

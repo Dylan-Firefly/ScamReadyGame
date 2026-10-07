@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e859dde399c43218513a151fe13541e, type: 3}
+  m_Name: S1_OfficialTuitionRecord
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Evidence.EvidenceDefinition
+  id: "S1_E01_OFFICIAL_TUITION_RECORD"
+  title: "Official Tuition Record"
+  summary: "The official student account lists AUD 4,820.00, due on 12 October. The payment is pending and is not currently overdue."

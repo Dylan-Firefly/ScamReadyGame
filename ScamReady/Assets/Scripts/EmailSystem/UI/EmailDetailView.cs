@@ -1,8 +1,8 @@
 using ScamReady.Responses;
 using ScamReady.Scenarios;
+using ScamReady.Verification;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace ScamReady.Email
 {
@@ -15,17 +15,19 @@ namespace ScamReady.Email
         [SerializeField] private TMP_Text subjectText;
         [SerializeField] private TMP_Text bodyText;
         [SerializeField] private TMP_Text responseText;
-        [SerializeField] private Button proceedButton;
-        [SerializeField] private Button stopContactButton;
-        [SerializeField] private Button ignoreButton;
-        [SerializeField] private Button rejectButton;
+        [SerializeField] private UnityEngine.UI.Button proceedButton;
+        [SerializeField] private UnityEngine.UI.Button stopContactButton;
+        [SerializeField] private UnityEngine.UI.Button ignoreButton;
+        [SerializeField] private UnityEngine.UI.Button rejectButton;
         [SerializeField] private TMP_Text proceedLabel;
         [SerializeField] private TMP_Text stopContactLabel;
         [SerializeField] private TMP_Text ignoreLabel;
         [SerializeField] private TMP_Text rejectLabel;
+        private ScenarioController controller;
 
         public void Connect(ScenarioController controller)
         {
+            this.controller = controller;
             proceedButton.onClick.AddListener(() => controller.ChooseResponse(ContactResponse.Proceed));
             stopContactButton.onClick.AddListener(controller.StopContact);
             ignoreButton.onClick.AddListener(() => controller.ChooseResponse(ContactResponse.Ignore));
@@ -34,19 +36,31 @@ namespace ScamReady.Email
 
         public void Bind(EmailData email, ScenarioSession session)
         {
+            RefreshEmailContent(email);
+            RefreshResponseLabels(email);
+            RefreshResponseState(session);
+        }
+
+        private void RefreshEmailContent(EmailData email)
+        {
             senderText.text = email.Sender;
             fromText.text = "From: " + email.From;
             replyToText.text = "Reply-To: " + email.ReplyTo;
             replyToText.gameObject.SetActive(!string.IsNullOrEmpty(email.ReplyTo));
             subjectText.text = email.Subject;
-            // 文案视为普通内容，避免邮件里的尖括号被 TMP 当作富文本标签。
-            bodyText.richText = false;
-            bodyText.text = email.Body;
+            BrowserLinkText.SetText(bodyText, email.Body, controller.OpenLink);
+        }
+
+        private void RefreshResponseLabels(EmailData email)
+        {
             proceedLabel.text = "Proceed\n" + email.ProceedLabel;
             stopContactLabel.text = "Stop Contact\n" + email.StopContactLabel;
             ignoreLabel.text = "Ignore\n" + email.IgnoreLabel;
             rejectLabel.text = "Reject / Report\n" + email.RejectLabel;
+        }
 
+        private void RefreshResponseState(ScenarioSession session)
+        {
             bool decided = session != null && session.Decision.HasValue;
             proceedButton.interactable = !decided;
             ignoreButton.interactable = !decided;

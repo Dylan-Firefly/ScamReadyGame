@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e859dde399c43218513a151fe13541e, type: 3}
+  m_Name: TutSc_OfficialDeliveryPolicy
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Evidence.EvidenceDefinition
+  id: "HARBOUR_E01_DELIVERY_PAYMENT_POLICY"
+  title: "Official Delivery Payment Policy"
+  summary: "Harbour Parcel does not send email or text links asking customers to pay a redelivery fee or provide credit card details. The email's card-payment request contradicts this published policy."

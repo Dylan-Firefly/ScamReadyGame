@@ -16,7 +16,7 @@ MonoBehaviour:
   title: Final Notice
   setup: You know your tuition payment is coming up, but you are unsure of the due
     date. Check your email and decide how to respond.
-  gameDateText: 5 October  |  10:17 AM
+  gameDateText: 1 October  |  10:17 AM
   email:
     id: S1_InitialEmail
     sender: University Student Fees
@@ -59,10 +59,90 @@ MonoBehaviour:
 
       University
       Administration'
-    proceedLabel: Reply and request payment instructions
+    proceedLink: 
+    proceedLabel: Trust the request and pay
     stopContactLabel: Return to desktop and verify
     ignoreLabel: Leave the email unanswered
     rejectLabel: Reject / report this email
   verificationPages:
   - {fileID: 11400000, guid: 0fb44e770c7b4fcf984b1d96e4550a5d, type: 2}
   - {fileID: 11400000, guid: d302f4413e4f4c4d8532b9cba9f4c2e4, type: 2}
+  linkedPages: []
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 0fb44e770c7b4fcf984b1d96e4550a5d, type: 2}
+    evidence: {fileID: 11400000, guid: c702b85d5c1c4effb5d6ffdc38d9823d, type: 2}
+    content: 'Tuition fee: AUD 4,820.00
+
+      Due date: 12 October
+
+      Status:
+      Payment Pending
+
+      Overdue: No'
+  - page: {fileID: 11400000, guid: d302f4413e4f4c4d8532b9cba9f4c2e4, type: 2}
+    evidence: {fileID: 11400000, guid: ce72c006f5384efa92ee6d4367b227f7, type: 2}
+    content: Check the balance and due date in your Student Portal. Use the official
+      portal payment options. The payment service is available.
+  requiredEvidence:
+  - {fileID: 11400000, guid: c702b85d5c1c4effb5d6ffdc38d9823d, type: 2}
+  - {fileID: 11400000, guid: ce72c006f5384efa92ee6d4367b227f7, type: 2}
+  reminder:
+    id: S1_P01_FINAL_REMINDER
+    triggerEvidenceCount: 1
+    title: FINAL REMINDER
+    body: Your case remains unresolved. Payment arrangements must be made before
+      3:00 PM today to avoid further administrative action.
+  feedback:
+    proceed:
+      title: You paid the scammer
+      body: 'You believed the sender''s claim and followed the alternative payment
+        instructions. Your money went to a scammer.
+
+
+        The official tuition
+        record says the payment is due on 12 October and is not overdue. Payments
+        should use the official Student Portal. Following this email''s instructions
+        did not settle your real tuition balance.'
+    ignore:
+      title: You ignored the message
+      body: 'You ignored the suspicious email and did not pay the sender. But was
+        ignoring it the best response?
+
+
+        Your real tuition balance still
+        needs attention. Use the official Student Portal to confirm the due date
+        and payment process. Ignoring the email does not resolve that obligation.'
+    reportUnverified:
+      title: Safe, but without supporting evidence
+      body: 'You rejected the suspicious email and avoided paying the scammer. You
+        did not collect evidence before making this decision.
+
+
+        You are safe
+        from this payment request, but your decision lacks a recorded basis. Check
+        claims through trusted official sources. Your real tuition obligation remains
+        separate from this email.'
+    reportPartial:
+      title: Safe, with some verification
+      body: 'You rejected the email after collecting {evidenceCount} evidence item(s),
+        including {collectedRequiredCount} of the {requiredCount} required items.
+        You avoided paying the scammer.
+
+
+        Your checks support caution, but
+        you have not collected all the key evidence. Compare both the official tuition
+        record and payment procedure to reach a better supported decision. Your real
+        tuition obligation still needs official handling.'
+    reportVerified:
+      title: Safe, with a supported decision
+      body: 'You collected {evidenceCount} evidence item(s), including all {requiredCount}
+        required items, before rejecting the email. The official due date and payment
+        procedure contradict the sender''s claims, giving you a strong basis to identify
+        the scam.
+
+
+        You avoided paying the scammer. Your real tuition obligation
+        still needs to be handled through the official Student Portal.'
+    unsafeLinkWarning: You opened {unsafeLinkCount} untrusted link(s). Opening the
+      message's link was a risky step. You avoided submitting the requested information.
+      Next time, verify through a trusted website or app you open independently.

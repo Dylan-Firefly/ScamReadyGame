@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce98cae6db03ce47aba606ce2c97e07, type: 3}
+  m_Name: TutSc_RedeliveryRequest
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Verification.VerificationPageDefinition
+  id: "TUT_PAGE_REDELIVERY_REQUEST"
+  entryLabel: "Harbour Parcel Redelivery"
+  siteName: "Harbour Parcel - Official Website"
+  address: "https://harbourparcel-redelivery.example/reschedule/HP-60482"
+  title: "Arrange Your Redelivery"
+  body: "Tracking number: HP-60482\nStatus: Awaiting confirmation\nRedelivery fee: AUD 2.99\n\nWe could not confirm your delivery address. Your parcel is on hold until the redelivery request is completed.\n\nConfirm your delivery and payment details:\nRecipient name and delivery address\nCredit card number, expiry date and security code\n\nSelect Process to provide these details and pay AUD 2.99. Complete your request before 6:00 PM today to prevent the parcel being returned to the sender.\n\nHarbour Parcel - Delivery Support"
+  isUnsafe: 1
+  processLabel: "Process\nSubmit card details"
