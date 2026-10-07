@@ -19,6 +19,7 @@ namespace ScamReady.Tutorial
         private bool refreshRequested;
         private bool showRequested;
         private bool finished;
+        private bool hasStarted;
 
         private void OnEnable()
         {
@@ -73,8 +74,11 @@ namespace ScamReady.Tutorial
             observedSession = session;
             stepIndex = 0;
             historyStart = session.History.Count;
-            finished = false;
-            showRequested = true;
+            // Do once 与 Session 分开保存；Reset/Play again 换会话时不重复教学。
+            finished = hasStarted;
+            showRequested = !finished;
+            hasStarted = true;
+            overlay.Hide();
         }
 
         private bool IsStepComplete(TutorialStep step, ScenarioSession session)

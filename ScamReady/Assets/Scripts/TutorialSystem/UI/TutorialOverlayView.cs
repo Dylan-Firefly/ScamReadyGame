@@ -21,6 +21,7 @@ namespace ScamReady.Tutorial
         [SerializeField] private UnityEngine.UI.Button nextButton;
         [SerializeField] private TMP_Text nextText;
         [SerializeField] private UnityEngine.UI.Button skipButton;
+        [SerializeField] private TMP_Text skipText;
 
         private readonly Vector3[] corners = new Vector3[4];
         private RectTransform focusTarget;
@@ -30,6 +31,9 @@ namespace ScamReady.Tutorial
         private EventSystem lockedEventSystem;
         private bool previousNavigation;
         private PointerEventData forwardedDrag;
+        private bool confirmingSkip;
+        private int stepNumber;
+        private int stepCount;
 
         public event Action NextRequested;
         public event Action SkipRequested;
@@ -42,8 +46,45 @@ namespace ScamReady.Tutorial
             bodyText.richText = false;
         }
 
-        private void RequestNext() => NextRequested?.Invoke();
-        private void RequestSkip() => SkipRequested?.Invoke();
+        private void RequestNext()
+        {
+            // 确认框的右侧按钮提交跳过；普通提示框的右侧按钮仍是 Next。
+            if (confirmingSkip) SkipRequested?.Invoke();
+            else NextRequested?.Invoke();
+        }
+
+        private void RequestSkip()
+        {
+            if (confirmingSkip) CancelSkipConfirmation();
+            else ShowSkipConfirmation();
+        }
+
+        public void ShowSkipConfirmation()
+        {
+            if (currentStep == null || confirmingSkip) return;
+            StopForwardedDrag();
+            confirmingSkip = true;
+            progressText.text = "TUTORIAL";
+            titleText.text = "Skip the tutorial?";
+            bodyText.text = "Are you sure you want to skip? You can continue exploring on your own. "
+                + "Resetting this scenario will not show the tutorial again.";
+            nextButton.gameObject.SetActive(true);
+            nextText.text = "Skip tutorial";
+            skipText.text = "Keep tutorial";
+            inputBlocker.gameObject.SetActive(true);
+            SetInputLock(true);
+            RefreshLayout();
+        }
+
+        public void CancelSkipConfirmation()
+        {
+            if (!confirmingSkip || currentStep == null) return;
+            confirmingSkip = false;
+            RefreshStepContent();
+            inputBlocker.gameObject.SetActive(currentStep.BlockInput);
+            SetInputLock(currentStep.BlockInput);
+            RefreshLayout();
+        }
 
         private void OnEnable() => Canvas.willRenderCanvases += RefreshLayout;
 
@@ -63,15 +104,14 @@ namespace ScamReady.Tutorial
             UnityEngine.UI.ScrollRect scrollRect)
         {
             StopForwardedDrag();
+            confirmingSkip = false;
             currentStep = step;
+            stepNumber = number;
+            stepCount = count;
             focusTarget = target;
             clickTarget = step.InteractionTarget != null ? step.InteractionTarget : target;
             scroll = scrollRect;
-            progressText.text = "TUTORIAL  " + number + " / " + count;
-            titleText.text = step.Title;
-            bodyText.text = step.Body;
-            nextText.text = string.IsNullOrWhiteSpace(step.NextLabel) ? "Next" : step.NextLabel;
-            nextButton.gameObject.SetActive(step.Completion == TutorialCompletion.Next);
+            RefreshStepContent();
             inputBlocker.gameObject.SetActive(step.BlockInput);
             SetInputLock(step.BlockInput);
             transform.SetAsLastSibling();
@@ -80,10 +120,21 @@ namespace ScamReady.Tutorial
             RefreshLayout();
         }
 
+        private void RefreshStepContent()
+        {
+            progressText.text = "TUTORIAL  " + stepNumber + " / " + stepCount;
+            titleText.text = currentStep.Title;
+            bodyText.text = currentStep.Body;
+            nextText.text = string.IsNullOrWhiteSpace(currentStep.NextLabel) ? "Next" : currentStep.NextLabel;
+            skipText.text = "Skip tutorial";
+            nextButton.gameObject.SetActive(currentStep.Completion == TutorialCompletion.Next);
+        }
+
         public void Hide()
         {
             StopForwardedDrag();
             SetInputLock(false);
+            confirmingSkip = false;
             currentStep = null;
             focusTarget = null;
             clickTarget = null;
@@ -113,7 +164,7 @@ namespace ScamReady.Tutorial
         {
             if (currentStep == null || !overlayRoot.gameObject.activeInHierarchy) return;
             var area = overlayRoot.rect;
-            bool hasFocus = focusTarget != null && focusTarget.gameObject.activeInHierarchy;
+            bool hasFocus = !confirmingSkip && focusTarget != null && focusTarget.gameObject.activeInHierarchy;
             Rect hole = hasFocus ? TargetRect(focusTarget) : new Rect(area.center, Vector2.zero);
             if (hasFocus && currentStep.FocusEvidence && scroll != null && scroll.viewport != null)
                 hole = Intersection(hole, TargetRect(scroll.viewport));
@@ -122,8 +173,9 @@ namespace ScamReady.Tutorial
             focusFrame.gameObject.SetActive(hasFocus);
             if (hasFocus) Place(focusFrame, new Rect(hole.position - Vector2.one * 4, hole.size + Vector2.one * 8));
 
-            foreach (var dimmer in dimmers) dimmer.gameObject.SetActive(currentStep.BlockInput);
-            if (currentStep.BlockInput)
+            bool blockInput = currentStep.BlockInput || confirmingSkip;
+            foreach (var dimmer in dimmers) dimmer.gameObject.SetActive(blockInput);
+            if (blockInput)
             {
                 if (!hasFocus) hole = new Rect(area.center, Vector2.zero);
                 Place(dimmers[0], Rect.MinMaxRect(area.xMin, area.yMin, hole.xMin, area.yMax));
@@ -185,7 +237,7 @@ namespace ScamReady.Tutorial
                     center = clamped;
                 }
             }
-            else if (!currentStep.BlockInput)
+            else if (!confirmingSkip && !currentStep.BlockInput)
                 center = new Vector2(area.center.x, area.yMin + height / 2 + 16);
             guidePanel.anchoredPosition = ClampCenter(center, area, width, height);
         }
@@ -212,7 +264,7 @@ namespace ScamReady.Tutorial
 
         public bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
         {
-            if (currentStep == null || !currentStep.BlockInput) return true;
+            if (currentStep == null || confirmingSkip || !currentStep.BlockInput) return true;
             if (RectTransformUtility.RectangleContainsScreenPoint(guidePanel, screenPoint, eventCamera)) return true;
             if (!currentStep.AllowTargetClick || clickTarget == null || !clickTarget.gameObject.activeInHierarchy)
                 return true;
@@ -223,7 +275,7 @@ namespace ScamReady.Tutorial
             return !inside;
         }
 
-        private bool CanScroll(PointerEventData data) => currentStep != null && currentStep.BlockInput
+        private bool CanScroll(PointerEventData data) => !confirmingSkip && currentStep != null && currentStep.BlockInput
             && scroll != null && scroll.isActiveAndEnabled && scroll.viewport != null
             && RectTransformUtility.RectangleContainsScreenPoint(scroll.viewport, data.position, data.pressEventCamera);
 

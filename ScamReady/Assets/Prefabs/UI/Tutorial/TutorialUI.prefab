@@ -1071,6 +1071,7 @@ MonoBehaviour:
   nextButton: {fileID: 910000065}
   nextText: {fileID: 910000069}
   skipButton: {fileID: 910000074}
+  skipText: {fileID: 910000078}
 --- !u!1 &910000001
 GameObject:
   m_ObjectHideFlags: 0
