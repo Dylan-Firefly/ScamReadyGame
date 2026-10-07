@@ -1,4 +1,4 @@
-%YAML 1.1
+﻿%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!29 &1
 OcclusionCullingSettings:
@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 297045262}
   - component: {fileID: 297045261}
   - component: {fileID: 297045260}
+  - component: {fileID: 2107200001}
   m_Layer: 5
   m_Name: BtnPanel
   m_TagString: Untagged
@@ -1392,6 +1393,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2115402484}
   m_CullTransparentMesh: 1
+--- !u!114 &2107200001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297045258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 564e70e1b5a7465c8fa3400ab22ad01a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.UI.MainMenuController
+  newGameButton: {fileID: 1547214245}
+  continueButton: {fileID: 2107891865}
+  exitButton: {fileID: 118123269}
+  tutorialSceneName: TutorialScenario
+  scenarioSceneName: Scenario
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

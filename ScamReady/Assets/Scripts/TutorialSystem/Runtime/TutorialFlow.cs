@@ -44,7 +44,13 @@ namespace ScamReady.Tutorial
             overlay.Hide();
         }
 
-        private void RequestRefresh() => refreshRequested = true;
+        private void RequestRefresh()
+        {
+            // 结束教程情境才解锁 Continue；跳过文字引导或重置不算完成。
+            if (controller.Session != null && controller.Session.IsComplete)
+                GameRunProgress.MarkTutorialCompleted();
+            refreshRequested = true;
+        }
 
         private void LateUpdate()
         {
