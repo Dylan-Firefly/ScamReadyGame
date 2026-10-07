@@ -1,5 +1,6 @@
 using ScamReady.Scenarios;
 using UnityEngine;
+using ScamReady.UI;
 
 namespace ScamReady.Email
 {
@@ -13,11 +14,22 @@ namespace ScamReady.Email
         [SerializeField] private EmailInboxItemView inboxItem;
         [SerializeField] private EmailDetailView detail;
 
+        [Header("Audio")]
+        [SerializeField] private UIAudioPlayer audioPlayer;
+
+        // 用于避免同一 ScenarioSession 在多次 Refresh 时重复播放邮件提示音。
+        private object lastSession;
+
         private void Awake()
         {
             closeButton.onClick.AddListener(controller.CloseEmail);
             inboxButton.onClick.AddListener(controller.OpenEmail);
             detail.Connect(controller);
+
+            if (audioPlayer == null)
+            {
+                audioPlayer = GetComponentInParent<UIAudioPlayer>();
+            }
         }
 
         private void OnEnable()
@@ -30,10 +42,23 @@ namespace ScamReady.Email
 
         private void Refresh()
         {
+            RefreshNotification();
             RefreshContent();
             SetVisible(controller.Session != null && controller.Session.IsEmailOpen);
         }
 
+        /// <summary>新会话首次出现邮件时播放一次提示音，后续状态刷新不重复播放。</summary>
+        private void RefreshNotification()
+        {
+            if (controller.Session == null)
+                return;
+
+            if (ReferenceEquals(lastSession, controller.Session))
+                return;
+
+            lastSession = controller.Session;
+            audioPlayer?.PlayNotification();
+        }
         private void RefreshContent()
         {
             inboxItem.Bind(controller.Definition.Email);
