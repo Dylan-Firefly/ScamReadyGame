@@ -426,6 +426,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 272758952}
   m_CullTransparentMesh: 1
+--- !u!224 &423523114 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3056222589274901383, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &476234599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1733,7 +1738,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 389779626089942061, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1285904088826335379, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       propertyPath: m_TextStyleHashCode
@@ -1897,6 +1902,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3965777959482464062, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       insertIndex: -1
       addedObject: {fileID: 882340451}
+    - targetCorrespondingSourceObject: {fileID: 3965777959482464062, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2107000017}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
 --- !u!224 &1635498761 stripped
@@ -2028,6 +2036,377 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!224 &2107000001 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8451513948859758322, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000002 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8835784260562920253, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000003 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8454643768181515096, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000004 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4285489903629897966, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000005 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3133859104417877688, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000006 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8656920826802581562, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000007 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1920830728148383, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000008 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3343032027712874670, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000009 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5471237111019963538, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000010 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4699272857403110387, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000011 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 893915754384162883, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000012 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7577560815301705532, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000013 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 458754299634362736, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000014 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5911021391557092227, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2107000015 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2473277393597807438, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
+  m_PrefabInstance: {fileID: 1635498760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2107000016
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1635498761}
+    m_Modifications: []
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e2d9a0011d894bd6b0c358d690275584, type: 3}
+--- !u!224 &2107000017 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 910000002, guid: e2d9a0011d894bd6b0c358d690275584, type: 3}
+  m_PrefabInstance: {fileID: 2107000016}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2107000019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 910000079, guid: e2d9a0011d894bd6b0c358d690275584, type: 3}
+  m_PrefabInstance: {fileID: 2107000016}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d9222a03c1e429b9fcad02729b11069, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Tutorial.TutorialOverlayView
+--- !u!1 &2107000020
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107000021}
+  - component: {fileID: 2107000022}
+  m_Layer: 0
+  m_Name: TutorialFlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2107000021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107000020}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2107000022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107000020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7feeaa53da5f4777803a6b8b1afb2c0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Tutorial.TutorialFlow
+  controller: {fileID: 2068168510}
+  overlay: {fileID: 2107000019}
+  evidenceContainer: {fileID: 2107000008}
+  steps:
+  - title: Your student desktop
+    body: 'Read the background on the desktop. You are expecting a textbook delivery.
+      A new email has arrived.
+
+
+      This tutorial shows you how to read a contact,
+      check its claims through trusted sources, save evidence and choose a response.'
+    nextLabel: Next
+    focusTarget: {fileID: 2107000015}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 0
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
+  - title: Open your email
+    body: Click Email to read the new message. The notification at the bottom is
+      another way to open it.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000001}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 1
+    eventType: 1
+    targetId: TUT_EMAIL_REDELIVERY_REQUEST
+  - title: Read before you respond
+    body: 'Check the sender, From and Reply-To addresses, and what the message asks
+      you to do. Scroll to read the full email.
+
+
+      Proceed opens the requested
+      page. Process on that page submits the requested information.
+
+      Stop Contact
+      returns to the desktop so you can check.
+
+      Ignore leaves the message unanswered.
+
+      Reject
+      / Report rejects the contact.
+
+
+      A familiar name or an official-looking
+      link does not prove a message is genuine.'
+    nextLabel: Next
+    focusTarget: {fileID: 2107000003}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 2107000004}
+    blockInput: 1
+    allowTargetClick: 0
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
+  - title: Pause and check
+    body: Click Stop Contact to return to the desktop. This pauses the contact so
+      you can verify its claims; it does not end the scenario.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000005}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 1
+    eventType: 3
+    targetId: TUT_EMAIL_REDELIVERY_REQUEST
+  - title: Use an independent source
+    body: Open Browser. Its homepage provides trusted sources you can visit independently
+      of the email link.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000002}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 1
+    eventType: 5
+    targetId: 
+  - title: Check your real order
+    body: Open Harbour Parcel Tracking. The saved order uses the tracking number
+      from your original order confirmation.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000006}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 1
+    eventType: 7
+    targetId: TUT_PAGE_PACKAGE_TRACKING
+  - title: Compare the information
+    body: 'Read the official tracking information and compare it with the email.
+      Does this order show a failed delivery or a payment request?
+
+
+      Scroll
+      if needed. Next, you will save the relevant information as evidence.'
+    nextLabel: Next
+    focusTarget: {fileID: 2107000007}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 2107000007}
+    blockInput: 1
+    allowTargetClick: 0
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
+  - title: Save useful evidence
+    body: "Click the highlighted evidence card to save the order status. This record
+      helps you check the email\u2019s claim that delivery has already failed.\n\nSaved
+      evidence appears in Notes. You can scroll this area if needed."
+    nextLabel: Next
+    focusTarget: {fileID: 0}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 2107000007}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 1
+    completion: 1
+    eventType: 8
+    targetId: TUT_E01_PARCEL_STATUS
+  - title: Notice the pressure
+    body: 'The sender is pushing you to act before a deadline. Urgency is a reason
+      to pause and check, not proof that the request is genuine.
+
+
+      Close this
+      reminder with X and continue checking.'
+    nextLabel: Next
+    focusTarget: {fileID: 2107000009}
+    interactionTarget: {fileID: 2107000010}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 2
+    eventType: 0
+    targetId: 
+  - title: Open your notes
+    body: Click Notes to review the evidence you saved. The number shows how many
+      pieces of evidence you have collected.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000011}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 1
+    eventType: 9
+    targetId: 
+  - title: Review your evidence
+    body: "Notes keeps the source and a short summary of each saved fact. Use these
+      facts to compare the contact\u2019s claims with independently checked information.\n\nOne
+      useful fact may not answer every question. You can collect more evidence from
+      another source."
+    nextLabel: Next
+    focusTarget: {fileID: 2107000012}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 2107000013}
+    blockInput: 1
+    allowTargetClick: 0
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
+  - title: Return to checking
+    body: Close Notes with X. Your evidence stays saved while you continue investigating.
+    nextLabel: Next
+    focusTarget: {fileID: 2107000014}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 1
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 3
+    eventType: 0
+    targetId: 
+  - title: 'Return to Browser homepage '
+    body: Click here to back to homepage.
+    nextLabel: Next
+    focusTarget: {fileID: 423523114}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 0
+    allowTargetClick: 1
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
+  - title: Try the rest yourself
+    body: 'You can now use all controls freely.
+
+
+      In Browser, use All sources
+      to find the delivery safety policy. You may save another piece of evidence.
+
+
+      Close
+      Browser to return to the desktop, reopen Email and decide how to respond. Your
+      final choice is yours; the result will explain it.'
+    nextLabel: Got it
+    focusTarget: {fileID: 0}
+    interactionTarget: {fileID: 0}
+    scrollArea: {fileID: 0}
+    blockInput: 0
+    allowTargetClick: 0
+    focusEvidence: 0
+    completion: 0
+    eventType: 0
+    targetId: 
 --- !u!1 &2123568610
 GameObject:
   m_ObjectHideFlags: 0
@@ -2121,3 +2500,4 @@ SceneRoots:
   - {fileID: 2068168511}
   - {fileID: 2123568612}
   - {fileID: 1796218469}
+  - {fileID: 2107000021}
