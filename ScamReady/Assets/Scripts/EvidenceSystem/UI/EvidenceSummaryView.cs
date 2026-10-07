@@ -38,14 +38,30 @@ namespace ScamReady.Evidence
         private void Refresh()
         {
             var session = controller.Session;
-            openButton.gameObject.SetActive(session == null || !session.IsComplete);
             int count = session == null ? 0 : session.CollectedEvidenceIds.Count;
+            RefreshEntry(session, count);
+            RefreshContent(session, count);
+            SetVisible(session != null && session.IsEvidenceSummaryOpen);
+            ResetScrollIfNeeded();
+        }
+
+        private void RefreshEntry(ScenarioSession session, int count)
+        {
+            openButton.gameObject.SetActive(session == null || !session.IsComplete);
+            buttonText.text = "Notes (" + count + ")";
+        }
+
+        private void RefreshContent(ScenarioSession session, int count)
+        {
             resetScroll |= session != displayedSession || count != displayedCount;
             displayedSession = session;
             displayedCount = count;
-            buttonText.text = "Notes (" + count + ")";
             emptyState.SetActive(count == 0);
+            summaryText.text = BuildSummaryText(session);
+        }
 
+        private string BuildSummaryText(ScenarioSession session)
+        {
             var text = new StringBuilder();
             if (session != null)
             {
@@ -59,17 +75,37 @@ namespace ScamReady.Evidence
                     text.Append(placement.Evidence.Summary);
                 }
             }
-            summaryText.text = text.ToString();
-            bool visible = session != null && session.IsEvidenceSummaryOpen;
-            window.SetActive(visible);
+            return text.ToString();
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (visible) Show();
+            else Hide();
+        }
+
+        /// <summary>仅显示摘要窗口；开窗动效和音效在这里接入。玩家打开笔记仍通过 Controller。</summary>
+        public void Show()
+        {
+            if (window.activeSelf) return;
+            window.SetActive(true);
+        }
+
+        /// <summary>仅隐藏摘要窗口，保留内容和阅读位置。</summary>
+        public void Hide()
+        {
+            if (!window.activeSelf) return;
+            window.SetActive(false);
+        }
+
+        private void ResetScrollIfNeeded()
+        {
             // 实际打开并完成布局后再重置位置，关闭期间保留重置请求。
-            if (visible && resetScroll)
-            {
-                Canvas.ForceUpdateCanvases();
-                summaryScroll.StopMovement();
-                summaryScroll.verticalNormalizedPosition = 1f;
-                resetScroll = false;
-            }
+            if (!window.activeInHierarchy || !resetScroll) return;
+            Canvas.ForceUpdateCanvases();
+            summaryScroll.StopMovement();
+            summaryScroll.verticalNormalizedPosition = 1f;
+            resetScroll = false;
         }
     }
 }

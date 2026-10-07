@@ -27,11 +27,35 @@ namespace ScamReady.UI
         {
             var session = controller.Session;
             bool visible = session != null && session.IsReminderVisible && !session.IsEvidenceSummaryOpen;
-            panel.SetActive(visible);
-            if (!visible) return;
+            if (visible) RefreshContent();
+            SetVisible(visible);
+        }
+
+        private void RefreshContent()
+        {
             titleText.text = controller.Definition.Reminder.Title;
             bodyText.richText = false;
             bodyText.text = controller.Definition.Reminder.Body;
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (visible) Show();
+            else Hide();
+        }
+
+        /// <summary>仅显示提醒面板；显示动效在这里接入，不修改提醒触发或已读状态。</summary>
+        public void Show()
+        {
+            if (panel.activeSelf) return;
+            panel.SetActive(true);
+        }
+
+        /// <summary>仅隐藏提醒面板。玩家关闭提醒仍调用 Controller.DismissReminder。</summary>
+        public void Hide()
+        {
+            if (!panel.activeSelf) return;
+            panel.SetActive(false);
         }
     }
 }

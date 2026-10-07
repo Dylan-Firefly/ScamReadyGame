@@ -66,10 +66,21 @@ namespace ScamReady.Verification
 
         private void Refresh()
         {
+            RefreshLinks();
+            bool pageChanged = RefreshContent();
+            SetVisible(controller.Session != null && controller.Session.IsBrowserOpen);
+            if (pageChanged && displayedPage != null) ResetScroll();
+        }
+
+        private void RefreshLinks()
+        {
             var pages = controller.Definition.VerificationPages;
             for (int i = 0; i < links.Length; i++)
                 links[i].Bind(i < pages.Count ? pages[i] : null, controller.OpenVerificationPage);
+        }
 
+        private bool RefreshContent()
+        {
             var session = controller.Session;
             var page = controller.CurrentVerificationPage;
             bool pageChanged = displayedSession != session || displayedPage != page;
@@ -78,23 +89,67 @@ namespace ScamReady.Verification
             if (pageChanged) RebuildEvidenceSpots(page);
             foreach (var spot in evidenceSpots) spot.Refresh();
 
-            window.SetActive(session != null && session.IsBrowserOpen);
-            homePanel.SetActive(page == null);
-            pagePanel.SetActive(page != null);
+            RefreshNavigation(page);
+            RefreshPageContent(page);
+            if (page == null) ShowHomePage();
+            else ShowInformationPage();
+            return pageChanged;
+        }
+
+        private void RefreshNavigation(VerificationPageDefinition page)
+        {
             homeButton.interactable = page != null;
             addressText.text = page == null ? "Official sources" : page.Address;
-            if (page == null) return;
+        }
 
+        private void RefreshPageContent(VerificationPageDefinition page)
+        {
+            if (page == null) return;
             siteText.text = page.SiteName;
             titleText.text = page.Title;
             bodyText.text = page.Body;
+        }
+
+        private void ShowHomePage()
+        {
+            if (homePanel.activeSelf && !pagePanel.activeSelf) return;
+            homePanel.SetActive(true);
+            pagePanel.SetActive(false);
+        }
+
+        private void ShowInformationPage()
+        {
+            if (pagePanel.activeSelf && !homePanel.activeSelf) return;
+            homePanel.SetActive(false);
+            pagePanel.SetActive(true);
+        }
+
+        private void SetVisible(bool visible)
+        {
+            if (visible) Show();
+            else Hide();
+        }
+
+        /// <summary>仅显示浏览器窗口；开窗动效和音效在这里接入。导航操作调用 Controller。</summary>
+        public void Show()
+        {
+            if (window.activeSelf) return;
+            window.SetActive(true);
+        }
+
+        /// <summary>仅隐藏浏览器窗口，保留当前页面和阅读位置。</summary>
+        public void Hide()
+        {
+            if (!window.activeSelf) return;
+            window.SetActive(false);
+        }
+
+        private void ResetScroll()
+        {
             // 换页或重开关卡时从顶部阅读；关闭再打开同一页保留阅读位置。
-            if (pageChanged)
-            {
-                Canvas.ForceUpdateCanvases();
-                bodyScroll.StopMovement();
-                bodyScroll.verticalNormalizedPosition = 1f;
-            }
+            Canvas.ForceUpdateCanvases();
+            bodyScroll.StopMovement();
+            bodyScroll.verticalNormalizedPosition = 1f;
         }
     }
 }
