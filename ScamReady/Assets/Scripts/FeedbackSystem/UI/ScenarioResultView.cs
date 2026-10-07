@@ -2,6 +2,7 @@ using ScamReady.Responses;
 using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
+using ScamReady.UI;
 
 namespace ScamReady.Feedback
 {
@@ -16,6 +17,10 @@ namespace ScamReady.Feedback
         [SerializeField] private TMP_Text bodyText;
         [SerializeField] private UnityEngine.UI.ScrollRect bodyScroll;
         [SerializeField] private UnityEngine.UI.Button restartButton;
+
+        [Header("Audio")]
+        [SerializeField] private UIAudioPlayer audioPlayer;
+
         private ScenarioEvaluation displayedResult;
 
         private void Awake()
@@ -23,6 +28,11 @@ namespace ScamReady.Feedback
             restartButton.onClick.AddListener(controller.Restart);
             titleText.richText = false;
             bodyText.richText = false;
+
+            if (audioPlayer == null)
+            {
+                audioPlayer = GetComponentInParent<UIAudioPlayer>();
+            }
         }
 
         private void OnEnable()
@@ -48,6 +58,7 @@ namespace ScamReady.Feedback
             {
                 RefreshContent(result);
                 displayedResult = result;
+                PlayResultSound(result);
             }
             Show();
             if (resultChanged) ResetScroll();
@@ -64,6 +75,22 @@ namespace ScamReady.Feedback
                 && !string.IsNullOrWhiteSpace(warning)) body += "\n\n" + warning;
             bodyText.text = FormatFeedbackBody(body, result);
             RefreshDecisionSummary(result);
+        }
+
+        /// <summary>新结算结果首次显示时，根据结果类型播放对应反馈音。</summary>
+        private void PlayResultSound(ScenarioEvaluation result)
+        {
+            if (audioPlayer == null)
+                return;
+
+            if (result.Outcome == ScenarioOutcome.ReportVerified)
+            {
+                audioPlayer.PlaySuccess();
+            }
+            else
+            {
+                audioPlayer.PlayWarning();
+            }
         }
 
         private static string FormatFeedbackBody(string body, ScenarioEvaluation result)
