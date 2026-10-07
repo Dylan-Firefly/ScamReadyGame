@@ -12,22 +12,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
   m_Name: TutSc_PackageRe-payment
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
-  id: "TUT_PACKAGE_REDELIVERY"
-  title: "Parcel Redelivery"
-  setup: "You ordered a textbook and are expecting a delivery from Harbour Parcel. Your order confirmation lists tracking number HP-60482. A delivery update has arrived. Check the email and decide how to respond."
-  gameDateText: "7 October  |  10:20 AM"
+  id: TUT_PACKAGE_REDELIVERY
+  title: Parcel Redelivery
+  setup: You ordered a textbook and are expecting a delivery from Harbour Parcel.
+    Your order confirmation lists tracking number HP-60482. A delivery update has
+    arrived. Check the email and decide how to respond.
+  gameDateText: 1 October  |  10:20 AM
   email:
-    id: "TUT_EMAIL_REDELIVERY_REQUEST"
-    sender: "Harbour Parcel"
-    from: "delivery@harbourparcel.example"
-    replyTo: "support@harbourparcel-redelivery.example"
-    subject: "Action required: delivery attempt unsuccessful"
-    body: "Dear customer,\n\nWe were unable to deliver your parcel HP-60482 today because the delivery address could not be confirmed.\n\nYour parcel is on hold. A redelivery fee of AUD 2.99 is required to arrange another delivery attempt.\n\nPlease confirm your address and complete the card payment before 6:00 PM today. If this request is not completed, your parcel will be returned to the sender.\n\nReschedule delivery:\nhttps://harbourparcel-redelivery.example/reschedule/HP-60482\n\nUse your credit card to complete the payment and confirm redelivery.\n\nRegards,\nHarbour Parcel\nDelivery Support"
-    proceedLink: "https://harbourparcel-redelivery.example/reschedule/HP-60482"
-    proceedLabel: "Open the redelivery page"
-    stopContactLabel: "Return to desktop and verify"
-    ignoreLabel: "Leave the email unanswered"
-    rejectLabel: "Reject / report this email"
+    id: TUT_EMAIL_REDELIVERY_REQUEST
+    sender: Harbour Parcel
+    from: delivery@harbourparcel.example
+    replyTo: support@harbourparcel-redelivery.example
+    subject: 'Action required: delivery attempt unsuccessful'
+    body: 'Dear customer,
+
+
+      We were unable to deliver your parcel HP-60482
+      today because the delivery address could not be confirmed.
+
+
+      Your parcel
+      is on hold. A redelivery fee of AUD 2.99 is required to arrange another delivery
+      attempt.
+
+
+      Please confirm your address and complete the card payment
+      before 6:00 PM today. If this request is not completed, your parcel will be
+      returned to the sender.
+
+
+      Reschedule delivery:
+
+      https://harbourparcel-redelivery.example/reschedule/HP-60482
+
+
+      Use
+      your credit card to complete the payment and confirm redelivery.
+
+
+      Regards,
+
+      Harbour
+      Parcel
+
+      Delivery Support'
+    proceedLink: https://harbourparcel-redelivery.example/reschedule/HP-60482
+    proceedLabel: Open the redelivery page
+    stopContactLabel: Return to desktop and verify
+    ignoreLabel: Leave the email unanswered
+    rejectLabel: Reject / report this email
   verificationPages:
   - {fileID: 11400000, guid: d89f30e4afb64f4293c5a81685b2bc95, type: 2}
   - {fileID: 11400000, guid: ad8302dc5ddd4ae88bf6430c783fff86, type: 2}
@@ -36,32 +69,108 @@ MonoBehaviour:
   evidencePlacements:
   - page: {fileID: 11400000, guid: d89f30e4afb64f4293c5a81685b2bc95, type: 2}
     evidence: {fileID: 11400000, guid: f5031615ee6c4ec49dce2a184cc7d31c, type: 2}
-    content: "Tracking number: HP-60482\nStatus: In transit\nExpected delivery: 8 October\nDelivery attempt: Not yet attempted\nAction required: None"
+    content: 'Tracking number: HP-60482
+
+      Status: In transit
+
+      Expected
+      delivery: 8 October
+
+      Delivery attempt: Not yet attempted
+
+      Action
+      required: None'
   - page: {fileID: 11400000, guid: ad8302dc5ddd4ae88bf6430c783fff86, type: 2}
     evidence: {fileID: 11400000, guid: b4e6819e968b46dcae4e6aa566428655, type: 2}
-    content: "Harbour Parcel does not send email or text links asking you to pay a redelivery fee or provide credit card details. Check delivery requests through our official website or app."
+    content: Harbour Parcel does not send email or text links asking you to pay a
+      redelivery fee or provide credit card details. Check delivery requests through
+      our official website or app.
   requiredEvidence:
   - {fileID: 11400000, guid: f5031615ee6c4ec49dce2a184cc7d31c, type: 2}
   - {fileID: 11400000, guid: b4e6819e968b46dcae4e6aa566428655, type: 2}
   reminder:
-    id: "TUT_REMINDER_REDELIVERY_DEADLINE"
+    id: TUT_REMINDER_REDELIVERY_DEADLINE
     triggerEvidenceCount: 1
-    title: "Final delivery reminder"
-    body: "Pay AUD 2.99 by 6:00 PM today to avoid return to sender.\n\nhttps://harbourparcel-redelivery.example/reschedule/HP-60482"
+    title: Final delivery reminder
+    body: 'Pay AUD 2.99 by 6:00 PM today to avoid return to sender.
+
+
+      https://harbourparcel-redelivery.example/reschedule/HP-60482'
   feedback:
     proceed:
-      title: "Your card details were stolen"
-      body: "You followed the email link and submitted your credit card details to pay AUD 2.99. The page was controlled by a scammer. Your card details were stolen and used for unauthorised purchases.\n\nThe small fee was the bait; the risk was more than losing AUD 2.99. Collecting evidence does not protect your card if you still submit its details to the fake page.\n\nHarbour Parcel's official policy contradicts this payment request. Following the email did not arrange delivery of your real parcel."
+      title: Your card details were stolen
+      body: 'You followed the email link and submitted your credit card details to
+        pay AUD 2.99. The page was controlled by a scammer. Your card details were
+        stolen and used for unauthorised purchases.
+
+
+        The small fee was the
+        bait; the risk was more than losing AUD 2.99. Collecting evidence does not
+        protect your card if you still submit its details to the fake page.
+
+
+        Harbour
+        Parcel''s official policy contradicts this payment request. Following the
+        email did not arrange delivery of your real parcel.'
     ignore:
-      title: "You ignored the delivery email"
-      body: "You left the email unanswered and did not submit your card details. This avoided the fake payment request.\n\nIgnoring a suspicious message can be a safe response. You are still expecting a genuine parcel, so check its status through the courier's official website or app using your original order details.\n\nIgnoring this email does not cancel or confirm the real delivery."
+      title: You ignored the delivery email
+      body: 'You left the email unanswered and did not submit your card details.
+        This avoided the fake payment request.
+
+
+        Ignoring a suspicious message
+        can be a safe response. You are still expecting a genuine parcel, so check
+        its status through the courier''s official website or app using your original
+        order details.
+
+
+        Ignoring this email does not cancel or confirm the
+        real delivery.'
     reportUnverified:
-      title: "Safe, without recorded evidence"
-      body: "You rejected the email and kept your card details safe. You collected no evidence before deciding.\n\nYou can safely reject a suspicious request without investigating first. To understand why this request is unsafe, check your original order's tracking record and the courier's official payment policy.\n\nRejecting this email does not cancel your genuine parcel delivery."
+      title: Safe, without recorded evidence
+      body: 'You rejected the email and kept your card details safe. You collected
+        no evidence before deciding.
+
+
+        You can safely reject a suspicious
+        request without investigating first. To understand why this request is unsafe,
+        check your original order''s tracking record and the courier''s official
+        payment policy.
+
+
+        Rejecting this email does not cancel your genuine
+        parcel delivery.'
     reportPartial:
-      title: "Safe, with some supporting evidence"
-      body: "You rejected the email after saving {evidenceCount} evidence item(s), including {collectedRequiredCount} of the {requiredCount} key items. You did not submit your card details.\n\nYou have recorded part of the basis for your decision. Compare the original order's parcel status with the courier's official policy to check both the delivery claim and the payment request.\n\nKeep checking your genuine parcel through the official website or app."
+      title: Safe, with some supporting evidence
+      body: 'You rejected the email after saving {evidenceCount} evidence item(s),
+        including {collectedRequiredCount} of the {requiredCount} key items. You
+        did not submit your card details.
+
+
+        You have recorded part of the
+        basis for your decision. Compare the original order''s parcel status with
+        the courier''s official policy to check both the delivery claim and the payment
+        request.
+
+
+        Keep checking your genuine parcel through the official
+        website or app.'
     reportVerified:
-      title: "Safe, with a supported decision"
-      body: "You saved {evidenceCount} evidence item(s), including all {requiredCount} key items, before rejecting the email. You kept your card details safe.\n\nThe official tracking record does not support the claimed delivery failure. Harbour Parcel's published policy also rules out email links requesting redelivery payments or card details. These checks give you a clear basis for rejecting this request.\n\nCheck your real parcel through the courier's official website or app."
-    unsafeLinkWarning: "You opened the message's untrusted link {unsafeLinkCount} time(s). Opening that link was a risky step. You avoided submitting your card details by leaving the page. Next time, check through the courier's official website or app you open independently."
+      title: Safe, with a supported decision
+      body: 'You saved {evidenceCount} evidence item(s), including all {requiredCount}
+        key items, before rejecting the email. You kept your card details safe.
+
+
+        The
+        official tracking record does not support the claimed delivery failure. Harbour
+        Parcel''s published policy also rules out email links requesting redelivery
+        payments or card details. These checks give you a clear basis for rejecting
+        this request.
+
+
+        Check your real parcel through the courier''s official
+        website or app.'
+    unsafeLinkWarning: You opened the message's untrusted link {unsafeLinkCount}
+      time(s). Opening that link was a risky step. You avoided submitting your card
+      details by leaving the page. Next time, check through the courier's official
+      website or app you open independently.
