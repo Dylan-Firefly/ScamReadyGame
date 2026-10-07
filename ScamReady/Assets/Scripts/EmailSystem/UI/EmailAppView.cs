@@ -75,14 +75,20 @@ namespace ScamReady.Email
         public void Show()
         {
             if (window.activeSelf) return;
+
             window.SetActive(true);
+            audioPlayer?.PlayOpen();
+            Debug.Log($"Email Show audioPlayer found: {audioPlayer != null}");
         }
 
         /// <summary>仅隐藏邮件窗口；关闭动效和音效在这里接入。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;
+
+            audioPlayer?.PlayClose();
             window.SetActive(false);
+            Debug.Log($"Email Hide audioPlayer found: {audioPlayer != null}");
         }
     }
 }

@@ -3,6 +3,7 @@ using ScamReady.Evidence;
 using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
+using ScamReady.UI;
 
 namespace ScamReady.Verification
 {
@@ -31,13 +32,23 @@ namespace ScamReady.Verification
         [SerializeField] private TMP_Text processText;
         private readonly List<EvidenceSpotView> evidenceSpots = new List<EvidenceSpotView>();
         private ScenarioSession displayedSession;
+
+        [Header("Audio")]
+        [SerializeField] private UIAudioPlayer audioPlayer;
+
         private VerificationPageDefinition displayedPage;
 
         private void Awake()
         {
             closeButton.onClick.AddListener(controller.CloseBrowser);
             homeButton.onClick.AddListener(controller.OpenBrowserHome);
-            if (processButton != null) processButton.onClick.AddListener(controller.SubmitBrowserInformation);
+            if (processButton != null) 
+                processButton.onClick.AddListener(controller.SubmitBrowserInformation);
+
+            if (audioPlayer == null)
+            {
+                audioPlayer = GetComponentInParent<UIAudioPlayer>();
+            }
         }
 
         private void OnEnable()
@@ -162,15 +173,20 @@ namespace ScamReady.Verification
         public void Show()
         {
             if (window.activeSelf) return;
+
             window.SetActive(true);
+            audioPlayer?.PlayOpen();
         }
 
         /// <summary>仅隐藏浏览器窗口，保留当前页面和阅读位置。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;
+
+            audioPlayer?.PlayClose();
             window.SetActive(false);
         }
+    
 
         private void ResetScroll()
         {
