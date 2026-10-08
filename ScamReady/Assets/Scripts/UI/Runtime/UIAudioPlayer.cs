@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ScamReady.UI
 {
@@ -25,6 +26,14 @@ namespace ScamReady.UI
             if (audioSource == null)
             {
                 audioSource = GetComponent<AudioSource>();
+            }
+        }
+
+        private void Update()
+        {
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                PlayClick();
             }
         }
 
@@ -76,4 +85,3 @@ namespace ScamReady.UI
         }
     }
 }
-
