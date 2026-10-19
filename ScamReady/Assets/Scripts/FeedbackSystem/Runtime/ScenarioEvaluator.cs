@@ -18,12 +18,22 @@ namespace ScamReady.Feedback
             foreach (var evidence in definition.RequiredEvidence)
                 if (evidence != null && !string.IsNullOrWhiteSpace(evidence.Id)) requiredIds.Add(evidence.Id);
 
-            var snapshot = new HashSet<string>(session.DecisionEvidenceIds);
+
+            var response = session.Decision.Value;
+
+            // Reject 使用玩家实际提交的证据。
+            // Proceed 和 Ignore 保持原有的证据快照。
+            var evidenceIds = response == ContactResponse.Reject
+                ? session.SubmittedEvidenceIds
+                : session.DecisionEvidenceIds;
+
+            var snapshot = new HashSet<string>(evidenceIds);
+
             int collectedRequired = 0;
             foreach (string id in requiredIds)
                 if (snapshot.Contains(id)) collectedRequired++;
 
-            var response = session.Decision.Value;
+            
             ScenarioOutcome outcome;
             if (response == ContactResponse.Proceed) outcome = ScenarioOutcome.Proceed;
             else if (response == ContactResponse.Ignore) outcome = ScenarioOutcome.Ignore;
