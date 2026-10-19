@@ -1,0 +1,197 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4944140b0f5046008c5af67a23afcc35, type: 3}
+  m_Name: PhoneScenarioCollection
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioCollection
+  levels:
+  - id: phone_parcel_redelivery
+    title: Parcel redelivery text
+    sender: Parcel Delivery
+    phoneNumber: +61 4 1234 5678
+    setup: You are expecting a parcel. A text claims delivery failed and asks you to use
+      a link to arrange redelivery.
+    initialMessageId: parcel_sms
+    messages:
+    - id: parcel_sms
+      text: 'Parcel Delivery: We could not deliver your package today. A small redelivery
+        fee is required to reschedule it. Tap the link to choose a new delivery time.'
+      interactions:
+      - id: parcel_open_link
+        label: Open the delivery link
+        type: 1
+        targetMessageId: parcel_link_page
+        linkAddress: https://parcel-redelivery.example.invalid/fee
+        linkPreview: The page asks for a card number to pay a small fee. No real website
+          is opened.
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+      - id: parcel_check_sender
+        label: Read the sender's follow-up
+        type: 0
+        targetMessageId: parcel_followup
+        linkAddress: 
+        linkPreview: 
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+    - id: parcel_followup
+      text: 'Your item will be returned today unless the fee is paid immediately. We
+        cannot provide tracking details by text. Use the link in our previous message.'
+      interactions:
+      - id: parcel_followup_open_link
+        label: Inspect the payment link
+        type: 1
+        targetMessageId: parcel_link_page
+        linkAddress: https://parcel-redelivery.example.invalid/fee
+        linkPreview: The page requests payment details before showing any parcel
+          information.
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+      - id: parcel_followup_report
+        label: Report this text
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 2
+        outcomeTitle: Good call
+        outcomeBody: The urgent fee request and payment link are warning signs. Check
+          delivery status using the courier's official app or website opened independently.
+    - id: parcel_link_page
+      text: 'Delivery rescheduling: Pay AUD 1.50 to release your parcel. Enter card
+        details below. The tracking number is not shown on this page.'
+      interactions:
+      - id: parcel_trust
+        label: Pay the fee
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 0
+        outcomeTitle: You followed the scam
+        outcomeBody: The text led to a payment page that asked for card details without
+          identifying the parcel. Do not pay through an unsolicited text link; verify
+          delivery through an official channel.
+      - id: parcel_ignore
+        label: Ignore the text
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 1
+        outcomeTitle: You did not pay
+        outcomeBody: Ignoring the message avoided the requested payment, but it does
+          not confirm whether a real parcel is due. Check with the courier using its
+          official app or website.
+      - id: parcel_report
+        label: Report and verify independently
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 2
+        outcomeTitle: You verified safely
+        outcomeBody: You avoided entering payment details and chose to report the
+          suspicious text. Check any expected delivery using a trusted courier channel.
+  - id: phone_bank_verification
+    title: Bank account warning
+    sender: Bank Security
+    phoneNumber: +61 4 8765 4321
+    setup: You receive an unexpected security warning asking you to confirm your
+      banking details through a link.
+    initialMessageId: bank_sms
+    messages:
+    - id: bank_sms
+      text: 'Bank Security Alert: A payment of AUD 742.80 is on hold. Your account
+        will be locked in 30 minutes unless you verify your identity using this link.'
+      interactions:
+      - id: bank_open_link
+        label: Inspect the verification link
+        type: 1
+        targetMessageId: bank_link_page
+        linkAddress: https://bank-verify.example.invalid/login
+        linkPreview: This simulated page asks for your banking username, password and
+          one-time security code.
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+      - id: bank_ask_question
+        label: Ask why the account is locked
+        type: 0
+        targetMessageId: bank_followup
+        linkAddress: 
+        linkPreview: 
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+    - id: bank_followup
+      text: 'For your protection, do not call the number on your card. Reply with your
+        customer number and the code sent to your phone so we can secure the account.'
+      interactions:
+      - id: bank_link_again
+        label: View the verification page
+        type: 1
+        targetMessageId: bank_link_page
+        linkAddress: https://bank-verify.example.invalid/login
+        linkPreview: The page is not the bank's official app and requests credentials
+          and a one-time code.
+        response: 0
+        outcomeTitle: 
+        outcomeBody: 
+      - id: bank_report
+        label: Report and contact the bank independently
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 2
+        outcomeTitle: You protected your account
+        outcomeBody: A legitimate bank will not ask you to disclose a one-time code
+          by text. Contact the bank using the number on your card or its official app.
+    - id: bank_link_page
+      text: 'Secure Account Verification: Enter your customer number, password and
+        one-time code to unlock your account.'
+      interactions:
+      - id: bank_trust
+        label: Enter the requested details
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 0
+        outcomeTitle: You exposed account details
+        outcomeBody: The page requested a password and one-time code through an
+          unsolicited link. Do not share credentials or security codes; contact the
+          bank through a trusted channel.
+      - id: bank_ignore
+        label: Ignore the message
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 1
+        outcomeTitle: You avoided sharing details
+        outcomeBody: You did not provide the requested credentials. If you are
+          concerned about a real payment, check directly in the bank's official app.
+      - id: bank_report_page
+        label: Report and verify independently
+        type: 2
+        targetMessageId: 
+        linkAddress: 
+        linkPreview: 
+        response: 2
+        outcomeTitle: You verified safely
+        outcomeBody: You avoided sharing your password and one-time code. Report the
+          message and check your account through the official bank app or a trusted
+          phone number.

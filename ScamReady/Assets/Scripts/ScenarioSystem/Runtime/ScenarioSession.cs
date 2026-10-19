@@ -7,6 +7,7 @@ namespace ScamReady.Scenarios
     {
         Desktop,
         Email,
+        Phone,
         Browser,
         Result
     }
@@ -16,6 +17,8 @@ namespace ScamReady.Scenarios
         EmailReceived,
         EmailOpened,
         EmailClosed,
+        PhoneOpened,
+        PhoneClosed,
         ContactStopped,
         ResponseChosen,
         BrowserOpened,
@@ -57,6 +60,7 @@ namespace ScamReady.Scenarios
         public string ScenarioId { get; }
         public ScenarioApp ActiveApp { get; private set; }
         public bool IsEmailOpen => ActiveApp == ScenarioApp.Email;
+        public bool IsPhoneOpen => ActiveApp == ScenarioApp.Phone;
         public bool IsBrowserOpen => ActiveApp == ScenarioApp.Browser;
         public string CurrentVerificationPageId { get; private set; }
         public bool HasReadEmail { get; private set; }
@@ -81,11 +85,29 @@ namespace ScamReady.Scenarios
             DecisionEvidenceIds = new List<string>().AsReadOnly();
             Record(ScenarioEventType.EmailReceived, emailId, 0);
         }
+        internal bool OpenPhone(double elapsedSeconds)
+        {
+            if (IsComplete || IsPhoneOpen) return false;
+            if (IsEmailOpen) Record(ScenarioEventType.EmailClosed, emailId, elapsedSeconds);
+            if (IsBrowserOpen) Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
+            ActiveApp = ScenarioApp.Phone;
+            Record(ScenarioEventType.PhoneOpened, ScenarioId, elapsedSeconds);
+            return true;
+        }
+
+        internal bool ClosePhone(double elapsedSeconds)
+        {
+            if (!IsPhoneOpen) return false;
+            ActiveApp = ScenarioApp.Desktop;
+            Record(ScenarioEventType.PhoneClosed, ScenarioId, elapsedSeconds);
+            return true;
+        }
 
         internal bool OpenEmail(double elapsedSeconds)
         {
             if (IsComplete || IsEmailOpen) return false;
             if (IsBrowserOpen) Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
+            if (IsPhoneOpen) Record(ScenarioEventType.PhoneClosed, ScenarioId, elapsedSeconds);
             ActiveApp = ScenarioApp.Email;
             HasReadEmail = true;
             Record(ScenarioEventType.EmailOpened, emailId, elapsedSeconds);
@@ -144,6 +166,7 @@ namespace ScamReady.Scenarios
         {
             if (IsComplete || IsBrowserOpen) return false;
             if (IsEmailOpen) CloseEmail(false, elapsedSeconds);
+            if (IsPhoneOpen) Record(ScenarioEventType.PhoneClosed, ScenarioId, elapsedSeconds);
             ActiveApp = ScenarioApp.Browser;
             Record(ScenarioEventType.BrowserOpened, ScenarioId, elapsedSeconds);
             return true;

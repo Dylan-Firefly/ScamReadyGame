@@ -9,6 +9,7 @@ namespace ScamReady.UI
     {
         [SerializeField] private ScenarioController controller;
         [SerializeField] private UnityEngine.UI.Button emailButton;
+        [SerializeField] private UnityEngine.UI.Button phoneButton;
         [SerializeField, Tooltip("绑定 DesktopPanel/BrowserShortcut 的按钮。")]
         private UnityEngine.UI.Button browserButton;
         [SerializeField] private UnityEngine.UI.Button notificationButton;
@@ -26,6 +27,7 @@ namespace ScamReady.UI
             displayedVisibility = null;
             controller.Changed += Refresh;
             emailButton.onClick.AddListener(controller.OpenEmail);
+            if (phoneButton != null) phoneButton.onClick.AddListener(controller.OpenPhone);
             browserButton.onClick.AddListener(controller.OpenBrowser);
             notificationButton.onClick.AddListener(controller.OpenEmail);
             restartButton.onClick.AddListener(controller.Restart);
@@ -36,6 +38,7 @@ namespace ScamReady.UI
         {
             controller.Changed -= Refresh;
             emailButton.onClick.RemoveListener(controller.OpenEmail);
+            if (phoneButton != null) phoneButton.onClick.RemoveListener(controller.OpenPhone);
             browserButton.onClick.RemoveListener(controller.OpenBrowser);
             notificationButton.onClick.RemoveListener(controller.OpenEmail);
             restartButton.onClick.RemoveListener(controller.Restart);
@@ -91,6 +94,7 @@ namespace ScamReady.UI
             emailButton.gameObject.SetActive(active);
             browserButton.gameObject.SetActive(active);
             notificationButton.gameObject.SetActive(active);
+            if (phoneButton != null) phoneButton.gameObject.SetActive(active);
         }
     }
 }

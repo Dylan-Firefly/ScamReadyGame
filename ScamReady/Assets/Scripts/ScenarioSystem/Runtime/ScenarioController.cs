@@ -46,6 +46,14 @@ namespace ScamReady.Scenarios
             Changed?.Invoke();
         }
 
+        public void OpenPhone()
+        {
+            if (Session != null && Session.OpenPhone(ElapsedSeconds)) Changed?.Invoke();
+        }
+        public void ClosePhone()
+        {
+            if (Session != null && Session.ClosePhone(ElapsedSeconds)) Changed?.Invoke();
+        }
         public void OpenEmail()
         {
             if (Session != null && Session.OpenEmail(ElapsedSeconds)) Changed?.Invoke();
