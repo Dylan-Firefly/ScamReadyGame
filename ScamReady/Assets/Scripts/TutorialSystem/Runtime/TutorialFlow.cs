@@ -140,7 +140,7 @@ namespace ScamReady.Tutorial
             // 与浏览器的生成顺序对应，只在绑定的容器内寻找，不访问 View 的私有字段。
             var cards = evidenceContainer.GetComponentsInChildren<EvidenceSpotView>(false);
             int index = 0;
-            foreach (var placement in controller.Definition.EvidencePlacements)
+            foreach (var placement in controller.EvidencePlacements)
             {
                 if (placement.Page != page || placement.Evidence == null) continue;
                 if (placement.Evidence.Id == evidenceId)

@@ -98,7 +98,7 @@ namespace ScamReady.UI
         {
             setupPanel.SetActive(active);
             emailButton.gameObject.SetActive(active && controller.IsEmailScenario);
-            browserButton.gameObject.SetActive(active && controller.IsEmailScenario);
+            browserButton.gameObject.SetActive(active && (controller.IsEmailScenario || controller.IsPhoneScenario));
             notificationButton.gameObject.SetActive(active && controller.IsEmailScenario);
             if (phoneButton != null)
                 phoneButton.gameObject.SetActive(active && controller.IsPhoneScenario);

@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using ScamReady.Evidence;
+using ScamReady.Scenarios;
+using ScamReady.Verification;
 using UnityEngine;
 
 namespace ScamReady.Phone
@@ -38,6 +41,14 @@ namespace ScamReady.Phone
         [SerializeField] private PhoneDialogLineData[] dialogLines = new PhoneDialogLineData[0];
         [SerializeField] private PhoneOutcomeData[] outcomes = new PhoneOutcomeData[0];
         [SerializeField] private PhoneMessageData[] messages = new PhoneMessageData[0];
+        [SerializeField, Tooltip("浏览器主页中可直接访问的可信页面。")]
+        private VerificationPageDefinition[] verificationPages = new VerificationPageDefinition[0];
+        [SerializeField, Tooltip("通过页面链接访问的其他页面。")]
+        private VerificationPageDefinition[] linkedPages = new VerificationPageDefinition[0];
+        [SerializeField, Tooltip("页面中可收集的证据及其来源内容。")]
+        private EvidencePlacement[] evidencePlacements = new EvidencePlacement[0];
+        [SerializeField, Tooltip("完成充分查验所需的关键证据。")]
+        private EvidenceDefinition[] requiredEvidence = new EvidenceDefinition[0];
 
         public string Id => id;
         public string Title => title;
@@ -46,14 +57,22 @@ namespace ScamReady.Phone
         public string Setup => setup;
         public string InitialMessageId => initialMessageId;
         public IReadOnlyList<PhoneDialogLineData> DialogLines => dialogLines;
+        public IReadOnlyList<VerificationPageDefinition> VerificationPages => verificationPages;
+        public IReadOnlyList<VerificationPageDefinition> LinkedPages => linkedPages;
+        public IReadOnlyList<EvidencePlacement> EvidencePlacements => evidencePlacements;
+        public IReadOnlyList<EvidenceDefinition> RequiredEvidence => requiredEvidence;
         public int RequiredEvidenceCount
         {
             get
             {
-                int count = 0;
+                var ids = new HashSet<string>();
                 foreach (var line in dialogLines)
-                    if (line != null && line.IsEvidence) count++;
-                return count;
+                    if (line != null && line.IsEvidence && !string.IsNullOrWhiteSpace(line.Id))
+                        ids.Add(line.Id);
+                foreach (var evidence in requiredEvidence)
+                    if (evidence != null && !string.IsNullOrWhiteSpace(evidence.Id))
+                        ids.Add(evidence.Id);
+                return ids.Count;
             }
         }
         public IReadOnlyList<PhoneMessageData> Messages => messages;
@@ -71,6 +90,36 @@ namespace ScamReady.Phone
             foreach (var line in dialogLines)
                 if (line != null && line.Id == lineId)
                     return line;
+            return null;
+        }
+
+        public bool IsRequiredEvidenceCollected(ScenarioSession session)
+        {
+            if (session == null) return false;
+
+            bool hasRequiredEvidence = false;
+            foreach (var line in dialogLines)
+            {
+                if (line == null || !line.IsEvidence || string.IsNullOrWhiteSpace(line.Id)) continue;
+                hasRequiredEvidence = true;
+                if (!session.HasCollectedEvidence(line.Id)) return false;
+            }
+
+            foreach (var evidence in requiredEvidence)
+            {
+                if (evidence == null || string.IsNullOrWhiteSpace(evidence.Id)) continue;
+                hasRequiredEvidence = true;
+                if (!session.HasCollectedEvidence(evidence.Id)) return false;
+            }
+
+            return hasRequiredEvidence;
+        }
+
+        public EvidencePlacement FindEvidencePlacement(string evidenceId)
+        {
+            foreach (var placement in evidencePlacements)
+                if (placement != null && placement.Evidence != null
+                    && placement.Evidence.Id == evidenceId) return placement;
             return null;
         }
 

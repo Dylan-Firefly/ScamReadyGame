@@ -45,11 +45,20 @@ namespace ScamReady.Scenarios
         public string CurrentContactName => IsPhoneScenario
             ? PhoneLevel?.CallerName
             : definition?.Email?.Sender;
+        public IReadOnlyList<VerificationPageDefinition> VerificationPages =>
+            IsPhoneScenario ? PhoneLevel?.VerificationPages ?? Array.Empty<VerificationPageDefinition>()
+            : definition?.VerificationPages ?? Array.Empty<VerificationPageDefinition>();
+        public IReadOnlyList<VerificationPageDefinition> LinkedPages =>
+            IsPhoneScenario ? PhoneLevel?.LinkedPages ?? Array.Empty<VerificationPageDefinition>()
+            : definition?.LinkedPages ?? Array.Empty<VerificationPageDefinition>();
+        public IReadOnlyList<EvidencePlacement> EvidencePlacements =>
+            IsPhoneScenario ? PhoneLevel?.EvidencePlacements ?? Array.Empty<EvidencePlacement>()
+            : definition?.EvidencePlacements ?? Array.Empty<EvidencePlacement>();
         public PhoneCallState CallState { get; private set; }
         public PhoneResponse? PhoneDecision { get; private set; }
         public string PhoneOutcomeTitle { get; private set; }
         public string PhoneOutcomeBody { get; private set; }
-        public int CollectedPhoneEvidenceCount => collectedPhoneEvidenceIds.Count;
+        public int CollectedPhoneEvidenceCount => Session == null ? 0 : Session.CollectedEvidenceIds.Count;
         public int RequiredPhoneEvidenceCount => PhoneLevel == null ? 0 : PhoneLevel.RequiredEvidenceCount;
         public double CallDurationSeconds => CallState == PhoneCallState.InCall
             ? Time.realtimeSinceStartupAsDouble - callStartedAt : completedCallDurationSeconds;
@@ -59,7 +68,7 @@ namespace ScamReady.Scenarios
         {
             get
             {
-                if (!IsEmailScenario || Session == null || Session.CurrentVerificationPageId == null) return null;
+                if (Session == null || Session.CurrentVerificationPageId == null) return null;
                 foreach (var page in BrowserPages())
                     if (page != null && page.Id == Session.CurrentVerificationPageId) return page;
                 return null;
@@ -161,7 +170,7 @@ namespace ScamReady.Scenarios
         }
 
         public bool HasCollectedPhoneEvidence(string lineId) =>
-            collectedPhoneEvidenceIds.Contains(lineId);
+            Session != null && Session.HasCollectedEvidence(lineId);
 
         public bool CollectPhoneEvidence(string lineId)
         {
@@ -193,7 +202,7 @@ namespace ScamReady.Scenarios
 
             bool verified = CallState == PhoneCallState.InCall
                 && RequiredPhoneEvidenceCount > 0
-                && CollectedPhoneEvidenceCount == RequiredPhoneEvidenceCount;
+                && PhoneLevel.IsRequiredEvidenceCollected(Session);
             FinishPhoneCall(verified ? PhoneResponse.Report : PhoneResponse.Ignore);
         }
 
@@ -291,25 +300,25 @@ namespace ScamReady.Scenarios
 
         public void OpenBrowser()
         {
-            if (IsEmailScenario && Session != null && Session.OpenBrowser(ElapsedSeconds)) Changed?.Invoke();
+            if (Session != null && Session.OpenBrowser(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void CloseBrowser()
         {
-            if (IsEmailScenario && Session != null && Session.CloseBrowser(ElapsedSeconds)) Changed?.Invoke();
+            if (Session != null && Session.CloseBrowser(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void OpenBrowserHome()
         {
-            if (IsEmailScenario && Session != null && Session.OpenBrowserHome()) Changed?.Invoke();
+            if (Session != null && Session.OpenBrowserHome()) Changed?.Invoke();
         }
 
         public void OpenVerificationPage(VerificationPageDefinition page)
         {
-            if (!IsEmailScenario || definition == null || Session == null
+            if (Session == null
                 || page == null || string.IsNullOrWhiteSpace(page.Id)) return;
             // 主页只提供可信入口，邮件带来的页面必须通过链接访问。
-            foreach (var available in definition.VerificationPages)
+            foreach (var available in VerificationPages)
             {
                 if (available != page || page.IsUnsafe) continue;
                 if (Session.OpenVerificationPage(page.Id, ElapsedSeconds)) Changed?.Invoke();
@@ -319,7 +328,7 @@ namespace ScamReady.Scenarios
 
         public void OpenLink(string address)
         {
-            if (!IsEmailScenario || Session == null || Session.IsComplete
+            if (Session == null || Session.IsComplete
                 || string.IsNullOrWhiteSpace(address)) return;
             foreach (var page in BrowserPages())
             {
@@ -340,7 +349,22 @@ namespace ScamReady.Scenarios
         public void SubmitBrowserInformation()
         {
             var page = CurrentVerificationPage;
-            if (!IsEmailScenario || definition == null || Session == null || page == null || !page.IsUnsafe
+            if (Session == null || page == null || !page.IsUnsafe) return;
+
+            if (IsPhoneScenario)
+            {
+                var outcome = PhoneLevel != null ? PhoneLevel.FindOutcome(PhoneResponse.Trust) : null;
+                if (outcome == null)
+                {
+                    Debug.LogError("Phone 关卡未配置 Trust 结局，无法提交验证信息。", this);
+                    return;
+                }
+                if (!Session.SubmitInformation(page.Id, ElapsedSeconds)) return;
+                CompletePhoneDecision(PhoneResponse.Trust, outcome);
+                return;
+            }
+
+            if (!IsEmailScenario || definition == null
                 || !Session.SubmitInformation(page.Id, ElapsedSeconds)) return;
             Result = ScenarioEvaluator.Evaluate(definition, Session);
             Changed?.Invoke();
@@ -348,38 +372,55 @@ namespace ScamReady.Scenarios
 
         private System.Collections.Generic.IEnumerable<VerificationPageDefinition> BrowserPages()
         {
-            foreach (var page in definition.VerificationPages) yield return page;
-            foreach (var page in definition.LinkedPages) yield return page;
+            foreach (var page in VerificationPages) yield return page;
+            foreach (var page in LinkedPages) yield return page;
         }
 
         private double ElapsedSeconds => Time.realtimeSinceStartupAsDouble - startedAt;
 
         public EvidencePlacement FindEvidencePlacement(string id)
         {
-            if (!IsEmailScenario || definition == null) return null;
-            foreach (var placement in definition.EvidencePlacements)
-                if (placement.Evidence != null && placement.Evidence.Id == id) return placement;
+            if (IsPhoneScenario)
+                return PhoneLevel != null ? PhoneLevel.FindEvidencePlacement(id) : null;
+            if (definition == null) return null;
+            foreach (var placement in EvidencePlacements)
+                if (placement != null && placement.Evidence != null && placement.Evidence.Id == id)
+                    return placement;
             return null;
         }
 
         public void CollectEvidence(EvidencePlacement placement)
         {
-            if (!IsEmailScenario || definition == null || Session == null
+            if (Session == null
                 || placement == null || placement.Evidence == null
                 || string.IsNullOrWhiteSpace(placement.Evidence.Id)
                 || placement.Page != CurrentVerificationPage) return;
 
-            foreach (var available in definition.EvidencePlacements)
+            foreach (var available in EvidencePlacements)
             {
-                if (available != placement) continue;
+                if (available == null || available != placement) continue;
                 if (!Session.CollectEvidence(placement.Evidence.Id, ElapsedSeconds)) return;
-                var reminder = definition.Reminder;
-                if (reminder != null && !string.IsNullOrWhiteSpace(reminder.Id)
-                    && Session.CollectedEvidenceIds.Count >= reminder.TriggerEvidenceCount)
-                    Session.TriggerReminder(reminder.Id, ElapsedSeconds);
+                if (IsEmailScenario && definition != null)
+                {
+                    var reminder = definition.Reminder;
+                    if (reminder != null && !string.IsNullOrWhiteSpace(reminder.Id)
+                        && Session.CollectedEvidenceIds.Count >= reminder.TriggerEvidenceCount)
+                        Session.TriggerReminder(reminder.Id, ElapsedSeconds);
+                }
                 Changed?.Invoke();
                 return;
             }
+        }
+
+        private void CompletePhoneDecision(PhoneResponse response, PhoneOutcomeData outcome)
+        {
+            if (CallState == PhoneCallState.InCall)
+                completedCallDurationSeconds = CallDurationSeconds;
+            PhoneDecision = response;
+            PhoneOutcomeTitle = outcome.Title;
+            PhoneOutcomeBody = outcome.Body;
+            CallState = PhoneCallState.Completed;
+            Changed?.Invoke();
         }
 
         public void OpenEvidenceSummary()

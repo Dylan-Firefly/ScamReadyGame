@@ -20,6 +20,15 @@ MonoBehaviour:
     phoneNumber: +61 4 1234 5678
     setup: You are expecting a parcel. A text claims delivery failed and asks you
       to use a link to arrange redelivery.
+    verificationPages:
+    - {fileID: 11400000, guid: 68fb0001dc5f4ae3a9b1c00d91b99a01, type: 2}
+    linkedPages: []
+    evidencePlacements:
+    - page: {fileID: 11400000, guid: 68fb0001dc5f4ae3a9b1c00d91b99a01, type: 2}
+      evidence: {fileID: 11400000, guid: 68fb0002dc5f4ae3a9b1c00d91b99a02, type: 2}
+      content: Harbour Parcel does not request unexpected redelivery fees through unsolicited calls or texts.
+    requiredEvidence:
+    - {fileID: 11400000, guid: 68fb0002dc5f4ae3a9b1c00d91b99a02, type: 2}
     initialMessageId: parcel_sms
     dialogLines:
     - id: parcel_caller_claim1
@@ -150,6 +159,15 @@ MonoBehaviour:
     phoneNumber: +61 4 8765 4321
     setup: You receive an unexpected security warning asking you to confirm your
       banking details through a link.
+    verificationPages:
+    - {fileID: 11400000, guid: 68fb0003dc5f4ae3a9b1c00d91b99a03, type: 2}
+    linkedPages: []
+    evidencePlacements:
+    - page: {fileID: 11400000, guid: 68fb0003dc5f4ae3a9b1c00d91b99a03, type: 2}
+      evidence: {fileID: 11400000, guid: 68fb0004dc5f4ae3a9b1c00d91b99a04, type: 2}
+      content: Harbour Bank never asks customers to share one-time security codes, passwords or PINs over the phone.
+    requiredEvidence:
+    - {fileID: 11400000, guid: 68fb0004dc5f4ae3a9b1c00d91b99a04, type: 2}
     initialMessageId: bank_sms
     dialogLines:
     - id: bank_unexpected_payment

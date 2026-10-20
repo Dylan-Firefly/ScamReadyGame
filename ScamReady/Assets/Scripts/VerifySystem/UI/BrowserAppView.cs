@@ -77,9 +77,9 @@ namespace ScamReady.Verification
             }
             evidenceSpots.Clear();
             if (page == null) return;
-            foreach (var placement in controller.Definition.EvidencePlacements)
+            foreach (var placement in controller.EvidencePlacements)
             {
-                if (placement.Page != page || placement.Evidence == null) continue;
+                if (placement == null || placement.Page != page || placement.Evidence == null) continue;
                 var spot = Instantiate(evidenceSpotPrefab, evidenceContainer);
                 spot.Bind(controller, placement);
                 evidenceSpots.Add(spot);
@@ -88,7 +88,7 @@ namespace ScamReady.Verification
 
         private void Refresh()
         {
-            if (!controller.IsEmailScenario || controller.Definition == null)
+            if (!controller.IsEmailScenario && !controller.IsPhoneScenario)
             {
                 SetVisible(false);
                 return;
@@ -102,7 +102,7 @@ namespace ScamReady.Verification
 
         private void RefreshLinks()
         {
-            var pages = controller.Definition.VerificationPages;
+            var pages = controller.VerificationPages;
             for (int i = 0; i < links.Length; i++)
                 links[i].Bind(i < pages.Count && pages[i] != null && !pages[i].IsUnsafe ? pages[i] : null,
                     controller.OpenVerificationPage, controller.OpenLink);
