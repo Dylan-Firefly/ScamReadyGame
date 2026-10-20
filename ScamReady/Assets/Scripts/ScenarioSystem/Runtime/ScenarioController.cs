@@ -1,22 +1,40 @@
 using System;
+using System.Collections.Generic;
 using ScamReady.Evidence;
 using ScamReady.Feedback;
+using ScamReady.Phone;
 using ScamReady.Responses;
 using ScamReady.Verification;
 using UnityEngine;
 
 namespace ScamReady.Scenarios
 {
-    /// <summary>统一接收操作并更新会话；不依赖具体邮件文案或窗口布局。</summary>
+    /// <summary>统一接收场景操作并更新会话状态。</summary>
     public sealed class ScenarioController : MonoBehaviour
     {
         [SerializeField, Tooltip("绑定本关的 EmailScenarioDefinition 内容资产。")]
         private EmailScenarioDefinition definition;
+        [Header("Phone scenario")]
+        [SerializeField] private PhoneScenarioCollection phoneCollection;
+        [SerializeField, Min(0)] private int phoneLevelIndex;
+
+        private readonly HashSet<string> collectedPhoneEvidenceIds = new HashSet<string>();
         private double startedAt;
+        private double callStartedAt;
+        private double completedCallDurationSeconds;
 
         public EmailScenarioDefinition Definition => definition;
         public ScenarioSession Session { get; private set; }
         public ScenarioEvaluation Result { get; private set; }
+        public PhoneScenarioLevel PhoneLevel { get; private set; }
+        public PhoneCallState CallState { get; private set; }
+        public PhoneResponse? PhoneDecision { get; private set; }
+        public string PhoneOutcomeTitle { get; private set; }
+        public string PhoneOutcomeBody { get; private set; }
+        public int CollectedPhoneEvidenceCount => collectedPhoneEvidenceIds.Count;
+        public int RequiredPhoneEvidenceCount => PhoneLevel == null ? 0 : PhoneLevel.RequiredEvidenceCount;
+        public double CallDurationSeconds => CallState == PhoneCallState.InCall
+            ? Time.realtimeSinceStartupAsDouble - callStartedAt : completedCallDurationSeconds;
         public event Action Changed;
 
         public VerificationPageDefinition CurrentVerificationPage
@@ -43,7 +61,139 @@ namespace ScamReady.Scenarios
             startedAt = Time.realtimeSinceStartupAsDouble;
             Session = new ScenarioSession(definition.Id, definition.Email.Id);
             Result = null;
+            PhoneLevel = null;
+            ResetPhoneProgress();
+            if (phoneCollection != null)
+                SetPhoneLevel(phoneLevelIndex);
             Changed?.Invoke();
+        }
+
+        public void LoadPhoneLevel(int index)
+        {
+            if (SetPhoneLevel(index))
+                Changed?.Invoke();
+        }
+
+        private bool SetPhoneLevel(int index)
+        {
+            if (phoneCollection == null)
+            {
+                Debug.LogError("ScenarioController 缺少 PhoneScenarioCollection 资产。", this);
+                return false;
+            }
+
+            if (index < 0 || index >= phoneCollection.Levels.Count)
+            {
+                Debug.LogError($"手机关卡索引 {index} 超出配置范围。", this);
+                return false;
+            }
+
+            var level = phoneCollection.Levels[index];
+            if (level == null || string.IsNullOrWhiteSpace(level.Id))
+            {
+                Debug.LogError($"手机关卡 {index} 缺少关卡数据或 ID。", this);
+                return false;
+            }
+
+            phoneLevelIndex = index;
+            PhoneLevel = level;
+            ResetPhoneProgress();
+            return true;
+        }
+
+        private void ResetPhoneProgress()
+        {
+            collectedPhoneEvidenceIds.Clear();
+            PhoneDecision = null;
+            PhoneOutcomeTitle = string.Empty;
+            PhoneOutcomeBody = string.Empty;
+            CallState = PhoneCallState.Incoming;
+            callStartedAt = 0d;
+            completedCallDurationSeconds = 0d;
+        }
+
+        public bool HasCollectedPhoneEvidence(string lineId) =>
+            collectedPhoneEvidenceIds.Contains(lineId);
+
+        public bool CollectPhoneEvidence(string lineId)
+        {
+            if (CallState != PhoneCallState.InCall || PhoneLevel == null
+                || string.IsNullOrWhiteSpace(lineId))
+                return false;
+
+            var line = PhoneLevel.FindDialogLine(lineId);
+            if (line == null || !line.IsEvidence || collectedPhoneEvidenceIds.Contains(lineId)
+                || Session == null || !Session.CollectPhoneEvidence(lineId, ElapsedSeconds))
+                return false;
+
+            collectedPhoneEvidenceIds.Add(lineId);
+            Changed?.Invoke();
+            return true;
+        }
+
+        public void AnswerCall()
+        {
+            if (CallState != PhoneCallState.Incoming || PhoneLevel == null) return;
+            CallState = PhoneCallState.InCall;
+            callStartedAt = Time.realtimeSinceStartupAsDouble;
+            Changed?.Invoke();
+        }
+
+        public void HangUp()
+        {
+            if (CallState == PhoneCallState.Completed) return;
+
+            bool verified = CallState == PhoneCallState.InCall
+                && RequiredPhoneEvidenceCount > 0
+                && CollectedPhoneEvidenceCount == RequiredPhoneEvidenceCount;
+            FinishPhoneCall(verified ? PhoneResponse.Report : PhoneResponse.Ignore);
+        }
+
+        public void ChoosePhoneResponse(PhoneResponse response)
+        {
+            if (CallState != PhoneCallState.InCall) return;
+            FinishPhoneCall(response);
+        }
+
+        private void FinishPhoneCall(PhoneResponse response)
+        {
+            if (PhoneLevel == null) return;
+
+            var outcome = PhoneLevel.FindOutcome(response);
+            if (outcome == null)
+            {
+                Debug.LogError($"手机关卡 {PhoneLevel.Id} 未配置 {response} 结局。", this);
+                return;
+            }
+
+            if (!TryChoosePhoneResponse(ToContactResponse(response)))
+            {
+                Debug.LogError($"手机回应 {response} 无法记录到当前会话。", this);
+                return;
+            }
+
+            completedCallDurationSeconds = CallDurationSeconds;
+            PhoneDecision = response;
+            PhoneOutcomeTitle = outcome.Title;
+            PhoneOutcomeBody = outcome.Body;
+            CallState = PhoneCallState.Completed;
+            Changed?.Invoke();
+        }
+
+        private bool TryChoosePhoneResponse(ContactResponse response)
+        {
+            return Session != null && Session.ChoosePhoneResponse(response, ElapsedSeconds);
+        }
+
+        private static ContactResponse ToContactResponse(PhoneResponse response)
+        {
+            switch (response)
+            {
+                case PhoneResponse.Trust: return ContactResponse.Proceed;
+                case PhoneResponse.Ignore: return ContactResponse.Ignore;
+                case PhoneResponse.Report: return ContactResponse.Reject;
+                default: throw new ArgumentOutOfRangeException(nameof(response), response, null);
+            }
         }
 
         public void OpenPhone()
@@ -88,21 +238,6 @@ namespace ScamReady.Scenarios
             // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
             Result = ScenarioEvaluator.Evaluate(definition, Session);
             Changed?.Invoke();
-        }
-
-        public bool ChoosePhoneResponse(ContactResponse response)
-        {
-            if (Session == null || !Session.ChoosePhoneResponse(response, ElapsedSeconds)) return false;
-            Changed?.Invoke();
-            return true;
-        }
-
-        public bool CollectPhoneEvidence(string evidenceId)
-        {
-            if (Session == null || string.IsNullOrWhiteSpace(evidenceId)
-                || !Session.CollectPhoneEvidence(evidenceId, ElapsedSeconds)) return false;
-            Changed?.Invoke();
-            return true;
         }
 
         public void OpenBrowser()

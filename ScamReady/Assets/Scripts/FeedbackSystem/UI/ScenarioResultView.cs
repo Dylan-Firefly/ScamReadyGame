@@ -3,7 +3,6 @@ using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
 using ScamReady.UI;
-using ScamReady.Phone;
 
 namespace ScamReady.Feedback
 {
@@ -11,7 +10,6 @@ namespace ScamReady.Feedback
     public sealed class ScenarioResultView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
-        [SerializeField] private PhoneScenarioController phoneController;
         [SerializeField] private GameObject window;
         [SerializeField] private TMP_Text scenarioText;
         [SerializeField] private TMP_Text titleText;
@@ -37,25 +35,17 @@ namespace ScamReady.Feedback
                 audioPlayer = GetComponentInParent<UIAudioPlayer>();
             }
 
-            if (phoneController == null)
-                phoneController = FindFirstObjectByType<PhoneScenarioController>();
         }
 
         private void OnEnable()
         {
             controller.Changed += Refresh;
-            if (phoneController == null)
-                phoneController = FindFirstObjectByType<PhoneScenarioController>();
-            if (phoneController != null)
-                phoneController.Changed += Refresh;
             Refresh();
         }
 
         private void OnDisable()
         {
             controller.Changed -= Refresh;
-            if (phoneController != null)
-                phoneController.Changed -= Refresh;
         }
 
         private void Refresh()
@@ -82,7 +72,7 @@ namespace ScamReady.Feedback
 
         private void RefreshPhoneResult()
         {
-            if (phoneController == null || !phoneController.Decision.HasValue)
+            if (!controller.PhoneDecision.HasValue)
             {
                 displayingPhoneResult = false;
                 Hide();
@@ -92,18 +82,18 @@ namespace ScamReady.Feedback
             if (!displayingPhoneResult)
             {
                 scenarioText.text = "Call complete  |  "
-                    + (phoneController.Level != null ? phoneController.Level.Title : string.Empty);
-                titleText.text = phoneController.OutcomeTitle;
-                string response = phoneController.Decision.Value == PhoneResponse.Trust ? "Proceed"
-                    : phoneController.Decision.Value == PhoneResponse.Report ? "Reject / Report" : "Ignore";
+                    + (controller.PhoneLevel != null ? controller.PhoneLevel.Title : string.Empty);
+                titleText.text = controller.PhoneOutcomeTitle;
+                string response = controller.PhoneDecision.Value == ScamReady.Phone.PhoneResponse.Trust ? "Proceed"
+                    : controller.PhoneDecision.Value == ScamReady.Phone.PhoneResponse.Report ? "Reject / Report" : "Ignore";
                 processText.text = "Your response: " + response
-                    + "\nEvidence at decision: " + phoneController.CollectedEvidenceCount
-                    + " / " + phoneController.RequiredEvidenceCount;
-                bodyText.text = phoneController.OutcomeBody;
+                    + "\nEvidence at decision: " + controller.CollectedPhoneEvidenceCount
+                    + " / " + controller.RequiredPhoneEvidenceCount;
+                bodyText.text = controller.PhoneOutcomeBody;
                 displayingPhoneResult = true;
                 if (audioPlayer != null)
                 {
-                    if (phoneController.Decision.Value == PhoneResponse.Report)
+                    if (controller.PhoneDecision.Value == ScamReady.Phone.PhoneResponse.Report)
                         audioPlayer.PlaySuccess();
                     else
                         audioPlayer.PlayWarning();

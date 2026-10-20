@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39a3c8978a2b48c9953cf2913b1ef426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneAppView
-  phoneController: {fileID: 0}
+  scenarioController: {fileID: 0}
   window: {fileID: 9038444054322949763}
   closeButton: {fileID: 3787649204231212948}
   scenarioTitleText: {fileID: 3134152978700880852}

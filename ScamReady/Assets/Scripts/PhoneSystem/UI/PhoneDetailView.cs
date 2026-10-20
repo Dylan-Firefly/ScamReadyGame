@@ -1,4 +1,5 @@
 using System;
+using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,21 +15,21 @@ namespace ScamReady.Phone
         [SerializeField] private Button answerButton;
         [SerializeField] private Button hangUpButton;
 
-        private PhoneScenarioController phoneController;
+        private ScenarioController scenarioController;
 
         private void Awake() => ResolveReferences();
 
         private void OnEnable()
         {
-            if (phoneController != null)
-                phoneController.Changed += Refresh;
+            if (scenarioController != null)
+                scenarioController.Changed += Refresh;
             Refresh();
         }
 
         private void OnDisable()
         {
-            if (phoneController != null)
-                phoneController.Changed -= Refresh;
+            if (scenarioController != null)
+                scenarioController.Changed -= Refresh;
         }
 
         private void OnDestroy()
@@ -39,19 +40,19 @@ namespace ScamReady.Phone
                 hangUpButton.onClick.RemoveListener(HangUp);
         }
 
-        public void Connect(PhoneScenarioController controller)
+        public void Connect(ScenarioController controller)
         {
             ResolveReferences();
-            if (phoneController != null)
-                phoneController.Changed -= Refresh;
+            if (scenarioController != null)
+                scenarioController.Changed -= Refresh;
             if (answerButton != null)
                 answerButton.onClick.RemoveListener(AnswerCall);
             if (hangUpButton != null)
                 hangUpButton.onClick.RemoveListener(HangUp);
 
-            phoneController = controller;
-            if (phoneController != null)
-                phoneController.Changed += Refresh;
+            scenarioController = controller;
+            if (scenarioController != null)
+                scenarioController.Changed += Refresh;
 
             if (answerButton != null)
                 answerButton.onClick.AddListener(AnswerCall);
@@ -76,39 +77,39 @@ namespace ScamReady.Phone
 
         private void Update()
         {
-            if (phoneController != null && phoneController.CallState == PhoneCallState.InCall)
+            if (scenarioController != null && scenarioController.CallState == PhoneCallState.InCall)
                 RefreshTime();
         }
 
         private void Refresh()
         {
-            if (phoneController == null || callerNameText == null || numberText == null || stateText == null
+            if (scenarioController == null || callerNameText == null || numberText == null || stateText == null
                 || timeText == null || answerButton == null || hangUpButton == null)
                 return;
 
-            callerNameText.text = phoneController.Level != null ? phoneController.Level.CallerName : string.Empty;
-            numberText.text = phoneController.Level != null ? phoneController.Level.PhoneNumber : string.Empty;
-            bool incoming = phoneController.CallState == PhoneCallState.Incoming;
+            callerNameText.text = scenarioController.PhoneLevel != null ? scenarioController.PhoneLevel.CallerName : string.Empty;
+            numberText.text = scenarioController.PhoneLevel != null ? scenarioController.PhoneLevel.PhoneNumber : string.Empty;
+            bool incoming = scenarioController.CallState == PhoneCallState.Incoming;
             stateText.gameObject.SetActive(incoming);
-            bool inCall = phoneController.CallState == PhoneCallState.InCall;
+            bool inCall = scenarioController.CallState == PhoneCallState.InCall;
             timeText.gameObject.SetActive(inCall);
             answerButton.gameObject.SetActive(incoming);
-            hangUpButton.gameObject.SetActive(phoneController.CallState != PhoneCallState.Completed);
+            hangUpButton.gameObject.SetActive(scenarioController.CallState != PhoneCallState.Completed);
             stateText.text = "Waiting for answer";
             RefreshTime();
         }
 
         private void RefreshTime()
         {
-            if (phoneController == null || timeText == null) return;
-            var duration = TimeSpan.FromSeconds(phoneController.CallDurationSeconds);
+            if (scenarioController == null || timeText == null) return;
+            var duration = TimeSpan.FromSeconds(scenarioController.CallDurationSeconds);
             timeText.text = duration.TotalHours >= 1d
                 ? duration.ToString(@"hh\:mm\:ss")
                 : duration.ToString(@"mm\:ss");
         }
 
-        private void AnswerCall() => phoneController.AnswerCall();
-        private void HangUp() => phoneController.HangUp();
+        private void AnswerCall() => scenarioController.AnswerCall();
+        private void HangUp() => scenarioController.HangUp();
 
         private TMP_Text FindText(string objectName)
         {

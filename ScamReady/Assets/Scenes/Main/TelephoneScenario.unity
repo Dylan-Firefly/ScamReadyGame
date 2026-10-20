@@ -1379,7 +1379,6 @@ GameObject:
   m_Component:
   - component: {fileID: 925016266}
   - component: {fileID: 925016265}
-  - component: {fileID: 2107424936}
   m_Layer: 0
   m_Name: ScenarioFlow
   m_TagString: Untagged
@@ -1400,6 +1399,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioController
   definition: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
+  phoneCollection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
+  phoneLevelIndex: 0
 --- !u!4 &925016266
 Transform:
   m_ObjectHideFlags: 0
@@ -1652,8 +1653,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2107424936}
-        m_TargetAssemblyTypeName: ScamReady.Phone.PhoneScenarioController, Assembly-CSharp
+      - m_Target: {fileID: 925016265}
+        m_TargetAssemblyTypeName: ScamReady.Scenarios.ScenarioController, Assembly-CSharp
         m_MethodName: OpenPhone
         m_Mode: 1
         m_Arguments:
@@ -2178,21 +2179,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3965777959482464062, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
   m_PrefabInstance: {fileID: 2100493141}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2107424936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925016264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdb2dc36b00445fb82ea08baecc6747c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioController
-  scenarioController: {fileID: 925016265}
-  collection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
-  levelIndex: 0
 --- !u!114 &2132085593
 MonoBehaviour:
   m_ObjectHideFlags: 0

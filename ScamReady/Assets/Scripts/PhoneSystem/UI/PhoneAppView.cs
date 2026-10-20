@@ -1,4 +1,5 @@
 using System.Collections;
+using ScamReady.Scenarios;
 using ScamReady.UI;
 using TMPro;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace ScamReady.Phone
 {
     public sealed class PhoneAppView : MonoBehaviour
     {
-        [SerializeField] private PhoneScenarioController phoneController;
+        [SerializeField] private ScenarioController scenarioController;
         [SerializeField] private GameObject window;
         [SerializeField] private Button closeButton;
         [SerializeField] private TMP_Text scenarioTitleText;
@@ -32,8 +33,8 @@ namespace ScamReady.Phone
 
         private void Awake()
         {
-            if (phoneController == null)
-                phoneController = FindFirstObjectByType<PhoneScenarioController>();
+            if (scenarioController == null)
+                scenarioController = FindFirstObjectByType<ScenarioController>();
 
             if (window == null)
                 window = gameObject;
@@ -65,7 +66,7 @@ namespace ScamReady.Phone
             if (windowAnimator == null && window != null)
                 windowAnimator = window.GetComponent<UIWindowAnimator>();
 
-            if (phoneController == null || window == null || closeButton == null
+            if (scenarioController == null || window == null || closeButton == null
                 || scenarioTitleText == null || action == null || dialogContent == null
                 || dialogContainer == null || dialogScrollRect == null
                 || dialogBoxPrefab == null || detailView == null
@@ -78,53 +79,53 @@ namespace ScamReady.Phone
             }
 
             ConfigureDialogScrollView();
-            closeButton.onClick.AddListener(phoneController.ClosePhone);
+            closeButton.onClick.AddListener(scenarioController.ClosePhone);
             proceedButton.onClick.AddListener(Proceed);
-            stopContactButton.onClick.AddListener(phoneController.StopContact);
+            stopContactButton.onClick.AddListener(scenarioController.StopPhoneContact);
             ignoreButton.onClick.AddListener(Ignore);
             rejectButton.onClick.AddListener(Reject);
-            detailView.Connect(phoneController);
+            detailView.Connect(scenarioController);
         }
 
         private void OnEnable()
         {
-            if (phoneController == null) return;
-            phoneController.Changed += Refresh;
+            if (scenarioController == null) return;
+            scenarioController.Changed += Refresh;
             Refresh();
             StartDialogSequenceIfNeeded();
         }
 
         private void OnDisable()
         {
-            if (phoneController != null)
-                phoneController.Changed -= Refresh;
+            if (scenarioController != null)
+                scenarioController.Changed -= Refresh;
             StopDialogSequence();
         }
 
         private void OnDestroy()
         {
-            if (phoneController == null) return;
-            if (closeButton != null) closeButton.onClick.RemoveListener(phoneController.ClosePhone);
+            if (scenarioController == null) return;
+            if (closeButton != null) closeButton.onClick.RemoveListener(scenarioController.ClosePhone);
             if (proceedButton != null) proceedButton.onClick.RemoveListener(Proceed);
-            if (stopContactButton != null) stopContactButton.onClick.RemoveListener(phoneController.StopContact);
+            if (stopContactButton != null) stopContactButton.onClick.RemoveListener(scenarioController.StopPhoneContact);
             if (ignoreButton != null) ignoreButton.onClick.RemoveListener(Ignore);
             if (rejectButton != null) rejectButton.onClick.RemoveListener(Reject);
         }
 
         private void Refresh()
         {
-            scenarioTitleText.text = phoneController.Level != null ? phoneController.Level.Title : string.Empty;
-            bool inCall = phoneController.CallState == PhoneCallState.InCall;
+            scenarioTitleText.text = scenarioController.PhoneLevel != null ? scenarioController.PhoneLevel.Title : string.Empty;
+            bool inCall = scenarioController.CallState == PhoneCallState.InCall;
             action.SetActive(inCall);
             dialogContent.SetActive(inCall);
 
-            if (displayedCallState != phoneController.CallState)
+            if (displayedCallState != scenarioController.CallState)
             {
-                displayedCallState = phoneController.CallState;
+                displayedCallState = scenarioController.CallState;
                 RebuildDialog();
             }
 
-            SetVisible(phoneController.IsPhoneOpen);
+            SetVisible(scenarioController.Session != null && scenarioController.Session.IsPhoneOpen);
         }
 
         private void RebuildDialog()
@@ -134,7 +135,7 @@ namespace ScamReady.Phone
                 Destroy(dialogContainer.GetChild(i).gameObject);
             nextDialogLineIndex = 0;
 
-            if (phoneController.CallState != PhoneCallState.InCall || phoneController.Level == null)
+            if (scenarioController.CallState != PhoneCallState.InCall || scenarioController.PhoneLevel == null)
                 return;
 
             StartDialogSequenceIfNeeded();
@@ -142,9 +143,9 @@ namespace ScamReady.Phone
 
         private IEnumerator DisplayDialogLines()
         {
-            var lines = phoneController.Level.DialogLines;
+            var lines = scenarioController.PhoneLevel.DialogLines;
             while (nextDialogLineIndex < lines.Count
-                && phoneController.CallState == PhoneCallState.InCall)
+                && scenarioController.CallState == PhoneCallState.InCall)
             {
                 var line = lines[nextDialogLineIndex++];
                 if (line == null) continue;
@@ -154,8 +155,8 @@ namespace ScamReady.Phone
                         <= dialogScrollRect.viewport.rect.height + 1f
                     || dialogScrollRect.verticalNormalizedPosition <= 0.05f;
                 var dialog = Instantiate(dialogBoxPrefab, dialogContainer);
-                dialog.Bind(line, phoneController.HasCollectedEvidence(line.Id),
-                    () => phoneController.CollectEvidence(line.Id));
+                dialog.Bind(line, scenarioController.HasCollectedPhoneEvidence(line.Id),
+                    () => scenarioController.CollectPhoneEvidence(line.Id));
 
                 yield return null;
                 Canvas.ForceUpdateCanvases();
@@ -173,10 +174,10 @@ namespace ScamReady.Phone
 
         private void StartDialogSequenceIfNeeded()
         {
-            if (!enabled || dialogRoutine != null || phoneController == null
-                || phoneController.CallState != PhoneCallState.InCall
-                || phoneController.Level == null
-                || nextDialogLineIndex >= phoneController.Level.DialogLines.Count)
+            if (!enabled || dialogRoutine != null || scenarioController == null
+                || scenarioController.CallState != PhoneCallState.InCall
+                || scenarioController.PhoneLevel == null
+                || nextDialogLineIndex >= scenarioController.PhoneLevel.DialogLines.Count)
                 return;
 
             dialogRoutine = StartCoroutine(DisplayDialogLines());
@@ -231,9 +232,9 @@ namespace ScamReady.Phone
             dialogScrollRect.enabled = true;
         }
 
-        private void Proceed() => phoneController.ChooseResponse(PhoneResponse.Trust);
-        private void Ignore() => phoneController.ChooseResponse(PhoneResponse.Ignore);
-        private void Reject() => phoneController.ChooseResponse(PhoneResponse.Report);
+        private void Proceed() => scenarioController.ChoosePhoneResponse(PhoneResponse.Trust);
+        private void Ignore() => scenarioController.ChoosePhoneResponse(PhoneResponse.Ignore);
+        private void Reject() => scenarioController.ChoosePhoneResponse(PhoneResponse.Report);
 
         private GameObject FindObject(string objectName)
         {
