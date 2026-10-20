@@ -88,6 +88,12 @@ namespace ScamReady.Verification
 
         private void Refresh()
         {
+            if (!controller.IsEmailScenario || controller.Definition == null)
+            {
+                SetVisible(false);
+                return;
+            }
+
             RefreshLinks();
             bool pageChanged = RefreshContent();
             SetVisible(controller.Session != null && controller.Session.IsBrowserOpen);

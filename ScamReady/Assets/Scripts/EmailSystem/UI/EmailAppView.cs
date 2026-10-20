@@ -50,6 +50,12 @@ namespace ScamReady.Email
 
         private void Refresh()
         {
+            if (!controller.IsEmailScenario || controller.Definition == null)
+            {
+                SetVisible(false);
+                return;
+            }
+
             RefreshNotification();
             RefreshContent();
             SetVisible(controller.Session != null && controller.Session.IsEmailOpen);

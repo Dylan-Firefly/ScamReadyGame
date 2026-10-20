@@ -64,7 +64,7 @@ namespace ScamReady.Scenarios
         public bool IsBrowserOpen => ActiveApp == ScenarioApp.Browser;
         public string CurrentVerificationPageId { get; private set; }
         public bool HasReadEmail { get; private set; }
-        public bool HasUnreadEmail => !HasReadEmail;
+        public bool HasUnreadEmail => !string.IsNullOrWhiteSpace(emailId) && !HasReadEmail;
         public ContactResponse? Decision { get; private set; }
         public bool IsComplete => Decision.HasValue;
         public IReadOnlyList<ScenarioEvent> History { get; }
@@ -83,7 +83,8 @@ namespace ScamReady.Scenarios
             History = history.AsReadOnly();
             CollectedEvidenceIds = collectedEvidenceIds.AsReadOnly();
             DecisionEvidenceIds = new List<string>().AsReadOnly();
-            Record(ScenarioEventType.EmailReceived, emailId, 0);
+            if (!string.IsNullOrWhiteSpace(emailId))
+                Record(ScenarioEventType.EmailReceived, emailId, 0);
         }
         internal bool OpenPhone(double elapsedSeconds)
         {

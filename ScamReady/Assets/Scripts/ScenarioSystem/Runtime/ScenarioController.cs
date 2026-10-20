@@ -9,12 +9,20 @@ using UnityEngine;
 
 namespace ScamReady.Scenarios
 {
+    public enum ScenarioType
+    {
+        Email,
+        Phone
+    }
+
     /// <summary>统一接收场景操作并更新会话状态。</summary>
     public sealed class ScenarioController : MonoBehaviour
     {
-        [SerializeField, Tooltip("绑定本关的 EmailScenarioDefinition 内容资产。")]
+        [Header("Current scenario")]
+        [SerializeField] private ScenarioType scenarioType;
+        [SerializeField, Tooltip("Email 模式下使用的 EmailScenarioDefinition。")]
         private EmailScenarioDefinition definition;
-        [Header("Phone scenario")]
+        [Header("Phone scenario data")]
         [SerializeField] private PhoneScenarioCollection phoneCollection;
         [SerializeField, Min(0)] private int phoneLevelIndex;
 
@@ -24,9 +32,19 @@ namespace ScamReady.Scenarios
         private double completedCallDurationSeconds;
 
         public EmailScenarioDefinition Definition => definition;
+        public ScenarioType CurrentScenarioType => scenarioType;
+        public bool IsEmailScenario => scenarioType == ScenarioType.Email;
+        public bool IsPhoneScenario => scenarioType == ScenarioType.Phone;
         public ScenarioSession Session { get; private set; }
         public ScenarioEvaluation Result { get; private set; }
         public PhoneScenarioLevel PhoneLevel { get; private set; }
+        public string CurrentScenarioId => IsPhoneScenario ? PhoneLevel?.Id : definition?.Id;
+        public string CurrentScenarioTitle => IsPhoneScenario ? PhoneLevel?.Title : definition?.Title;
+        public string CurrentScenarioSetup => IsPhoneScenario ? PhoneLevel?.Setup : definition?.Setup;
+        public string CurrentScenarioDateText => IsEmailScenario ? definition?.GameDateText : string.Empty;
+        public string CurrentContactName => IsPhoneScenario
+            ? PhoneLevel?.CallerName
+            : definition?.Email?.Sender;
         public PhoneCallState CallState { get; private set; }
         public PhoneResponse? PhoneDecision { get; private set; }
         public string PhoneOutcomeTitle { get; private set; }
@@ -41,7 +59,7 @@ namespace ScamReady.Scenarios
         {
             get
             {
-                if (Session == null || Session.CurrentVerificationPageId == null) return null;
+                if (!IsEmailScenario || Session == null || Session.CurrentVerificationPageId == null) return null;
                 foreach (var page in BrowserPages())
                     if (page != null && page.Id == Session.CurrentVerificationPageId) return page;
                 return null;
@@ -52,26 +70,56 @@ namespace ScamReady.Scenarios
 
         public void Restart()
         {
-            if (definition == null)
-            {
-                Debug.LogError("ScenarioController 缺少关卡配置资产。", this);
-                return;
-            }
-
-            startedAt = Time.realtimeSinceStartupAsDouble;
-            Session = new ScenarioSession(definition.Id, definition.Email.Id);
+            Session = null;
             Result = null;
             PhoneLevel = null;
             ResetPhoneProgress();
-            if (phoneCollection != null)
-                SetPhoneLevel(phoneLevelIndex);
+
+            string scenarioId;
+            string emailId = null;
+            switch (scenarioType)
+            {
+                case ScenarioType.Email:
+                    if (definition == null || definition.Email == null
+                        || string.IsNullOrWhiteSpace(definition.Id)
+                        || string.IsNullOrWhiteSpace(definition.Email.Id))
+                    {
+                        Debug.LogError("Email 模式需要有效的 EmailScenarioDefinition 和邮件 ID。", this);
+                        Changed?.Invoke();
+                        return;
+                    }
+                    scenarioId = definition.Id;
+                    emailId = definition.Email.Id;
+                    break;
+                case ScenarioType.Phone:
+                    if (!SetPhoneLevel(phoneLevelIndex))
+                    {
+                        Changed?.Invoke();
+                        return;
+                    }
+                    scenarioId = PhoneLevel.Id;
+                    break;
+                default:
+                    Debug.LogError($"不支持的场景类型：{scenarioType}。", this);
+                    Changed?.Invoke();
+                    return;
+            }
+
+            startedAt = Time.realtimeSinceStartupAsDouble;
+            Session = new ScenarioSession(scenarioId, emailId);
             Changed?.Invoke();
         }
 
         public void LoadPhoneLevel(int index)
         {
+            if (!IsPhoneScenario)
+            {
+                Debug.LogError("只有 Phone 模式可以加载电话关卡。", this);
+                return;
+            }
+
             if (SetPhoneLevel(index))
-                Changed?.Invoke();
+                Restart();
         }
 
         private bool SetPhoneLevel(int index)
@@ -117,7 +165,7 @@ namespace ScamReady.Scenarios
 
         public bool CollectPhoneEvidence(string lineId)
         {
-            if (CallState != PhoneCallState.InCall || PhoneLevel == null
+            if (!IsPhoneScenario || CallState != PhoneCallState.InCall || PhoneLevel == null
                 || string.IsNullOrWhiteSpace(lineId))
                 return false;
 
@@ -133,7 +181,7 @@ namespace ScamReady.Scenarios
 
         public void AnswerCall()
         {
-            if (CallState != PhoneCallState.Incoming || PhoneLevel == null) return;
+            if (!IsPhoneScenario || CallState != PhoneCallState.Incoming || PhoneLevel == null) return;
             CallState = PhoneCallState.InCall;
             callStartedAt = Time.realtimeSinceStartupAsDouble;
             Changed?.Invoke();
@@ -141,7 +189,7 @@ namespace ScamReady.Scenarios
 
         public void HangUp()
         {
-            if (CallState == PhoneCallState.Completed) return;
+            if (!IsPhoneScenario || CallState == PhoneCallState.Completed) return;
 
             bool verified = CallState == PhoneCallState.InCall
                 && RequiredPhoneEvidenceCount > 0
@@ -151,7 +199,7 @@ namespace ScamReady.Scenarios
 
         public void ChoosePhoneResponse(PhoneResponse response)
         {
-            if (CallState != PhoneCallState.InCall) return;
+            if (!IsPhoneScenario || CallState != PhoneCallState.InCall) return;
             FinishPhoneCall(response);
         }
 
@@ -198,36 +246,37 @@ namespace ScamReady.Scenarios
 
         public void OpenPhone()
         {
-            if (Session != null && Session.OpenPhone(ElapsedSeconds)) Changed?.Invoke();
+            if (IsPhoneScenario && Session != null && Session.OpenPhone(ElapsedSeconds)) Changed?.Invoke();
         }
         public void ClosePhone()
         {
-            if (Session != null && Session.ClosePhone(ElapsedSeconds)) Changed?.Invoke();
+            if (IsPhoneScenario && Session != null && Session.ClosePhone(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void StopPhoneContact()
         {
-            if (Session != null && Session.ClosePhone(true, ElapsedSeconds)) Changed?.Invoke();
+            if (IsPhoneScenario && Session != null && Session.ClosePhone(true, ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void OpenEmail()
         {
-            if (Session != null && Session.OpenEmail(ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.OpenEmail(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void CloseEmail()
         {
-            if (Session != null && Session.CloseEmail(false, ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.CloseEmail(false, ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void StopContact()
         {
-            if (Session != null && Session.CloseEmail(true, ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.CloseEmail(true, ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void ChooseResponse(ContactResponse response)
         {
-            if (Session == null || !Session.IsEmailOpen || Session.IsComplete) return;
+            if (!IsEmailScenario || definition == null
+                || Session == null || !Session.IsEmailOpen || Session.IsComplete) return;
             // 配有链接的邮件先进入页面；打开链接不等于已经提交信息。
             if (response == ContactResponse.Proceed && !string.IsNullOrWhiteSpace(definition.Email.ProceedLink))
             {
@@ -242,22 +291,23 @@ namespace ScamReady.Scenarios
 
         public void OpenBrowser()
         {
-            if (Session != null && Session.OpenBrowser(ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.OpenBrowser(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void CloseBrowser()
         {
-            if (Session != null && Session.CloseBrowser(ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.CloseBrowser(ElapsedSeconds)) Changed?.Invoke();
         }
 
         public void OpenBrowserHome()
         {
-            if (Session != null && Session.OpenBrowserHome()) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.OpenBrowserHome()) Changed?.Invoke();
         }
 
         public void OpenVerificationPage(VerificationPageDefinition page)
         {
-            if (Session == null || page == null || string.IsNullOrWhiteSpace(page.Id)) return;
+            if (!IsEmailScenario || definition == null || Session == null
+                || page == null || string.IsNullOrWhiteSpace(page.Id)) return;
             // 主页只提供可信入口，邮件带来的页面必须通过链接访问。
             foreach (var available in definition.VerificationPages)
             {
@@ -269,7 +319,8 @@ namespace ScamReady.Scenarios
 
         public void OpenLink(string address)
         {
-            if (Session == null || Session.IsComplete || string.IsNullOrWhiteSpace(address)) return;
+            if (!IsEmailScenario || Session == null || Session.IsComplete
+                || string.IsNullOrWhiteSpace(address)) return;
             foreach (var page in BrowserPages())
             {
                 if (page == null || string.IsNullOrWhiteSpace(page.Id)
@@ -289,7 +340,7 @@ namespace ScamReady.Scenarios
         public void SubmitBrowserInformation()
         {
             var page = CurrentVerificationPage;
-            if (Session == null || page == null || !page.IsUnsafe
+            if (!IsEmailScenario || definition == null || Session == null || page == null || !page.IsUnsafe
                 || !Session.SubmitInformation(page.Id, ElapsedSeconds)) return;
             Result = ScenarioEvaluator.Evaluate(definition, Session);
             Changed?.Invoke();
@@ -305,6 +356,7 @@ namespace ScamReady.Scenarios
 
         public EvidencePlacement FindEvidencePlacement(string id)
         {
+            if (!IsEmailScenario || definition == null) return null;
             foreach (var placement in definition.EvidencePlacements)
                 if (placement.Evidence != null && placement.Evidence.Id == id) return placement;
             return null;
@@ -312,7 +364,8 @@ namespace ScamReady.Scenarios
 
         public void CollectEvidence(EvidencePlacement placement)
         {
-            if (Session == null || placement == null || placement.Evidence == null
+            if (!IsEmailScenario || definition == null || Session == null
+                || placement == null || placement.Evidence == null
                 || string.IsNullOrWhiteSpace(placement.Evidence.Id)
                 || placement.Page != CurrentVerificationPage) return;
 
@@ -341,7 +394,7 @@ namespace ScamReady.Scenarios
 
         public void DismissReminder()
         {
-            if (Session != null && Session.DismissReminder(ElapsedSeconds)) Changed?.Invoke();
+            if (IsEmailScenario && Session != null && Session.DismissReminder(ElapsedSeconds)) Changed?.Invoke();
         }
     }
 }

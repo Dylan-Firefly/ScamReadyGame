@@ -1124,6 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0667d204e15e8d14da324ad3f135dfb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioController
+  scenarioType: 0
   definition: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
 --- !u!4 &925016266
 Transform:

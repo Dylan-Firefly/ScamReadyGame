@@ -1,4 +1,5 @@
 using ScamReady.Scenarios;
+using ScamReady.Phone;
 using TMPro;
 using UnityEngine;
 
@@ -53,17 +54,22 @@ namespace ScamReady.UI
 
         private void RefreshContent()
         {
-            dateText.text = controller.Definition.GameDateText;
-            setupText.text = controller.Definition.Setup;
+            dateText.text = controller.CurrentScenarioDateText ?? string.Empty;
+            setupText.text = controller.CurrentScenarioSetup ?? string.Empty;
         }
 
         private void RefreshNotification()
         {
-            bool unread = controller.Session != null && controller.Session.HasUnreadEmail;
+            bool unread = controller.IsEmailScenario
+                && controller.Session != null && controller.Session.HasUnreadEmail;
             unreadBadge.SetActive(unread);
-            notificationText.text = unread
-                ? "1 new email  -  " + controller.Definition.Email.Sender
-                : "Open inbox";
+            notificationText.text = controller.IsPhoneScenario
+                ? controller.CallState == PhoneCallState.Incoming
+                    ? "Incoming call  -  " + (controller.CurrentContactName ?? string.Empty)
+                    : "Open phone"
+                : unread
+                    ? "1 new email  -  " + (controller.CurrentContactName ?? string.Empty)
+                    : "Open inbox";
         }
 
         private void SetVisible(bool visible)
@@ -91,10 +97,11 @@ namespace ScamReady.UI
         private void SetDesktopElementsActive(bool active)
         {
             setupPanel.SetActive(active);
-            emailButton.gameObject.SetActive(active);
-            browserButton.gameObject.SetActive(active);
-            notificationButton.gameObject.SetActive(active);
-            if (phoneButton != null) phoneButton.gameObject.SetActive(active);
+            emailButton.gameObject.SetActive(active && controller.IsEmailScenario);
+            browserButton.gameObject.SetActive(active && controller.IsEmailScenario);
+            notificationButton.gameObject.SetActive(active && controller.IsEmailScenario);
+            if (phoneButton != null)
+                phoneButton.gameObject.SetActive(active && controller.IsPhoneScenario);
         }
     }
 }
