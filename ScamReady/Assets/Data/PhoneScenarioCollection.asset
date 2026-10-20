@@ -14,26 +14,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioCollection
   levels:
   - id: phone_parcel_redelivery
-    title: Parcel redelivery text
+    title: Phone
     callerName: Parcel Delivery Support
     sender: Parcel Delivery
     phoneNumber: +61 4 1234 5678
-    setup: You are expecting a parcel. A text claims delivery failed and asks you to use
-      a link to arrange redelivery.
+    setup: You are expecting a parcel. A text claims delivery failed and asks you
+      to use a link to arrange redelivery.
     initialMessageId: parcel_sms
     dialogLines:
-    - id: parcel_caller_claim
-      text: Hello, I am calling from Parcel Delivery. We have a package addressed to
-        you, but the delivery has been put on hold.
-      isEvidence: 1
-    - id: parcel_small_fee
-      text: There is only a small redelivery charge. I can take the payment now and
-        arrange another delivery attempt.
-      isEvidence: 1
-    - id: parcel_urgent_deadline
-      text: You need to pay immediately or the parcel will be returned today. I cannot
-        give you the tracking number, but I can text you a payment link.
-      isEvidence: 1
+    - id: parcel_caller_claim1
+      text: 'Hello, I am calling from Parcel Delivery. '
+      isEvidence: 0
+    - id: parcel_caller_claim2
+      text: We have a package addressed to you, but the delivery has been put on
+        hold.
+      isEvidence: 0
+    - id: parcel_small_fee1
+      text: 'There is only a small redelivery charge. '
+      isEvidence: 0
+    - id: parcel_small_fee2
+      text: I can take the payment now and arrange another delivery attempt.
+      isEvidence: 0
+    - id: parcel_urgent_deadline1
+      text: You need to pay immediately or the parcel will be returned today.
+      isEvidence: 0
+    - id: parcel_urgent_deadline2
+      text: ' I cannot give you the tracking number, but I can text you a payment
+        link.'
+      isEvidence: 0
     outcomes:
     - response: 0
       title: You paid the caller
@@ -42,14 +50,14 @@ MonoBehaviour:
         official app or website.
     - response: 1
       title: You ended the call without verifying
-      body: Hanging up or ignoring the caller avoided an immediate payment, but did not
-        confirm whether a real parcel is due. Check with the courier through an
-        official channel.
+      body: Hanging up or ignoring the caller avoided an immediate payment, but did
+        not confirm whether a real parcel is due. Check with the courier through
+        an official channel.
     - response: 2
       title: You identified the scam
-      body: You collected the configured warning signs before rejecting the call. A
-        caller who pressures you to pay, withholds tracking details and offers an
-        unsolicited payment link should be verified independently.
+      body: You collected the configured warning signs before rejecting the call.
+        A caller who pressures you to pay, withholds tracking details and offers
+        an unsolicited payment link should be verified independently.
     messages:
     - id: parcel_sms
       text: 'Parcel Delivery: We could not deliver your package today. A small redelivery
@@ -60,8 +68,8 @@ MonoBehaviour:
         type: 1
         targetMessageId: parcel_link_page
         linkAddress: https://parcel-redelivery.example.invalid/fee
-        linkPreview: The page asks for a card number to pay a small fee. No real website
-          is opened.
+        linkPreview: The page asks for a card number to pay a small fee. No real
+          website is opened.
         response: 0
         outcomeTitle: 
         outcomeBody: 
@@ -75,8 +83,9 @@ MonoBehaviour:
         outcomeTitle: 
         outcomeBody: 
     - id: parcel_followup
-      text: 'Your item will be returned today unless the fee is paid immediately. We
-        cannot provide tracking details by text. Use the link in our previous message.'
+      text: Your item will be returned today unless the fee is paid immediately.
+        We cannot provide tracking details by text. Use the link in our previous
+        message.
       interactions:
       - id: parcel_followup_open_link
         label: Inspect the payment link
@@ -122,8 +131,8 @@ MonoBehaviour:
         response: 1
         outcomeTitle: You did not pay
         outcomeBody: Ignoring the message avoided the requested payment, but it does
-          not confirm whether a real parcel is due. Check with the courier using its
-          official app or website.
+          not confirm whether a real parcel is due. Check with the courier using
+          its official app or website.
       - id: parcel_report
         label: Report and verify independently
         type: 2
@@ -135,7 +144,7 @@ MonoBehaviour:
         outcomeBody: You avoided entering payment details and chose to report the
           suspicious text. Check any expected delivery using a trusted courier channel.
   - id: phone_bank_verification
-    title: Bank account warning
+    title: Phone
     callerName: Bank Security Team
     sender: Bank Security
     phoneNumber: +61 4 8765 4321
@@ -144,12 +153,12 @@ MonoBehaviour:
     initialMessageId: bank_sms
     dialogLines:
     - id: bank_unexpected_payment
-      text: We detected a payment of AUD 742.80 on your account. Your account will be
-        locked unless you confirm your identity within thirty minutes.
+      text: We detected a payment of AUD 742.80 on your account. Your account will
+        be locked unless you confirm your identity within thirty minutes.
       isEvidence: 1
     - id: bank_security_code
-      text: To stop the payment, tell me the one-time security code we just sent to
-        your phone. I can verify it for you while we are on this call.
+      text: To stop the payment, tell me the one-time security code we just sent
+        to your phone. I can verify it for you while we are on this call.
       isEvidence: 1
     - id: bank_no_callback
       text: Do not call the number on your bank card because it may delay the security
@@ -158,19 +167,19 @@ MonoBehaviour:
     outcomes:
     - response: 0
       title: You shared account details
-      body: You followed an unexpected caller's instructions and risked exposing your
-        banking credentials or security code. Contact your bank immediately using the
-        official app or the number on your card.
+      body: You followed an unexpected caller's instructions and risked exposing
+        your banking credentials or security code. Contact your bank immediately
+        using the official app or the number on your card.
     - response: 1
       title: You ended the call without verifying
       body: You did not provide information to the caller. If you are concerned about
-        a real payment, check your account in the official bank app or call the
-        number printed on your card.
+        a real payment, check your account in the official bank app or call the number
+        printed on your card.
     - response: 2
       title: You protected your account
       body: You identified the request for a one-time code, artificial urgency and
-        discouragement from calling your bank. Banks will not ask you to disclose a
-        security code over the phone.
+        discouragement from calling your bank. Banks will not ask you to disclose
+        a security code over the phone.
     messages:
     - id: bank_sms
       text: 'Bank Security Alert: A payment of AUD 742.80 is on hold. Your account
@@ -181,8 +190,8 @@ MonoBehaviour:
         type: 1
         targetMessageId: bank_link_page
         linkAddress: https://bank-verify.example.invalid/login
-        linkPreview: This simulated page asks for your banking username, password and
-          one-time security code.
+        linkPreview: This simulated page asks for your banking username, password
+          and one-time security code.
         response: 0
         outcomeTitle: 
         outcomeBody: 
@@ -196,8 +205,9 @@ MonoBehaviour:
         outcomeTitle: 
         outcomeBody: 
     - id: bank_followup
-      text: 'For your protection, do not call the number on your card. Reply with your
-        customer number and the code sent to your phone so we can secure the account.'
+      text: For your protection, do not call the number on your card. Reply with
+        your customer number and the code sent to your phone so we can secure the
+        account.
       interactions:
       - id: bank_link_again
         label: View the verification page
@@ -218,7 +228,8 @@ MonoBehaviour:
         response: 2
         outcomeTitle: You protected your account
         outcomeBody: A legitimate bank will not ask you to disclose a one-time code
-          by text. Contact the bank using the number on your card or its official app.
+          by text. Contact the bank using the number on your card or its official
+          app.
     - id: bank_link_page
       text: 'Secure Account Verification: Enter your customer number, password and
         one-time code to unlock your account.'
@@ -231,9 +242,9 @@ MonoBehaviour:
         linkPreview: 
         response: 0
         outcomeTitle: You exposed account details
-        outcomeBody: The page requested a password and one-time code through an
-          unsolicited link. Do not share credentials or security codes; contact the
-          bank through a trusted channel.
+        outcomeBody: The page requested a password and one-time code through an unsolicited
+          link. Do not share credentials or security codes; contact the bank through
+          a trusted channel.
       - id: bank_ignore
         label: Ignore the message
         type: 2
@@ -242,8 +253,8 @@ MonoBehaviour:
         linkPreview: 
         response: 1
         outcomeTitle: You avoided sharing details
-        outcomeBody: You did not provide the requested credentials. If you are
-          concerned about a real payment, check directly in the bank's official app.
+        outcomeBody: You did not provide the requested credentials. If you are concerned
+          about a real payment, check directly in the bank's official app.
       - id: bank_report_page
         label: Report and verify independently
         type: 2
@@ -252,6 +263,6 @@ MonoBehaviour:
         linkPreview: 
         response: 2
         outcomeTitle: You verified safely
-        outcomeBody: You avoided sharing your password and one-time code. Report the
-          message and check your account through the official bank app or a trusted
+        outcomeBody: You avoided sharing your password and one-time code. Report
+          the message and check your account through the official bank app or a trusted
           phone number.

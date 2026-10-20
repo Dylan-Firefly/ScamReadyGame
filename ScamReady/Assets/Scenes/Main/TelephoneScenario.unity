@@ -2737,7 +2737,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -17, y: -17}
+  m_SizeDelta: {x: -30, y: -30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &800749445
 MonoBehaviour:
@@ -2959,10 +2959,10 @@ RectTransform:
   - {fileID: 619224891157116359}
   m_Father: {fileID: 800749444}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -5}
+  m_SizeDelta: {x: 0, y: -10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &819681670
 MonoBehaviour:
@@ -2985,10 +2985,10 @@ MonoBehaviour:
   m_Spacing: 10
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
-  m_ChildScaleWidth: 1
-  m_ChildScaleHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
 --- !u!1001 &849557310
 PrefabInstance:
@@ -4046,21 +4046,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioController
   definition: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
---- !u!114 &2107424936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925016264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdb2dc36b00445fb82ea08baecc6747c, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioController
-  scenarioController: {fileID: 925016265}
-  collection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
-  levelIndex: 0
 --- !u!4 &925016266
 Transform:
   m_ObjectHideFlags: 0
@@ -4125,15 +4110,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39a3c8978a2b48c9953cf2913b1ef426, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneAppView
   phoneController: {fileID: 2107424936}
   window: {fileID: 849557316}
   closeButton: {fileID: 849557315}
   scenarioTitleText: {fileID: 849557312}
-  action: {fileID: 0}
-  dialogContent: {fileID: 0}
-  dialogContainer: {fileID: 0}
+  action: {fileID: 703010016}
+  dialogContent: {fileID: 1366142834}
+  dialogContainer: {fileID: 819681669}
   dialogBoxPrefab: {fileID: 918374650120334456, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
   windowAnimator: {fileID: 0}
 --- !u!114 &1107424935
@@ -4677,7 +4662,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1313862793
@@ -4749,7 +4734,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1366142835
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4765,10 +4750,10 @@ RectTransform:
   - {fileID: 1636555082}
   m_Father: {fileID: 1107424932}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 631.70703, y: -275}
+  m_SizeDelta: {x: 300, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1366142836
 MonoBehaviour:
@@ -5122,8 +5107,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 15, y: 0}
-  m_SizeDelta: {x: -50, y: -20}
+  m_AnchoredPosition: {x: 27.979187, y: -13.906311}
+  m_SizeDelta: {x: -24.0416, y: 7.8126}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1636555083
 MonoBehaviour:
@@ -5148,8 +5133,8 @@ MonoBehaviour:
   m_Viewport: {fileID: 800749444}
   m_HorizontalScrollbar: {fileID: 1798890265}
   m_VerticalScrollbar: {fileID: 1695012861}
-  m_HorizontalScrollbarVisibility: 2
-  m_VerticalScrollbarVisibility: 2
+  m_HorizontalScrollbarVisibility: 1
+  m_VerticalScrollbarVisibility: 1
   m_HorizontalScrollbarSpacing: -3
   m_VerticalScrollbarSpacing: -3
   m_OnValueChanged:
@@ -5275,8 +5260,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1848108256}
   m_HandleRect: {fileID: 1848108255}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 0.184
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5674,8 +5659,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3713831}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.184}
+  m_AnchorMax: {x: 1, y: 0.184}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5938,7 +5923,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2861995883789002321, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3343032027712874670, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6212,7 +6197,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 3965777959482464062, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
-      insertIndex: 2
+      insertIndex: 4
       addedObject: {fileID: 1107424932}
     - targetCorrespondingSourceObject: {fileID: 4712740254430239533, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
       insertIndex: 2
@@ -6240,6 +6225,21 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3965777959482464062, guid: 9d13b14affd70c542b8c991a7196ff45, type: 3}
   m_PrefabInstance: {fileID: 2100493141}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2107424936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925016264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb2dc36b00445fb82ea08baecc6747c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioController
+  scenarioController: {fileID: 925016265}
+  collection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
+  levelIndex: 0
 --- !u!114 &2132085593
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6287,7 +6287,7 @@ RectTransform:
   m_Father: {fileID: 773594218}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6355,7 +6355,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_AnchorMin.x
@@ -6363,15 +6363,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 233
+      value: 245.9584
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 517.8126
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6403,11 +6403,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 122.9792
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -258.9063
       objectReference: {fileID: 0}
     - target: {fileID: 8681411981576341823, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
