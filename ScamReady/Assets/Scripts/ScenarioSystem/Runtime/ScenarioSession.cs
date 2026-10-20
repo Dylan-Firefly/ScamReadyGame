@@ -97,9 +97,15 @@ namespace ScamReady.Scenarios
 
         internal bool ClosePhone(double elapsedSeconds)
         {
+            return ClosePhone(false, elapsedSeconds);
+        }
+
+        internal bool ClosePhone(bool stopContact, double elapsedSeconds)
+        {
             if (!IsPhoneOpen) return false;
             ActiveApp = ScenarioApp.Desktop;
-            Record(ScenarioEventType.PhoneClosed, ScenarioId, elapsedSeconds);
+            Record(stopContact ? ScenarioEventType.ContactStopped : ScenarioEventType.PhoneClosed,
+                ScenarioId, elapsedSeconds);
             return true;
         }
 
@@ -126,6 +132,15 @@ namespace ScamReady.Scenarios
         internal bool ChooseResponse(ContactResponse response, double elapsedSeconds)
         {
             if (!IsEmailOpen || IsComplete) return false;
+            if (response != ContactResponse.Proceed && response != ContactResponse.Ignore
+                && response != ContactResponse.Reject) return false;
+            CompleteDecision(response, elapsedSeconds);
+            return true;
+        }
+
+        internal bool ChoosePhoneResponse(ContactResponse response, double elapsedSeconds)
+        {
+            if (!IsPhoneOpen || IsComplete) return false;
             if (response != ContactResponse.Proceed && response != ContactResponse.Ignore
                 && response != ContactResponse.Reject) return false;
             CompleteDecision(response, elapsedSeconds);
@@ -205,6 +220,14 @@ namespace ScamReady.Scenarios
         internal bool CollectEvidence(string id, double elapsedSeconds)
         {
             if (!IsBrowserOpen || HasCollectedEvidence(id)) return false;
+            collectedEvidenceIds.Add(id);
+            Record(ScenarioEventType.EvidenceCollected, id, elapsedSeconds);
+            return true;
+        }
+
+        internal bool CollectPhoneEvidence(string id, double elapsedSeconds)
+        {
+            if (!IsPhoneOpen || HasCollectedEvidence(id)) return false;
             collectedEvidenceIds.Add(id);
             Record(ScenarioEventType.EvidenceCollected, id, elapsedSeconds);
             return true;

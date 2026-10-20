@@ -4007,23 +4007,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 908363551}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5b7c6a353dc0984594eb595e62c4ec8, type: 3}
+  m_Script: {fileID: 11500000, guid: d1b438e7353b4a6e9fc7484cd47fe064, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Email.EmailDetailView
-  senderText: {fileID: 351531510}
-  fromText: {fileID: 396166687}
-  replyToText: {fileID: 0}
-  subjectText: {fileID: 0}
-  bodyText: {fileID: 0}
-  responseText: {fileID: 0}
-  proceedButton: {fileID: 1569100347}
-  stopContactButton: {fileID: 807656646}
-  ignoreButton: {fileID: 351603769}
-  rejectButton: {fileID: 65994215}
-  proceedLabel: {fileID: 1630447257}
-  stopContactLabel: {fileID: 1154877538}
-  ignoreLabel: {fileID: 685715554}
-  rejectLabel: {fileID: 77237551}
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneDetailView
+  callerNameText: {fileID: 0}
+  stateText: {fileID: 0}
+  timeText: {fileID: 0}
+  answerButton: {fileID: 0}
+  hangUpButton: {fileID: 0}
 --- !u!1 &925016264
 GameObject:
   m_ObjectHideFlags: 0
@@ -4034,6 +4025,7 @@ GameObject:
   m_Component:
   - component: {fileID: 925016266}
   - component: {fileID: 925016265}
+  - component: {fileID: 2107424936}
   m_Layer: 0
   m_Name: ScenarioFlow
   m_TagString: Untagged
@@ -4054,6 +4046,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioController
   definition: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
+--- !u!114 &2107424936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 925016264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdb2dc36b00445fb82ea08baecc6747c, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneScenarioController
+  scenarioController: {fileID: 925016265}
+  collection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
+  levelIndex: 0
 --- !u!4 &925016266
 Transform:
   m_ObjectHideFlags: 0
@@ -4079,7 +4086,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1107424932}
   - component: {fileID: 1107424934}
-  - component: {fileID: 1107424933}
   - component: {fileID: 1107424935}
   m_Layer: 5
   m_Name: PhoneUI
@@ -4109,26 +4115,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 0, y: -100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1107424933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1107424931}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4518fac96576a949806ea1ed7da0cbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Email.EmailAppView
-  controller: {fileID: 925016265}
-  window: {fileID: 849557316}
-  closeButton: {fileID: 849557315}
-  inboxButton: {fileID: 0}
-  inboxItem: {fileID: 0}
-  detail: {fileID: 908363555}
-  audioPlayer: {fileID: 0}
-  windowAnimator: {fileID: 0}
 --- !u!114 &1107424934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4139,22 +4125,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39a3c8978a2b48c9953cf2913b1ef426, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneAppView
-  phoneController: {fileID: 0}
+  phoneController: {fileID: 2107424936}
   window: {fileID: 849557316}
   closeButton: {fileID: 849557315}
   scenarioTitleText: {fileID: 849557312}
-  setupText: {fileID: 0}
-  senderText: {fileID: 0}
-  phoneNumberText: {fileID: 0}
-  messageText: {fileID: 0}
-  noticeText: {fileID: 0}
-  outcomePanel: {fileID: 0}
-  outcomeTitleText: {fileID: 0}
-  outcomeBodyText: {fileID: 0}
-  interactionContainer: {fileID: 0}
-  interactionButtonPrefab: {fileID: 0}
+  action: {fileID: 0}
+  dialogContent: {fileID: 0}
+  dialogContainer: {fileID: 0}
+  dialogBoxPrefab: {fileID: 918374650120334456, guid: 60fe8f50234c8d94593752ef71b604bd, type: 3}
   windowAnimator: {fileID: 0}
 --- !u!114 &1107424935
 MonoBehaviour:
@@ -4687,7 +4667,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1313862793}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2107424936}
+        m_TargetAssemblyTypeName: ScamReady.Phone.PhoneScenarioController, Assembly-CSharp
+        m_MethodName: OpenPhone
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument:
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1313862793
 MonoBehaviour:
   m_ObjectHideFlags: 0

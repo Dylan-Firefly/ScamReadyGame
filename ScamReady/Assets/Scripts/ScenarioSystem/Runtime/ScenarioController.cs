@@ -54,6 +54,12 @@ namespace ScamReady.Scenarios
         {
             if (Session != null && Session.ClosePhone(ElapsedSeconds)) Changed?.Invoke();
         }
+
+        public void StopPhoneContact()
+        {
+            if (Session != null && Session.ClosePhone(true, ElapsedSeconds)) Changed?.Invoke();
+        }
+
         public void OpenEmail()
         {
             if (Session != null && Session.OpenEmail(ElapsedSeconds)) Changed?.Invoke();
@@ -82,6 +88,21 @@ namespace ScamReady.Scenarios
             // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
             Result = ScenarioEvaluator.Evaluate(definition, Session);
             Changed?.Invoke();
+        }
+
+        public bool ChoosePhoneResponse(ContactResponse response)
+        {
+            if (Session == null || !Session.ChoosePhoneResponse(response, ElapsedSeconds)) return false;
+            Changed?.Invoke();
+            return true;
+        }
+
+        public bool CollectPhoneEvidence(string evidenceId)
+        {
+            if (Session == null || string.IsNullOrWhiteSpace(evidenceId)
+                || !Session.CollectPhoneEvidence(evidenceId, ElapsedSeconds)) return false;
+            Changed?.Invoke();
+            return true;
         }
 
         public void OpenBrowser()

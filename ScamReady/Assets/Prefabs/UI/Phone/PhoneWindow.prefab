@@ -737,23 +737,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 964775422836636932}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5b7c6a353dc0984594eb595e62c4ec8, type: 3}
+  m_Script: {fileID: 11500000, guid: d1b438e7353b4a6e9fc7484cd47fe064, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Email.EmailDetailView
-  senderText: {fileID: 1933230201426868692}
-  fromText: {fileID: 807183436135571627}
-  replyToText: {fileID: 0}
-  subjectText: {fileID: 0}
-  bodyText: {fileID: 0}
-  responseText: {fileID: 0}
-  proceedButton: {fileID: 4558356422436127571}
-  stopContactButton: {fileID: 8824227707148907334}
-  ignoreButton: {fileID: 1530642070588466288}
-  rejectButton: {fileID: 8380625589492582363}
-  proceedLabel: {fileID: 8458015466001679107}
-  stopContactLabel: {fileID: 2351096403801109233}
-  ignoreLabel: {fileID: 5740362728632052243}
-  rejectLabel: {fileID: 1426574626563063912}
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Phone.PhoneDetailView
+  callerNameText: {fileID: 0}
+  stateText: {fileID: 0}
+  timeText: {fileID: 0}
+  answerButton: {fileID: 0}
+  hangUpButton: {fileID: 0}
 --- !u!222 &6671935197074178988
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -18,24 +18,61 @@ namespace ScamReady.Phone
         Report
     }
 
+    public enum PhoneCallState
+    {
+        Incoming,
+        InCall,
+        Completed
+    }
+
     [Serializable]
     public sealed class PhoneScenarioLevel
     {
         [SerializeField] private string id;
         [SerializeField] private string title;
+        [SerializeField] private string callerName;
         [SerializeField] private string sender;
         [SerializeField] private string phoneNumber;
         [SerializeField, TextArea(2, 5)] private string setup;
         [SerializeField] private string initialMessageId;
+        [SerializeField] private PhoneDialogLineData[] dialogLines = new PhoneDialogLineData[0];
+        [SerializeField] private PhoneOutcomeData[] outcomes = new PhoneOutcomeData[0];
         [SerializeField] private PhoneMessageData[] messages = new PhoneMessageData[0];
 
         public string Id => id;
         public string Title => title;
-        public string Sender => sender;
+        public string CallerName => string.IsNullOrWhiteSpace(callerName) ? sender : callerName;
         public string PhoneNumber => phoneNumber;
         public string Setup => setup;
         public string InitialMessageId => initialMessageId;
+        public IReadOnlyList<PhoneDialogLineData> DialogLines => dialogLines;
+        public int RequiredEvidenceCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (var line in dialogLines)
+                    if (line != null && line.IsEvidence) count++;
+                return count;
+            }
+        }
         public IReadOnlyList<PhoneMessageData> Messages => messages;
+
+        public PhoneOutcomeData FindOutcome(PhoneResponse response)
+        {
+            foreach (var outcome in outcomes)
+                if (outcome != null && outcome.Response == response)
+                    return outcome;
+            return null;
+        }
+
+        public PhoneDialogLineData FindDialogLine(string lineId)
+        {
+            foreach (var line in dialogLines)
+                if (line != null && line.Id == lineId)
+                    return line;
+            return null;
+        }
 
         public PhoneMessageData FindMessage(string messageId)
         {
@@ -44,6 +81,31 @@ namespace ScamReady.Phone
                     return message;
             return null;
         }
+    }
+
+    [Serializable]
+    public sealed class PhoneDialogLineData
+    {
+        [SerializeField] private string id;
+        [SerializeField, TextArea(2, 8)] private string text;
+        [SerializeField, Tooltip("点击此对话段即可收集为本关所需证据。")]
+        private bool isEvidence;
+
+        public string Id => id;
+        public string Text => text;
+        public bool IsEvidence => isEvidence;
+    }
+
+    [Serializable]
+    public sealed class PhoneOutcomeData
+    {
+        [SerializeField] private PhoneResponse response;
+        [SerializeField] private string title;
+        [SerializeField, TextArea(2, 8)] private string body;
+
+        public PhoneResponse Response => response;
+        public string Title => title;
+        public string Body => body;
     }
 
     [Serializable]

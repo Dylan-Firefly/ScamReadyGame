@@ -11,38 +11,72 @@ namespace ScamReady.Phone
         [SerializeField] private GameObject window;
         [SerializeField] private Button closeButton;
         [SerializeField] private TMP_Text scenarioTitleText;
-        [SerializeField] private TMP_Text setupText;
-        [SerializeField] private TMP_Text senderText;
-        [SerializeField] private TMP_Text phoneNumberText;
-        [SerializeField] private TMP_Text messageText;
-        [SerializeField] private TMP_Text noticeText;
-        [SerializeField] private GameObject outcomePanel;
-        [SerializeField] private TMP_Text outcomeTitleText;
-        [SerializeField] private TMP_Text outcomeBodyText;
-        [SerializeField] private Transform interactionContainer;
-        [SerializeField] private Button interactionButtonPrefab;
+        [SerializeField] private GameObject action;
+        [SerializeField] private GameObject dialogContent;
+        [SerializeField] private Transform dialogContainer;
+        [SerializeField] private PhoneDialogBoxView dialogBoxPrefab;
         [SerializeField] private UIWindowAnimator windowAnimator;
+
+        private Button proceedButton;
+        private Button stopContactButton;
+        private Button ignoreButton;
+        private Button rejectButton;
+        private PhoneDetailView detailView;
+        private PhoneCallState? displayedCallState;
+        private Transform searchRoot;
 
         private void Awake()
         {
-            if (phoneController == null || window == null || closeButton == null
-                || scenarioTitleText == null || setupText == null || senderText == null
-                || phoneNumberText == null || messageText == null || noticeText == null
-                || outcomePanel == null || outcomeTitleText == null || outcomeBodyText == null
-                || interactionContainer == null || interactionButtonPrefab == null)
+            if (phoneController == null)
+                phoneController = FindFirstObjectByType<PhoneScenarioController>();
+
+            if (window == null)
+                window = gameObject;
+            searchRoot = window != null ? window.transform : transform;
+            if (closeButton == null)
+                closeButton = FindButton("CloseButton");
+            if (scenarioTitleText == null)
+                scenarioTitleText = FindText("scenarioTitleText");
+            if (action == null)
+                action = FindObject("Action");
+            if (dialogContent == null)
+                dialogContent = FindObject("Dialog Content");
+            if (dialogContainer == null && dialogContent != null)
             {
-                Debug.LogError("PhoneAppView 缺少必需的 UI 或控制器引用。", this);
+                var grid = dialogContent.GetComponentInChildren<GridLayoutGroup>(true);
+                dialogContainer = grid != null ? grid.transform : dialogContent.transform;
+            }
+            if (proceedButton == null) proceedButton = FindButton("Proceed");
+            if (stopContactButton == null) stopContactButton = FindButton("StopContact");
+            if (ignoreButton == null) ignoreButton = FindButton("Ignore");
+            if (rejectButton == null) rejectButton = FindButton("Reject");
+            if (detailView == null && window != null)
+                detailView = window.GetComponentInChildren<PhoneDetailView>(true);
+            if (windowAnimator == null && window != null)
+                windowAnimator = window.GetComponent<UIWindowAnimator>();
+
+            if (phoneController == null || window == null || closeButton == null
+                || scenarioTitleText == null || action == null || dialogContent == null
+                || dialogContainer == null || dialogBoxPrefab == null || detailView == null
+                || proceedButton == null || stopContactButton == null
+                || ignoreButton == null || rejectButton == null)
+            {
+                Debug.LogError("PhoneAppView 缺少必需的手机控制器、结局依赖或 UI 引用。", this);
                 enabled = false;
                 return;
             }
 
             closeButton.onClick.AddListener(phoneController.ClosePhone);
-            if (windowAnimator == null)
-                windowAnimator = window.GetComponent<UIWindowAnimator>();
+            proceedButton.onClick.AddListener(Proceed);
+            stopContactButton.onClick.AddListener(phoneController.StopContact);
+            ignoreButton.onClick.AddListener(Ignore);
+            rejectButton.onClick.AddListener(Reject);
+            detailView.Connect(phoneController);
         }
 
         private void OnEnable()
         {
+            if (phoneController == null) return;
             phoneController.Changed += Refresh;
             Refresh();
         }
@@ -55,65 +89,71 @@ namespace ScamReady.Phone
 
         private void OnDestroy()
         {
-            if (closeButton != null && phoneController != null)
-                closeButton.onClick.RemoveListener(phoneController.ClosePhone);
+            if (phoneController == null) return;
+            if (closeButton != null) closeButton.onClick.RemoveListener(phoneController.ClosePhone);
+            if (proceedButton != null) proceedButton.onClick.RemoveListener(Proceed);
+            if (stopContactButton != null) stopContactButton.onClick.RemoveListener(phoneController.StopContact);
+            if (ignoreButton != null) ignoreButton.onClick.RemoveListener(Ignore);
+            if (rejectButton != null) rejectButton.onClick.RemoveListener(Reject);
         }
 
         private void Refresh()
         {
-            RefreshContent();
+            scenarioTitleText.text = phoneController.Level != null ? phoneController.Level.Title : string.Empty;
+            bool inCall = phoneController.CallState == PhoneCallState.InCall;
+            action.SetActive(inCall);
+            dialogContent.SetActive(inCall);
+
+            if (displayedCallState != phoneController.CallState)
+            {
+                displayedCallState = phoneController.CallState;
+                RebuildDialog();
+            }
+
             SetVisible(phoneController.IsPhoneOpen);
         }
 
-        private void RefreshContent()
+        private void RebuildDialog()
         {
-            var level = phoneController.Level;
-            var message = phoneController.CurrentMessage;
-            if (level == null || message == null) return;
+            for (int i = dialogContainer.childCount - 1; i >= 0; i--)
+                Destroy(dialogContainer.GetChild(i).gameObject);
 
-            scenarioTitleText.text = level.Title;
-            setupText.text = level.Setup;
-            senderText.text = level.Sender;
-            phoneNumberText.text = level.PhoneNumber;
-            messageText.text = message.Text;
-            noticeText.text = phoneController.LatestNotice;
-            noticeText.gameObject.SetActive(!string.IsNullOrEmpty(phoneController.LatestNotice));
+            if (phoneController.CallState != PhoneCallState.InCall || phoneController.Level == null)
+                return;
 
-            bool decided = phoneController.Decision.HasValue;
-            outcomePanel.SetActive(decided);
-            outcomeTitleText.text = phoneController.OutcomeTitle;
-            outcomeBodyText.text = phoneController.OutcomeBody;
-            RebuildInteractions(message, decided);
+            foreach (var line in phoneController.Level.DialogLines)
+            {
+                if (line == null) continue;
+                var dialog = Instantiate(dialogBoxPrefab, dialogContainer);
+                dialog.Bind(line, phoneController.HasCollectedEvidence(line.Id),
+                    () => phoneController.CollectEvidence(line.Id));
+            }
         }
 
-        private void RebuildInteractions(PhoneMessageData message, bool decided)
+        private void Proceed() => phoneController.ChooseResponse(PhoneResponse.Trust);
+        private void Ignore() => phoneController.ChooseResponse(PhoneResponse.Ignore);
+        private void Reject() => phoneController.ChooseResponse(PhoneResponse.Report);
+
+        private GameObject FindObject(string objectName)
         {
-            for (int i = interactionContainer.childCount - 1; i >= 0; i--)
-                Destroy(interactionContainer.GetChild(i).gameObject);
+            foreach (var transform in searchRoot.GetComponentsInChildren<Transform>(true))
+                if (transform.name == objectName)
+                    return transform.gameObject;
+            return null;
+        }
 
-            if (decided) return;
+        private Button FindButton(string objectName)
+        {
+            var target = FindObject(objectName);
+            return target != null ? target.GetComponent<Button>() : null;
+        }
 
-            if (interactionButtonPrefab == null)
-            {
-                Debug.LogError("PhoneAppView 缺少交互按钮 Prefab。", this);
-                return;
-            }
-
-            foreach (var interaction in message.Interactions)
-            {
-                var button = Instantiate(interactionButtonPrefab, interactionContainer);
-                var label = button.GetComponentInChildren<TMP_Text>();
-                if (label == null)
-                {
-                    Debug.LogError("手机交互按钮 Prefab 缺少 TMP_Text 子对象。", button);
-                    button.interactable = false;
-                    continue;
-                }
-
-                label.text = interaction.Label;
-                string interactionId = interaction.Id;
-                button.onClick.AddListener(() => phoneController.SelectInteraction(interactionId));
-            }
+        private TMP_Text FindText(string objectName)
+        {
+            foreach (var text in searchRoot.GetComponentsInChildren<TMP_Text>(true))
+                if (text.gameObject.name == objectName)
+                    return text;
+            return null;
         }
 
         private void SetVisible(bool visible)

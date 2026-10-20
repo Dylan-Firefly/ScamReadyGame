@@ -15,11 +15,41 @@ MonoBehaviour:
   levels:
   - id: phone_parcel_redelivery
     title: Parcel redelivery text
+    callerName: Parcel Delivery Support
     sender: Parcel Delivery
     phoneNumber: +61 4 1234 5678
     setup: You are expecting a parcel. A text claims delivery failed and asks you to use
       a link to arrange redelivery.
     initialMessageId: parcel_sms
+    dialogLines:
+    - id: parcel_caller_claim
+      text: Hello, I am calling from Parcel Delivery. We have a package addressed to
+        you, but the delivery has been put on hold.
+      isEvidence: 1
+    - id: parcel_small_fee
+      text: There is only a small redelivery charge. I can take the payment now and
+        arrange another delivery attempt.
+      isEvidence: 1
+    - id: parcel_urgent_deadline
+      text: You need to pay immediately or the parcel will be returned today. I cannot
+        give you the tracking number, but I can text you a payment link.
+      isEvidence: 1
+    outcomes:
+    - response: 0
+      title: You paid the caller
+      body: You trusted an unexpected caller and agreed to pay a redelivery fee without
+        independently confirming the parcel. Check deliveries through the courier's
+        official app or website.
+    - response: 1
+      title: You ended the call without verifying
+      body: Hanging up or ignoring the caller avoided an immediate payment, but did not
+        confirm whether a real parcel is due. Check with the courier through an
+        official channel.
+    - response: 2
+      title: You identified the scam
+      body: You collected the configured warning signs before rejecting the call. A
+        caller who pressures you to pay, withholds tracking details and offers an
+        unsolicited payment link should be verified independently.
     messages:
     - id: parcel_sms
       text: 'Parcel Delivery: We could not deliver your package today. A small redelivery
@@ -106,11 +136,41 @@ MonoBehaviour:
           suspicious text. Check any expected delivery using a trusted courier channel.
   - id: phone_bank_verification
     title: Bank account warning
+    callerName: Bank Security Team
     sender: Bank Security
     phoneNumber: +61 4 8765 4321
     setup: You receive an unexpected security warning asking you to confirm your
       banking details through a link.
     initialMessageId: bank_sms
+    dialogLines:
+    - id: bank_unexpected_payment
+      text: We detected a payment of AUD 742.80 on your account. Your account will be
+        locked unless you confirm your identity within thirty minutes.
+      isEvidence: 1
+    - id: bank_security_code
+      text: To stop the payment, tell me the one-time security code we just sent to
+        your phone. I can verify it for you while we are on this call.
+      isEvidence: 1
+    - id: bank_no_callback
+      text: Do not call the number on your bank card because it may delay the security
+        check. I can send you a secure link to sign in now.
+      isEvidence: 1
+    outcomes:
+    - response: 0
+      title: You shared account details
+      body: You followed an unexpected caller's instructions and risked exposing your
+        banking credentials or security code. Contact your bank immediately using the
+        official app or the number on your card.
+    - response: 1
+      title: You ended the call without verifying
+      body: You did not provide information to the caller. If you are concerned about
+        a real payment, check your account in the official bank app or call the
+        number printed on your card.
+    - response: 2
+      title: You protected your account
+      body: You identified the request for a one-time code, artificial urgency and
+        discouragement from calling your bank. Banks will not ask you to disclose a
+        security code over the phone.
     messages:
     - id: bank_sms
       text: 'Bank Security Alert: A payment of AUD 742.80 is on hold. Your account

@@ -3,6 +3,7 @@ using ScamReady.Scenarios;
 using TMPro;
 using UnityEngine;
 using ScamReady.UI;
+using ScamReady.Phone;
 
 namespace ScamReady.Feedback
 {
@@ -10,6 +11,7 @@ namespace ScamReady.Feedback
     public sealed class ScenarioResultView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
+        [SerializeField] private PhoneScenarioController phoneController;
         [SerializeField] private GameObject window;
         [SerializeField] private TMP_Text scenarioText;
         [SerializeField] private TMP_Text titleText;
@@ -22,6 +24,7 @@ namespace ScamReady.Feedback
         [SerializeField] private UIAudioPlayer audioPlayer;
 
         private ScenarioEvaluation displayedResult;
+        private bool displayingPhoneResult;
 
         private void Awake()
         {
@@ -33,15 +36,27 @@ namespace ScamReady.Feedback
             {
                 audioPlayer = GetComponentInParent<UIAudioPlayer>();
             }
+
+            if (phoneController == null)
+                phoneController = FindFirstObjectByType<PhoneScenarioController>();
         }
 
         private void OnEnable()
         {
             controller.Changed += Refresh;
+            if (phoneController == null)
+                phoneController = FindFirstObjectByType<PhoneScenarioController>();
+            if (phoneController != null)
+                phoneController.Changed += Refresh;
             Refresh();
         }
 
-        private void OnDisable() => controller.Changed -= Refresh;
+        private void OnDisable()
+        {
+            controller.Changed -= Refresh;
+            if (phoneController != null)
+                phoneController.Changed -= Refresh;
+        }
 
         private void Refresh()
         {
@@ -49,10 +64,11 @@ namespace ScamReady.Feedback
             if (result == null)
             {
                 displayedResult = null;
-                Hide();
+                RefreshPhoneResult();
                 return;
             }
 
+            displayingPhoneResult = false;
             bool resultChanged = result != displayedResult;
             if (resultChanged)
             {
@@ -62,6 +78,42 @@ namespace ScamReady.Feedback
             }
             Show();
             if (resultChanged) ResetScroll();
+        }
+
+        private void RefreshPhoneResult()
+        {
+            if (phoneController == null || !phoneController.Decision.HasValue)
+            {
+                displayingPhoneResult = false;
+                Hide();
+                return;
+            }
+
+            if (!displayingPhoneResult)
+            {
+                scenarioText.text = "Call complete  |  "
+                    + (phoneController.Level != null ? phoneController.Level.Title : string.Empty);
+                titleText.text = phoneController.OutcomeTitle;
+                string response = phoneController.Decision.Value == PhoneResponse.Trust ? "Proceed"
+                    : phoneController.Decision.Value == PhoneResponse.Report ? "Reject / Report" : "Ignore";
+                processText.text = "Your response: " + response
+                    + "\nEvidence at decision: " + phoneController.CollectedEvidenceCount
+                    + " / " + phoneController.RequiredEvidenceCount;
+                bodyText.text = phoneController.OutcomeBody;
+                displayingPhoneResult = true;
+                if (audioPlayer != null)
+                {
+                    if (phoneController.Decision.Value == PhoneResponse.Report)
+                        audioPlayer.PlaySuccess();
+                    else
+                        audioPlayer.PlayWarning();
+                }
+                Show();
+                ResetScroll();
+                return;
+            }
+
+            Show();
         }
 
         private void RefreshContent(ScenarioEvaluation result)
