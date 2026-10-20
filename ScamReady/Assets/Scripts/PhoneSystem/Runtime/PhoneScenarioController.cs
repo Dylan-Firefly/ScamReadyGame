@@ -119,16 +119,23 @@ namespace ScamReady.Phone
 
         public void StopContact()
         {
-            if (CallState != PhoneCallState.InCall) return;
+            // if (CallState != PhoneCallState.InCall) return;
+            // if (scenarioController == null)
+            // {
+            //     Debug.LogError("PhoneScenarioController 缺少 ScenarioController 引用。", this);
+            //     return;
+            // }
+
+            // completedCallDurationSeconds = CallDurationSeconds;
+            // CallState = PhoneCallState.Completed;
+            // scenarioController.StopPhoneContact();
             if (scenarioController == null)
             {
                 Debug.LogError("PhoneScenarioController 缺少 ScenarioController 引用。", this);
                 return;
             }
 
-            completedCallDurationSeconds = CallDurationSeconds;
-            CallState = PhoneCallState.Completed;
-            scenarioController.StopPhoneContact();
+            scenarioController.ClosePhone();
         }
 
         public void OpenPhone()
