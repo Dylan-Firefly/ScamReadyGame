@@ -64,6 +64,25 @@ namespace ScamReady.Scenarios
             ? Time.realtimeSinceStartupAsDouble - callStartedAt : completedCallDurationSeconds;
         public event Action Changed;
 
+
+        public void CancelEvidenceSubmission()
+        {
+            if (Session != null && Session.CloseEvidenceSubmission())
+                Changed?.Invoke();
+        }
+
+        public void SubmitEvidence(
+            System.Collections.Generic.IReadOnlyList<string> selectedIds)
+        {
+            if (Session == null ||
+                !Session.SubmitEvidence(selectedIds, ElapsedSeconds))
+                return;
+
+            Result = ScenarioEvaluator.Evaluate(definition, Session);
+            Changed?.Invoke();
+        }
+
+
         public VerificationPageDefinition CurrentVerificationPage
         {
             get
@@ -294,7 +313,12 @@ namespace ScamReady.Scenarios
             }
             if (!Session.ChooseResponse(response, ElapsedSeconds)) return;
             // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
-            Result = ScenarioEvaluator.Evaluate(definition, Session);
+            // Reject 只是打开证据提交窗口，不立即进行评分。
+            if (Session.IsComplete)
+            {
+                Result = ScenarioEvaluator.Evaluate(definition, Session);
+            }
+
             Changed?.Invoke();
         }
 
@@ -328,8 +352,13 @@ namespace ScamReady.Scenarios
 
         public void OpenLink(string address)
         {
-            if (Session == null || Session.IsComplete
-                || string.IsNullOrWhiteSpace(address)) return;
+
+            if (Session == null ||
+                Session.IsComplete ||
+                Session.IsEvidenceSubmissionOpen ||
+                string.IsNullOrWhiteSpace(address))
+                return;
+
             foreach (var page in BrowserPages())
             {
                 if (page == null || string.IsNullOrWhiteSpace(page.Id)

@@ -70,6 +70,8 @@ namespace ScamReady.Scenarios
         public IReadOnlyList<ScenarioEvent> History { get; }
         public IReadOnlyList<string> CollectedEvidenceIds { get; }
         public IReadOnlyList<string> DecisionEvidenceIds { get; private set; }
+        public IReadOnlyList<string> SubmittedEvidenceIds { get; private set; }
+        public bool IsEvidenceSubmissionOpen { get; private set; }
         public int? DecisionSequenceIndex { get; private set; }
         public int DecisionUnsafeLinkCount { get; private set; }
         public bool IsEvidenceSummaryOpen { get; private set; }
@@ -83,9 +85,11 @@ namespace ScamReady.Scenarios
             History = history.AsReadOnly();
             CollectedEvidenceIds = collectedEvidenceIds.AsReadOnly();
             DecisionEvidenceIds = new List<string>().AsReadOnly();
+            SubmittedEvidenceIds = new List<string>().AsReadOnly();
             if (!string.IsNullOrWhiteSpace(emailId))
                 Record(ScenarioEventType.EmailReceived, emailId, 0);
         }
+
         internal bool OpenPhone(double elapsedSeconds)
         {
             if (IsComplete || IsPhoneOpen) return false;
@@ -109,10 +113,12 @@ namespace ScamReady.Scenarios
                 ScenarioId, elapsedSeconds);
             return true;
         }
+        }
 
         internal bool OpenEmail(double elapsedSeconds)
         {
-            if (IsComplete || IsEmailOpen) return false;
+            if (IsComplete || IsEvidenceSummaryOpen || IsEvidenceSubmissionOpen)
+                return false;
             if (IsBrowserOpen) Record(ScenarioEventType.BrowserClosed, ScenarioId, elapsedSeconds);
             if (IsPhoneOpen) Record(ScenarioEventType.PhoneClosed, ScenarioId, elapsedSeconds);
             ActiveApp = ScenarioApp.Email;
@@ -123,18 +129,31 @@ namespace ScamReady.Scenarios
 
         internal bool CloseEmail(bool stopContact, double elapsedSeconds)
         {
-            if (!IsEmailOpen) return false;
+            if (!IsEmailOpen || IsEvidenceSubmissionOpen) return false;
             ActiveApp = ScenarioApp.Desktop;
             Record(stopContact ? ScenarioEventType.ContactStopped : ScenarioEventType.EmailClosed,
                 emailId, elapsedSeconds);
             return true;
         }
 
+
         internal bool ChooseResponse(ContactResponse response, double elapsedSeconds)
         {
             if (!IsEmailOpen || IsComplete) return false;
-            if (response != ContactResponse.Proceed && response != ContactResponse.Ignore
-                && response != ContactResponse.Reject) return false;
+
+            if (response != ContactResponse.Proceed &&
+                response != ContactResponse.Ignore &&
+                response != ContactResponse.Reject)
+                return false;
+
+            // Reject 先打开证据提交窗口，不立即结算。
+            if (response == ContactResponse.Reject)
+                return OpenEvidenceSubmission(elapsedSeconds);
+
+            // 提交窗口打开期间不能进行其他回应。
+            if (IsEvidenceSubmissionOpen)
+                return false;
+
             CompleteDecision(response, elapsedSeconds);
             return true;
         }
@@ -148,6 +167,40 @@ namespace ScamReady.Scenarios
             return true;
         }
 
+        internal bool OpenEvidenceSubmission(double elapsedSeconds)
+        {
+            if (!IsEmailOpen || IsComplete || IsEvidenceSubmissionOpen)
+                return false;
+            IsEvidenceSubmissionOpen = true;
+            IsEvidenceSummaryOpen = false;
+            return true;
+        }
+
+        internal bool CloseEvidenceSubmission()
+        {
+            if (!IsEvidenceSubmissionOpen || IsComplete)
+                return false;
+            IsEvidenceSubmissionOpen = false;
+            return true;
+        }
+
+        internal bool SubmitEvidence(IReadOnlyList<string> selectedIds, double elapsedSeconds)
+        {
+            if (!IsEvidenceSubmissionOpen || !IsEmailOpen || IsComplete || selectedIds == null)
+                return false;
+
+            var selected = new HashSet<string>();
+            foreach (string id in selectedIds)
+            {
+                if (string.IsNullOrWhiteSpace(id) || !collectedEvidenceIds.Contains(id))
+                    return false;
+                selected.Add(id);
+            }
+
+            SubmittedEvidenceIds = new List<string>(selected).AsReadOnly();
+            CompleteDecision(ContactResponse.Reject, elapsedSeconds);
+            return true;
+        }
         internal bool SubmitInformation(string pageId, double elapsedSeconds)
         {
             if (!IsBrowserOpen || IsComplete || CurrentVerificationPageId != pageId) return false;
@@ -174,6 +227,7 @@ namespace ScamReady.Scenarios
             DecisionSequenceIndex = history.Count + 1;
             ActiveApp = ScenarioApp.Result;
             IsEvidenceSummaryOpen = false;
+            IsEvidenceSubmissionOpen = false;
             IsReminderVisible = false;
             Record(ScenarioEventType.ResponseChosen, response.ToString(), elapsedSeconds);
         }
