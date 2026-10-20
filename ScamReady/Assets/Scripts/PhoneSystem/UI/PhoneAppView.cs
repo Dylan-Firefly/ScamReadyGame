@@ -1,3 +1,4 @@
+using System.Collections;
 using ScamReady.UI;
 using TMPro;
 using UnityEngine;
@@ -15,12 +16,16 @@ namespace ScamReady.Phone
         [SerializeField] private GameObject dialogContent;
         [SerializeField] private Transform dialogContainer;
         [SerializeField] private PhoneDialogBoxView dialogBoxPrefab;
+        [SerializeField, Min(0f)] private float dialogLineDelaySeconds = 1.25f;
         [SerializeField] private UIWindowAnimator windowAnimator;
 
         private Button proceedButton;
         private Button stopContactButton;
         private Button ignoreButton;
         private Button rejectButton;
+        private ScrollRect dialogScrollRect;
+        private Coroutine dialogRoutine;
+        private int nextDialogLineIndex;
         private PhoneDetailView detailView;
         private PhoneCallState? displayedCallState;
         private Transform searchRoot;
@@ -41,10 +46,15 @@ namespace ScamReady.Phone
                 action = FindObject("Action");
             if (dialogContent == null)
                 dialogContent = FindObject("Dialog Content");
+            if (dialogScrollRect == null && dialogContent != null)
+                dialogScrollRect = dialogContent.GetComponentInChildren<ScrollRect>(true);
             if (dialogContainer == null && dialogContent != null)
             {
-                var grid = dialogContent.GetComponentInChildren<GridLayoutGroup>(true);
-                dialogContainer = grid != null ? grid.transform : dialogContent.transform;
+                var grid = FindObject("Grid");
+                dialogContainer = grid != null ? grid.transform
+                    : dialogScrollRect != null && dialogScrollRect.content != null
+                        ? dialogScrollRect.content
+                        : dialogContent.transform;
             }
             if (proceedButton == null) proceedButton = FindButton("Proceed");
             if (stopContactButton == null) stopContactButton = FindButton("StopContact");
@@ -57,7 +67,8 @@ namespace ScamReady.Phone
 
             if (phoneController == null || window == null || closeButton == null
                 || scenarioTitleText == null || action == null || dialogContent == null
-                || dialogContainer == null || dialogBoxPrefab == null || detailView == null
+                || dialogContainer == null || dialogScrollRect == null
+                || dialogBoxPrefab == null || detailView == null
                 || proceedButton == null || stopContactButton == null
                 || ignoreButton == null || rejectButton == null)
             {
@@ -66,6 +77,7 @@ namespace ScamReady.Phone
                 return;
             }
 
+            ConfigureDialogScrollView();
             closeButton.onClick.AddListener(phoneController.ClosePhone);
             proceedButton.onClick.AddListener(Proceed);
             stopContactButton.onClick.AddListener(phoneController.StopContact);
@@ -79,12 +91,14 @@ namespace ScamReady.Phone
             if (phoneController == null) return;
             phoneController.Changed += Refresh;
             Refresh();
+            StartDialogSequenceIfNeeded();
         }
 
         private void OnDisable()
         {
             if (phoneController != null)
                 phoneController.Changed -= Refresh;
+            StopDialogSequence();
         }
 
         private void OnDestroy()
@@ -115,19 +129,106 @@ namespace ScamReady.Phone
 
         private void RebuildDialog()
         {
+            StopDialogSequence();
             for (int i = dialogContainer.childCount - 1; i >= 0; i--)
                 Destroy(dialogContainer.GetChild(i).gameObject);
+            nextDialogLineIndex = 0;
 
             if (phoneController.CallState != PhoneCallState.InCall || phoneController.Level == null)
                 return;
 
-            foreach (var line in phoneController.Level.DialogLines)
+            StartDialogSequenceIfNeeded();
+        }
+
+        private IEnumerator DisplayDialogLines()
+        {
+            var lines = phoneController.Level.DialogLines;
+            while (nextDialogLineIndex < lines.Count
+                && phoneController.CallState == PhoneCallState.InCall)
             {
+                var line = lines[nextDialogLineIndex++];
                 if (line == null) continue;
+
+                bool wasAtBottom = dialogScrollRect.viewport == null
+                    || dialogContainer.GetComponent<RectTransform>().rect.height
+                        <= dialogScrollRect.viewport.rect.height + 1f
+                    || dialogScrollRect.verticalNormalizedPosition <= 0.05f;
                 var dialog = Instantiate(dialogBoxPrefab, dialogContainer);
                 dialog.Bind(line, phoneController.HasCollectedEvidence(line.Id),
                     () => phoneController.CollectEvidence(line.Id));
+
+                yield return null;
+                Canvas.ForceUpdateCanvases();
+                LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)dialogContainer);
+                Canvas.ForceUpdateCanvases();
+                if (wasAtBottom)
+                    dialogScrollRect.verticalNormalizedPosition = 0f;
+
+                if (nextDialogLineIndex < lines.Count && dialogLineDelaySeconds > 0f)
+                    yield return new WaitForSecondsRealtime(dialogLineDelaySeconds);
             }
+
+            dialogRoutine = null;
+        }
+
+        private void StartDialogSequenceIfNeeded()
+        {
+            if (!enabled || dialogRoutine != null || phoneController == null
+                || phoneController.CallState != PhoneCallState.InCall
+                || phoneController.Level == null
+                || nextDialogLineIndex >= phoneController.Level.DialogLines.Count)
+                return;
+
+            dialogRoutine = StartCoroutine(DisplayDialogLines());
+        }
+
+        private void StopDialogSequence()
+        {
+            if (dialogRoutine == null) return;
+            StopCoroutine(dialogRoutine);
+            dialogRoutine = null;
+        }
+
+        private void ConfigureDialogScrollView()
+        {
+            var contentRect = dialogContainer as RectTransform;
+            if (contentRect == null)
+            {
+                Debug.LogError("PhoneAppView 的对话 Grid 必须是 RectTransform。", this);
+                enabled = false;
+                return;
+            }
+            contentRect.anchorMin = new Vector2(0f, 1f);
+            contentRect.anchorMax = new Vector2(1f, 1f);
+            contentRect.pivot = new Vector2(0.5f, 1f);
+            contentRect.anchoredPosition = Vector2.zero;
+
+            var gridLayout = dialogContainer.GetComponent<GridLayoutGroup>();
+            if (gridLayout != null)
+                gridLayout.enabled = false;
+
+            var verticalLayout = dialogContainer.GetComponent<VerticalLayoutGroup>();
+            if (verticalLayout == null)
+                verticalLayout = dialogContainer.gameObject.AddComponent<VerticalLayoutGroup>();
+            verticalLayout.childControlWidth = true;
+            verticalLayout.childControlHeight = true;
+            verticalLayout.childForceExpandWidth = true;
+            verticalLayout.childForceExpandHeight = false;
+
+            var contentSizeFitter = dialogContainer.GetComponent<ContentSizeFitter>();
+            if (contentSizeFitter == null)
+                contentSizeFitter = dialogContainer.gameObject.AddComponent<ContentSizeFitter>();
+            contentSizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+            contentSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            dialogScrollRect.content = contentRect;
+            dialogScrollRect.horizontal = false;
+            dialogScrollRect.vertical = true;
+            dialogScrollRect.horizontalScrollbar = null;
+            dialogScrollRect.verticalScrollbar = null;
+            foreach (var scrollbar in dialogContent.GetComponentsInChildren<Scrollbar>(true))
+                scrollbar.gameObject.SetActive(false);
+            dialogScrollRect.enabled = true;
         }
 
         private void Proceed() => phoneController.ChooseResponse(PhoneResponse.Trust);

@@ -8,6 +8,7 @@ namespace ScamReady.Phone
     public sealed class PhoneDetailView : MonoBehaviour
     {
         [SerializeField] private TMP_Text callerNameText;
+        [SerializeField] private TMP_Text numberText;
         [SerializeField] private TMP_Text stateText;
         [SerializeField] private TMP_Text timeText;
         [SerializeField] private Button answerButton;
@@ -62,14 +63,15 @@ namespace ScamReady.Phone
         private void ResolveReferences()
         {
             if (callerNameText == null) callerNameText = FindText("Caller");
+            if (numberText == null) numberText = FindText("Number");
             if (stateText == null) stateText = FindText("State");
             if (timeText == null) timeText = FindText("Time");
             if (answerButton == null) answerButton = FindButton("Answer");
             if (hangUpButton == null) hangUpButton = FindButton("HangUp");
 
-            if (callerNameText == null || stateText == null || timeText == null
+            if (callerNameText == null || numberText == null || stateText == null || timeText == null
                 || answerButton == null || hangUpButton == null)
-                Debug.LogError("PhoneDetailView 缺少 Caller、State、Time、Answer 或 HangUp 引用。", this);
+                Debug.LogError("PhoneDetailView 缺少 Caller、Number、State、Time、Answer 或 HangUp 引用。", this);
         }
 
         private void Update()
@@ -80,11 +82,12 @@ namespace ScamReady.Phone
 
         private void Refresh()
         {
-            if (phoneController == null || callerNameText == null || stateText == null
+            if (phoneController == null || callerNameText == null || numberText == null || stateText == null
                 || timeText == null || answerButton == null || hangUpButton == null)
                 return;
 
             callerNameText.text = phoneController.Level != null ? phoneController.Level.CallerName : string.Empty;
+            numberText.text = phoneController.Level != null ? phoneController.Level.PhoneNumber : string.Empty;
             bool incoming = phoneController.CallState == PhoneCallState.Incoming;
             stateText.gameObject.SetActive(incoming);
             bool inCall = phoneController.CallState == PhoneCallState.InCall;
