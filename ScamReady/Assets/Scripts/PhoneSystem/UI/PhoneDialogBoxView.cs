@@ -59,7 +59,7 @@ namespace ScamReady.Phone
             var layout = GetComponent<VerticalLayoutGroup>();
             if (layout == null)
                 layout = gameObject.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(12, 12, 8, 8);
+            layout.padding = new RectOffset(40, 12, 8, 8);
             layout.childControlWidth = true;
             layout.childControlHeight = true;
             layout.childForceExpandWidth = true;
