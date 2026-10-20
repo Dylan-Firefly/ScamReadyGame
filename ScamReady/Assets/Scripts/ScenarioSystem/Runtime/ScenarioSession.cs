@@ -113,7 +113,7 @@ namespace ScamReady.Scenarios
                 ScenarioId, elapsedSeconds);
             return true;
         }
-        }
+        
 
         internal bool OpenEmail(double elapsedSeconds)
         {
