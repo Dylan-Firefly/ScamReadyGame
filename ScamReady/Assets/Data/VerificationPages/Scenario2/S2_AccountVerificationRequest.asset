@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce98cae6db03ce47aba606ce2c97e07, type: 3}
+  m_Name: S2_AccountVerificationRequest
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Verification.VerificationPageDefinition
+  id: "S2_PAGE_ACCOUNT_VERIFICATION_REQUEST"
+  entryLabel: "Account Verification"
+  siteName: "Harbour University - Account Services"
+  address: "https://accounts.harbouruniversity-support.example/verify"
+  title: "Keep Your Student Account Active"
+  body: "Your student account requires verification before 6:00 PM today. Until verification is complete, the account remains scheduled for restriction.\n\nConfirm your account using:\nStudent email address\nCurrent account password\n\nSelect Process to submit these login details and keep access to university email, course materials and assignment submission.\n\nPlease complete this check only once. You do not need to contact the IT service desk."
+  isUnsafe: 1
+  processLabel: "Process\nSubmit login details"

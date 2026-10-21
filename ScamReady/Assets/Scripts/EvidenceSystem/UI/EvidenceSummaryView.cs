@@ -68,7 +68,15 @@ namespace ScamReady.Evidence
                 foreach (string id in session.CollectedEvidenceIds)
                 {
                     var placement = controller.FindEvidencePlacement(id);
-                    if (placement == null) continue;
+                    if (placement == null)
+                    {
+                        var line = controller.IsPhoneScenario ? controller.PhoneLevel?.FindDialogLine(id) : null;
+                        if (line == null) continue;
+                        if (text.Length > 0) text.Append("\n\n");
+                        text.Append("Call transcript\nSource: ").Append(controller.CurrentContactName).Append('\n');
+                        text.Append(line.Text);
+                        continue;
+                    }
                     if (text.Length > 0) text.Append("\n\n");
                     text.Append(placement.Evidence.Title).Append('\n');
                     text.Append("Source: ").Append(placement.Page.SiteName).Append('\n');

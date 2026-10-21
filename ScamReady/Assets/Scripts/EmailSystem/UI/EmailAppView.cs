@@ -22,9 +22,12 @@ namespace ScamReady.Email
 
         // 用于避免同一 ScenarioSession 在多次 Refresh 时重复播放邮件提示音。
         private object lastSession;
+        private UnityEngine.UI.ScrollRect bodyScroll;
+        private bool resetScroll;
 
         private void Awake()
         {
+            bodyScroll = window.GetComponentInChildren<UnityEngine.UI.ScrollRect>(true);
             closeButton.onClick.AddListener(controller.CloseEmail);
             inboxButton.onClick.AddListener(controller.OpenEmail);
             detail.Connect(controller);
@@ -59,6 +62,13 @@ namespace ScamReady.Email
             RefreshNotification();
             RefreshContent();
             SetVisible(controller.Session != null && controller.Session.IsEmailOpen);
+            if (resetScroll && window.activeInHierarchy && bodyScroll != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                bodyScroll.StopMovement();
+                bodyScroll.verticalNormalizedPosition = 1f;
+                resetScroll = false;
+            }
         }
 
         /// <summary>新会话首次出现邮件时播放一次提示音，后续状态刷新不重复播放。</summary>
@@ -71,6 +81,7 @@ namespace ScamReady.Email
                 return;
 
             lastSession = controller.Session;
+            resetScroll = true;
             audioPlayer?.PlayNotification();
         }
         private void RefreshContent()

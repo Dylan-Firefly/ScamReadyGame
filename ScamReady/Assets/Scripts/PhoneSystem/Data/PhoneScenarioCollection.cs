@@ -209,5 +209,13 @@ namespace ScamReady.Phone
         [SerializeField] private PhoneScenarioLevel[] levels = new PhoneScenarioLevel[0];
 
         public IReadOnlyList<PhoneScenarioLevel> Levels => levels;
+
+        public int FindLevelIndex(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id)) return -1;
+            for (int i = 0; i < levels.Length; i++)
+                if (levels[i] != null && levels[i].Id == id) return i;
+            return -1;
+        }
     }
 }

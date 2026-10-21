@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
+  m_Name: S3_ResearchAssistantOffer
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
+  id: "S3_RESEARCH_ASSISTANT_OFFER"
+  title: "Research Assistant Offer"
+  setup: "You applied for the university's Student Research Assistant role RA-204 and are waiting for an interview invitation. An email now claims you have been selected. Check the offer before responding."
+  gameDateText: "1 October  |  10:17 AM"
+  email:
+    id: "S3_EMAIL_RESEARCH_ASSISTANT_OFFER"
+    sender: "Harbour University Research Office"
+    from: "research-office@harbouruniversity.example"
+    replyTo: "onboarding@harbouruniversity-careers.example"
+    subject: "Research Assistant RA-204 - Offer confirmation"
+    body: "Dear applicant,\n\nCongratulations. Your application for Student Research Assistant RA-204 has been successful. The position offers 6 hours of flexible work per week at AUD 36 per hour, assisting with research data entry. No further interview is required.\n\nTo confirm your place, pay the refundable AUD 189 equipment deposit through our designated onboarding supplier before 5:00 PM today:\nhttps://harbouruniversity-careers.example/onboarding/RA-204\n\nThe deposit reserves your university headset and research software access. It will be reimbursed with your first salary payment. Once payment is confirmed, we will send your starting instructions.\n\nPlaces are limited. If your reservation is not completed by the deadline, we will offer the position to another applicant.\n\nRegards,\nResearch Recruitment Team\nHarbour University"
+    proceedLink: "https://harbouruniversity-careers.example/onboarding/RA-204"
+    proceedLabel: "Open equipment page"
+    stopContactLabel: "Return to desktop and verify"
+    ignoreLabel: "Leave the offer unanswered"
+    rejectLabel: "Reject / report this email"
+  verificationPages:
+  - {fileID: 11400000, guid: 0258261ae64749fca7e35c9f2c9bd4c1, type: 2}
+  - {fileID: 11400000, guid: d2c24e6789d046d5aec466ac62a33773, type: 2}
+  linkedPages:
+  - {fileID: 11400000, guid: 18e08299dc4242fa92422690cb761970, type: 2}
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 0258261ae64749fca7e35c9f2c9bd4c1, type: 2}
+    evidence: {fileID: 11400000, guid: be0fc024a7464ba4b55743aab2f9394b, type: 2}
+    content: "RA-204 status on 1 October: Accepting applications; no offers issued\nInterviews: 10 October, required before an offer"
+  - page: {fileID: 11400000, guid: d2c24e6789d046d5aec466ac62a33773, type: 2}
+    evidence: {fileID: 11400000, guid: 6eca2b0cc02248b9a648a2c8b5a6fc3c, type: 2}
+    content: "Equipment is provided and paid for by the university department. RA-204 applicants do not pay an equipment deposit or buy an external onboarding package."
+  requiredEvidence:
+  - {fileID: 11400000, guid: be0fc024a7464ba4b55743aab2f9394b, type: 2}
+  - {fileID: 11400000, guid: 6eca2b0cc02248b9a648a2c8b5a6fc3c, type: 2}
+  reminder:
+    id: "S3_REMINDER_EQUIPMENT_RESERVATION"
+    triggerEvidenceCount: 1
+    title: "Your equipment reservation is unpaid"
+    body: "Your RA-204 position is still awaiting equipment confirmation. Pay the refundable AUD 189 deposit before 5:00 PM today to keep your place. It will be reimbursed with your first salary payment.\n\nhttps://harbouruniversity-careers.example/onboarding/RA-204"
+  feedback:
+    proceed:
+      title: "You paid a fake onboarding supplier"
+      body: "You submitted payment details and paid AUD 189 to a scammer. This did not reserve equipment or secure the research assistant job. Your card details may also have been exposed.\n\nThe real RA-204 role was still accepting applications and had not issued offers. Its equipment is supplied by the university department without an applicant deposit. A real job listing and a promise of reimbursement did not make this payment request genuine."
+    ignore:
+      title: "You left the job offer unanswered"
+      body: "You ignored the email and did not pay its equipment deposit. This avoided the fake onboarding payment.\n\nYour genuine application for RA-204 is separate from this email. Check its progress through the official Careers portal rather than assuming the suspicious offer is a valid update or that your application has been cancelled."
+    reportUnverified:
+      title: "Safe, without submitted evidence"
+      body: "You rejected the email and avoided paying the equipment deposit. No supporting evidence was submitted with your report.\n\nYou can reject a suspicious offer without investigating first. To understand the request, compare the official recruitment stage and the equipment policy for this particular role. An existing job title does not establish who sent the offer."
+    reportPartial:
+      title: "Safe, with some supporting evidence"
+      body: "You rejected the offer and submitted {evidenceCount} evidence item(s), including {collectedRequiredCount} of the {requiredCount} key items. You avoided the deposit payment.\n\nYour report contains part of the basis for your decision. Compare both the official recruitment schedule and who arranges equipment for RA-204. Check your real application through the university Careers portal."
+    reportVerified:
+      title: "Safe, with a supported offer check"
+      body: "You rejected the offer and submitted all {requiredCount} key evidence items. You avoided paying the fake equipment deposit.\n\nThe Careers portal states that interviews have not yet taken place and no offers have been issued. The equipment policy also says that the department supplies equipment without an applicant deposit. These facts contradict the email's offer and payment request.\n\nRA-204 is a genuine advertised role in this scenario, but the email was impersonating its recruiters."
+    unsafeLinkWarning: "You opened the offer's equipment-payment link {unsafeLinkCount} time(s), but left without submitting payment details. An official-looking onboarding page is not proof of an employer's identity. Verify the offer and payment request through the university website you open independently."

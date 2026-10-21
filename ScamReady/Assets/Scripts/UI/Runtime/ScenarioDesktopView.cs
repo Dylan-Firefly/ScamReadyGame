@@ -16,6 +16,7 @@ namespace ScamReady.UI
         [SerializeField] private UnityEngine.UI.Button notificationButton;
         [SerializeField] private UnityEngine.UI.Button restartButton;
         [SerializeField] private GameObject unreadBadge;
+        [SerializeField] private GameObject phoneUnreadBadge;
         [SerializeField] private TMP_Text notificationText;
         [SerializeField] private TMP_Text dateText;
         [SerializeField] private TMP_Text setupText;
@@ -30,7 +31,7 @@ namespace ScamReady.UI
             emailButton.onClick.AddListener(controller.OpenEmail);
             if (phoneButton != null) phoneButton.onClick.AddListener(controller.OpenPhone);
             browserButton.onClick.AddListener(controller.OpenBrowser);
-            notificationButton.onClick.AddListener(controller.OpenEmail);
+            notificationButton.onClick.AddListener(OpenCurrentContact);
             restartButton.onClick.AddListener(controller.Restart);
             Refresh();
         }
@@ -41,7 +42,7 @@ namespace ScamReady.UI
             emailButton.onClick.RemoveListener(controller.OpenEmail);
             if (phoneButton != null) phoneButton.onClick.RemoveListener(controller.OpenPhone);
             browserButton.onClick.RemoveListener(controller.OpenBrowser);
-            notificationButton.onClick.RemoveListener(controller.OpenEmail);
+            notificationButton.onClick.RemoveListener(OpenCurrentContact);
             restartButton.onClick.RemoveListener(controller.Restart);
         }
 
@@ -50,6 +51,12 @@ namespace ScamReady.UI
             RefreshContent();
             RefreshNotification();
             SetVisible(controller.Session == null || controller.Session.ActiveApp == ScenarioApp.Desktop);
+        }
+
+        private void OpenCurrentContact()
+        {
+            if (controller.IsPhoneScenario) controller.OpenPhone();
+            else controller.OpenEmail();
         }
 
         private void RefreshContent()
@@ -63,6 +70,9 @@ namespace ScamReady.UI
             bool unread = controller.IsEmailScenario
                 && controller.Session != null && controller.Session.HasUnreadEmail;
             unreadBadge.SetActive(unread);
+            if (phoneUnreadBadge != null)
+                phoneUnreadBadge.SetActive(controller.IsPhoneScenario
+                    && controller.Session != null && controller.CallState == PhoneCallState.Incoming);
             notificationText.text = controller.IsPhoneScenario
                 ? controller.CallState == PhoneCallState.Incoming
                     ? "Incoming call  -  " + (controller.CurrentContactName ?? string.Empty)
@@ -81,7 +91,6 @@ namespace ScamReady.UI
         /// <summary>仅显示桌面情境卡和入口，常驻栏保留。切换应用仍通过 Controller。</summary>
         public void Show()
         {
-            if (displayedVisibility == true) return;
             displayedVisibility = true;
             SetDesktopElementsActive(true);
         }
@@ -99,7 +108,7 @@ namespace ScamReady.UI
             setupPanel.SetActive(active);
             emailButton.gameObject.SetActive(active && controller.IsEmailScenario);
             browserButton.gameObject.SetActive(active && (controller.IsEmailScenario || controller.IsPhoneScenario));
-            notificationButton.gameObject.SetActive(active && controller.IsEmailScenario);
+            notificationButton.gameObject.SetActive(active);
             if (phoneButton != null)
                 phoneButton.gameObject.SetActive(active && controller.IsPhoneScenario);
         }

@@ -5,7 +5,7 @@ using ScamReady.Scenarios;
 
 namespace ScamReady.Feedback
 {
-    /// <summary>仅评估邮件诈骗的最终选择与当时证据；不推断官方后续处理。</summary>
+    /// <summary>冻结邮件回应、查验依据与通知性质；后续行为仅由情景反馈作叙事表达。</summary>
     public static class ScenarioEvaluator
     {
         public static ScenarioEvaluation Evaluate(EmailScenarioDefinition definition, ScenarioSession session)
@@ -43,7 +43,7 @@ namespace ScamReady.Feedback
                 ? ScenarioOutcome.ReportUnverified : ScenarioOutcome.ReportPartial;
 
             return new ScenarioEvaluation(response, outcome, snapshot.Count, collectedRequired,
-                requiredIds.Count, session.DecisionUnsafeLinkCount);
+                requiredIds.Count, session.DecisionUnsafeLinkCount, definition.IsLegitimate);
         }
     }
 }

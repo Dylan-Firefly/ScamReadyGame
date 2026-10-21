@@ -17,6 +17,7 @@ namespace ScamReady.Feedback
         [SerializeField] private TMP_Text bodyText;
         [SerializeField] private UnityEngine.UI.ScrollRect bodyScroll;
         [SerializeField] private UnityEngine.UI.Button restartButton;
+        [SerializeField] private UnityEngine.UI.Button nextScenarioButton;
 
         [Header("Audio")]
         [SerializeField] private UIAudioPlayer audioPlayer;
@@ -27,6 +28,7 @@ namespace ScamReady.Feedback
         private void Awake()
         {
             restartButton.onClick.AddListener(controller.Restart);
+            if (nextScenarioButton != null) nextScenarioButton.onClick.AddListener(controller.NextScenario);
             titleText.richText = false;
             bodyText.richText = false;
 
@@ -48,8 +50,19 @@ namespace ScamReady.Feedback
             controller.Changed -= Refresh;
         }
 
+        private void OnDestroy()
+        {
+            restartButton.onClick.RemoveListener(controller.Restart);
+            if (nextScenarioButton != null) nextScenarioButton.onClick.RemoveListener(controller.NextScenario);
+        }
+
         private void Refresh()
         {
+            if (nextScenarioButton != null)
+            {
+                nextScenarioButton.gameObject.SetActive(controller.HasPlaylist);
+                nextScenarioButton.interactable = controller.CanStartNextScenario;
+            }
             var result = controller.Result;
             if (result == null)
             {
@@ -125,7 +138,7 @@ namespace ScamReady.Feedback
             if (audioPlayer == null)
                 return;
 
-            if (result.Outcome == ScenarioOutcome.ReportVerified)
+            if (result.HasSupportedDecision)
             {
                 audioPlayer.PlaySuccess();
             }
@@ -148,11 +161,16 @@ namespace ScamReady.Feedback
         {
             string response = result.Response == ContactResponse.Reject ? "Reject / Report" : result.Response.ToString();
             string verification = result.HasCompleteVerification ? "Complete verification"
-                : result.EvidenceCount == 0 ? "No evidence collected" : "Incomplete verification";
+                : result.EvidenceCount == 0
+                    ? result.Response == ContactResponse.Reject ? "No evidence submitted" : "No evidence collected"
+                    : "Incomplete verification";
+            string evidenceLabel = result.Response == ContactResponse.Reject
+                ? "Evidence submitted: " : "Evidence at decision: ";
             processText.text = "Your decision: " + response + "\n"
-                + "Evidence at decision: " + result.EvidenceCount + "  |  Required: "
+                + evidenceLabel + result.EvidenceCount + "  |  Required: "
                 + result.CollectedRequiredEvidenceCount + "/" + result.RequiredEvidenceCount
-                + "\n" + verification;
+                + "\n" + verification
+                + (result.IsLegitimateContact ? "\nThis was a genuine notice." : string.Empty);
         }
 
         /// <summary>仅显示结果窗口；开窗动效和音效在这里接入，不重新评估结果。</summary>

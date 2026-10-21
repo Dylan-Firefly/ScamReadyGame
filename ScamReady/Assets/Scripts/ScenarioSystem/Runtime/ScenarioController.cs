@@ -18,6 +18,9 @@ namespace ScamReady.Scenarios
     /// <summary>统一接收场景操作并更新会话状态。</summary>
     public sealed class ScenarioController : MonoBehaviour
     {
+        [Header("Scenario playlist")]
+        [SerializeField, Tooltip("配置后在当前场景连续发布联系；留空时运行下方的单一情景。")]
+        private ScenarioPlaylist playlist;
         [Header("Current scenario")]
         [SerializeField] private ScenarioType scenarioType;
         [SerializeField, Tooltip("Email 模式下使用的 EmailScenarioDefinition。")]
@@ -30,6 +33,9 @@ namespace ScamReady.Scenarios
         private double startedAt;
         private double callStartedAt;
         private double completedCallDurationSeconds;
+        private readonly Queue<ScenarioPlaylistEntry> pendingScenarios = new Queue<ScenarioPlaylistEntry>();
+        private readonly List<ScenarioPlaylistEntry> availableScenarios = new List<ScenarioPlaylistEntry>();
+        private ScenarioPlaylistEntry currentEntry;
 
         public EmailScenarioDefinition Definition => definition;
         public ScenarioType CurrentScenarioType => scenarioType;
@@ -63,6 +69,9 @@ namespace ScamReady.Scenarios
         public double CallDurationSeconds => CallState == PhoneCallState.InCall
             ? Time.realtimeSinceStartupAsDouble - callStartedAt : completedCallDurationSeconds;
         public event Action Changed;
+        public bool HasPlaylist => playlist != null;
+        public bool CanStartNextScenario => HasPlaylist && Session != null && Session.IsComplete
+            && (pendingScenarios.Count > 0 || (playlist.Loop && availableScenarios.Count > 0));
 
 
         public void CancelEvidenceSubmission()
@@ -74,7 +83,7 @@ namespace ScamReady.Scenarios
         public void SubmitEvidence(
             System.Collections.Generic.IReadOnlyList<string> selectedIds)
         {
-            if (Session == null ||
+            if (!IsEmailScenario || Session == null ||
                 !Session.SubmitEvidence(selectedIds, ElapsedSeconds))
                 return;
 
@@ -94,7 +103,77 @@ namespace ScamReady.Scenarios
             }
         }
 
-        private void Start() => Restart();
+        private void Start()
+        {
+            if (playlist == null)
+            {
+                Restart();
+                return;
+            }
+
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var entry in playlist.Entries)
+            {
+                if (entry == null || !entry.IsValid || !ids.Add(entry.Id))
+                {
+                    Debug.LogWarning("情景列表中有无效或重复的情景，已跳过。", this);
+                    continue;
+                }
+                availableScenarios.Add(entry);
+            }
+
+            if (availableScenarios.Count == 0)
+            {
+                Debug.LogError("情景列表没有可用的情景，请检查邮件数据或电话情景 ID。", this);
+                Changed?.Invoke();
+                return;
+            }
+
+            RefillScenarioQueue();
+            StartQueuedScenario();
+        }
+
+        /// <summary>只有完成本轮后才能发布下一次联系；重玩仍使用 Restart。</summary>
+        public void NextScenario()
+        {
+            if (!CanStartNextScenario) return;
+            if (pendingScenarios.Count == 0) RefillScenarioQueue();
+            StartQueuedScenario();
+        }
+
+        private void RefillScenarioQueue()
+        {
+            pendingScenarios.Clear();
+            var round = new List<ScenarioPlaylistEntry>(availableScenarios);
+            if (playlist.Shuffle)
+            {
+                for (int i = round.Count - 1; i > 0; i--)
+                {
+                    int other = UnityEngine.Random.Range(0, i + 1);
+                    var entry = round[i];
+                    round[i] = round[other];
+                    round[other] = entry;
+                }
+                // 跨轮也避免刚完成的情景紧接着再次出现。
+                if (round.Count > 1 && round[0] == currentEntry)
+                {
+                    int other = UnityEngine.Random.Range(1, round.Count);
+                    round[0] = round[other];
+                    round[other] = currentEntry;
+                }
+            }
+            foreach (var entry in round) pendingScenarios.Enqueue(entry);
+        }
+
+        private void StartQueuedScenario()
+        {
+            currentEntry = pendingScenarios.Dequeue();
+            scenarioType = currentEntry.Type;
+            definition = currentEntry.Email;
+            phoneCollection = currentEntry.PhoneCollection;
+            phoneLevelIndex = currentEntry.Type == ScenarioType.Phone ? currentEntry.PhoneLevelIndex : 0;
+            Restart();
+        }
 
         public void Restart()
         {

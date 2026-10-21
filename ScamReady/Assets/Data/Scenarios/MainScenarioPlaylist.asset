@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c7d70f4b9834d4396c61692480844e1, type: 3}
+  m_Name: MainScenarioPlaylist
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.ScenarioPlaylist
+  entries:
+  - type: 0
+    email: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
+    phoneCollection: {fileID: 0}
+    phoneLevelId:
+  - type: 1
+    email: {fileID: 0}
+    phoneCollection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
+    phoneLevelId: phone_parcel_redelivery
+  - type: 1
+    email: {fileID: 0}
+    phoneCollection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
+    phoneLevelId: phone_bank_verification
+  - type: 0
+    email: {fileID: 11400000, guid: 389a00f8706048cebf6b6c13092a1812, type: 2}
+    phoneCollection: {fileID: 0}
+    phoneLevelId:
+  - type: 0
+    email: {fileID: 11400000, guid: 2503b3ba754349a6bfa7d06b79762f64, type: 2}
+    phoneCollection: {fileID: 0}
+    phoneLevelId:
+  - type: 0
+    email: {fileID: 11400000, guid: 331a9cd0eca440568e7f9fe87e3155e5, type: 2}
+    phoneCollection: {fileID: 0}
+    phoneLevelId:
+  - type: 0
+    email: {fileID: 11400000, guid: 5ff7875b505948e09cd150200bbe7c97, type: 2}
+    phoneCollection: {fileID: 0}
+    phoneLevelId:
+  shuffle: 0
+  loop: 1

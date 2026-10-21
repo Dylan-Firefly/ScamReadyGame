@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce98cae6db03ce47aba606ce2c97e07, type: 3}
+  m_Name: S3_CareersVacancy
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Verification.VerificationPageDefinition
+  id: "S3_PAGE_CAREERS_VACANCY"
+  entryLabel: "Research Assistant Vacancy"
+  siteName: "Harbour University - Careers"
+  address: "https://careers.harbouruniversity.example/jobs/RA-204"
+  title: "Research Assistant - RA-204"
+  body: "Recruitment update as of 1 October\n\nRole: Student Research Assistant\nReference: RA-204\nHours: 6 per week\nPay: AUD 36 per hour\nApplications close: 8 October\nInterviews: 10 October\nStatus: Accepting applications; no offers issued\n\nThis role supports research data entry and administration. Shortlisted applicants must complete an interview before an offer is issued.\n\nApplications and official offer updates are managed through this Careers portal. If you receive an unexpected offer, contact the School Research Office using the details published on the university website."
+  isUnsafe: 0
+  processLabel: "Process"

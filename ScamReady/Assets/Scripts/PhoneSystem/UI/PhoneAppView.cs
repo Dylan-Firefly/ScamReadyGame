@@ -29,6 +29,7 @@ namespace ScamReady.Phone
         private int nextDialogLineIndex;
         private PhoneDetailView detailView;
         private PhoneCallState? displayedCallState;
+        private ScenarioSession displayedSession;
         private Transform searchRoot;
 
         private void Awake()
@@ -115,27 +116,33 @@ namespace ScamReady.Phone
         private void Refresh()
         {
             scenarioTitleText.text = scenarioController.PhoneLevel != null ? scenarioController.PhoneLevel.Title : string.Empty;
-            bool inCall = scenarioController.CallState == PhoneCallState.InCall;
+            bool inCall = scenarioController.IsPhoneScenario && scenarioController.CallState == PhoneCallState.InCall;
             action.SetActive(inCall);
             dialogContent.SetActive(inCall);
 
-            if (displayedCallState != scenarioController.CallState)
+            if (displayedSession != scenarioController.Session || displayedCallState != scenarioController.CallState)
             {
+                displayedSession = scenarioController.Session;
                 displayedCallState = scenarioController.CallState;
                 RebuildDialog();
             }
 
-            SetVisible(scenarioController.Session != null && scenarioController.Session.IsPhoneOpen);
+            SetVisible(scenarioController.IsPhoneScenario
+                && scenarioController.Session != null && scenarioController.Session.IsPhoneOpen);
         }
 
         private void RebuildDialog()
         {
             StopDialogSequence();
             for (int i = dialogContainer.childCount - 1; i >= 0; i--)
+            {
+                dialogContainer.GetChild(i).gameObject.SetActive(false);
                 Destroy(dialogContainer.GetChild(i).gameObject);
+            }
             nextDialogLineIndex = 0;
 
-            if (scenarioController.CallState != PhoneCallState.InCall || scenarioController.PhoneLevel == null)
+            if (!scenarioController.IsPhoneScenario
+                || scenarioController.CallState != PhoneCallState.InCall || scenarioController.PhoneLevel == null)
                 return;
 
             StartDialogSequenceIfNeeded();
@@ -143,8 +150,10 @@ namespace ScamReady.Phone
 
         private IEnumerator DisplayDialogLines()
         {
+            var session = scenarioController.Session;
             var lines = scenarioController.PhoneLevel.DialogLines;
             while (nextDialogLineIndex < lines.Count
+                && scenarioController.Session == session
                 && scenarioController.CallState == PhoneCallState.InCall)
             {
                 var line = lines[nextDialogLineIndex++];
@@ -175,6 +184,7 @@ namespace ScamReady.Phone
         private void StartDialogSequenceIfNeeded()
         {
             if (!enabled || dialogRoutine != null || scenarioController == null
+                || !scenarioController.IsPhoneScenario
                 || scenarioController.CallState != PhoneCallState.InCall
                 || scenarioController.PhoneLevel == null
                 || nextDialogLineIndex >= scenarioController.PhoneLevel.DialogLines.Count)

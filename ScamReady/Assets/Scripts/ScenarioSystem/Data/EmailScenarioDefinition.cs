@@ -15,6 +15,8 @@ namespace ScamReady.Scenarios
         [SerializeField] private string title;
         [SerializeField, TextArea(2, 5)] private string setup;
         [SerializeField] private string gameDateText;
+        [SerializeField, Tooltip("合法通知勾选此项，仅用于结算；默认不勾选，兼容现有诈骗情景。")]
+        private bool isLegitimate;
         [SerializeField] private EmailData email = new EmailData();
         [SerializeField, Tooltip("拖入本关可访问的官网页面资产。当前浏览器提供两个入口。")]
         private VerificationPageDefinition[] verificationPages = new VerificationPageDefinition[0];
@@ -31,6 +33,7 @@ namespace ScamReady.Scenarios
         public string Title => title;
         public string Setup => setup;
         public string GameDateText => gameDateText;
+        public bool IsLegitimate => isLegitimate;
         public EmailData Email => email;
         public IReadOnlyList<VerificationPageDefinition> VerificationPages => verificationPages;
         public IReadOnlyList<VerificationPageDefinition> LinkedPages => linkedPages;

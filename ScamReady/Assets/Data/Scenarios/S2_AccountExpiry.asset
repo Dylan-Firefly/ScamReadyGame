@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
+  m_Name: S2_AccountExpiry
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
+  id: "S2_ACCOUNT_EXPIRY"
+  title: "Student Account Expiry"
+  setup: "An assignment is due this evening, and you need your university account to submit it. A notice about your account access has arrived. Check the email and decide how to respond."
+  gameDateText: "1 October  |  10:17 AM"
+  email:
+    id: "S2_EMAIL_ACCOUNT_EXPIRY"
+    sender: "Harbour University IT Services"
+    from: "it-notices@harbouruniversity.example"
+    replyTo: "service@harbouruniversity-support.example"
+    subject: "Action required - Your student account expires today"
+    body: "Dear student,\n\nOur records show that your student account password expires today. To prevent interruption to your university email, course materials and assignment submission, complete the account verification before 6:00 PM.\n\nConfirm your student email address and current password using the account service below:\nhttps://accounts.harbouruniversity-support.example/verify\n\nThis check is part of our account-maintenance process. Once completed, your access will continue without interruption. Failure to verify before the deadline will result in a temporary account restriction.\n\nRegards,\nAccount Services\nHarbour University IT Services"
+    proceedLink: "https://accounts.harbouruniversity-support.example/verify"
+    proceedLabel: "Open verification page"
+    stopContactLabel: "Return to desktop and verify"
+    ignoreLabel: "Leave the email unanswered"
+    rejectLabel: "Reject / report this email"
+  verificationPages:
+  - {fileID: 11400000, guid: 9a4d67970800463596b9237394ff70f1, type: 2}
+  - {fileID: 11400000, guid: 1f43e2e0e4374d0ea84b111c5cf9ea98, type: 2}
+  linkedPages:
+  - {fileID: 11400000, guid: f676399fe42c4263a2083f2cbf0c3ffc, type: 2}
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 9a4d67970800463596b9237394ff70f1, type: 2}
+    evidence: {fileID: 11400000, guid: a315e0f11bff401f8df5f91d15b7d59a, type: 2}
+    content: "Password expiry: 29 October\nTime remaining: 28 days\nAccount verification required today: No"
+  - page: {fileID: 11400000, guid: 1f43e2e0e4374d0ea84b111c5cf9ea98, type: 2}
+    evidence: {fileID: 11400000, guid: 08868ce14c764a41bfb264ae13d99d01, type: 2}
+    content: "Official account service: accounts.harbouruniversity.example\nThe email points to accounts.harbouruniversity-support.example, a different domain."
+  requiredEvidence:
+  - {fileID: 11400000, guid: a315e0f11bff401f8df5f91d15b7d59a, type: 2}
+  - {fileID: 11400000, guid: 08868ce14c764a41bfb264ae13d99d01, type: 2}
+  reminder:
+    id: "S2_REMINDER_ACCOUNT_RESTRICTION"
+    triggerEvidenceCount: 1
+    title: "Account verification still pending"
+    body: "Your account verification is still incomplete. Please complete the check before 6:00 PM today to avoid losing access to email and assignment submission.\n\nhttps://accounts.harbouruniversity-support.example/verify"
+  feedback:
+    proceed:
+      title: "Your account password was exposed"
+      body: "You submitted your student email address and password to a page controlled by a scammer. The scammer now has those login details and could use them to access your email or impersonate you.\n\nThe Student Account Centre showed that your password expires on 29 October, not today. The email also used a different domain from the university account service. Collecting evidence did not protect your account when you still submitted the password."
+    ignore:
+      title: "You left the account notice unanswered"
+      body: "You ignored the message and did not submit your password to its verification page. This avoided the credential request.\n\nIf you are concerned about account access, open the university website independently and check the Student Account Centre. Genuine expiry reminders can exist; confirm the actual expiry date and manage your account through the official service."
+    reportUnverified:
+      title: "Safe, without submitted evidence"
+      body: "You rejected the request and did not submit your password. No supporting evidence was submitted with your report.\n\nYou can safely reject a suspicious request without investigating first. To understand this notice, compare the password-expiry record with the account-management address published by IT Services."
+    reportPartial:
+      title: "Safe, with some supporting evidence"
+      body: "You rejected the request and submitted {evidenceCount} evidence item(s), including {collectedRequiredCount} of the {requiredCount} key items. You did not submit your password.\n\nYour report contains part of the basis for your decision. Check both when the password actually expires and whether the linked page is the university account service."
+    reportVerified:
+      title: "Safe, with a supported account check"
+      body: "You rejected the request and submitted all {requiredCount} key evidence items. You kept your password safe.\n\nThe account record gives 29 October as the expiry date, while the email claims the password expires today. The linked page also uses a different domain from the official account service. These independent checks support rejecting this particular request.\n\nA genuine password reminder may still arrive later. Use the official account centre to manage it."
+    unsafeLinkWarning: "You opened the message's verification link {unsafeLinkCount} time(s), but left without submitting your login details. That page was trying to obtain your password. Next time, open the university account service independently before acting on the message."
