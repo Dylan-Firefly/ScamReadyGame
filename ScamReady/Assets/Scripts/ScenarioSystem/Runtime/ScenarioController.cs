@@ -15,15 +15,14 @@ namespace ScamReady.Scenarios
         Phone
     }
 
-    /// <summary>统一接收场景操作并更新会话状态。</summary>
     public sealed class ScenarioController : MonoBehaviour
     {
         [Header("Scenario playlist")]
-        [SerializeField, Tooltip("配置后在当前场景连续发布联系；留空时运行下方的单一情景。")]
+        [SerializeField, Tooltip("Optional playlist. Leave empty to run a single scenario.")]
         private ScenarioPlaylist playlist;
         [Header("Current scenario")]
         [SerializeField] private ScenarioType scenarioType;
-        [SerializeField, Tooltip("Email 模式下使用的 EmailScenarioDefinition。")]
+        [SerializeField, Tooltip("Scenario definition used in Email mode.")]
         private EmailScenarioDefinition definition;
         [Header("Phone scenario data")]
         [SerializeField] private PhoneScenarioCollection phoneCollection;
@@ -133,7 +132,6 @@ namespace ScamReady.Scenarios
             StartQueuedScenario();
         }
 
-        /// <summary>只有完成本轮后才能发布下一次联系；重玩仍使用 Restart。</summary>
         public void NextScenario()
         {
             if (!CanStartNextScenario) return;
@@ -154,7 +152,7 @@ namespace ScamReady.Scenarios
                     round[i] = round[other];
                     round[other] = entry;
                 }
-                // 跨轮也避免刚完成的情景紧接着再次出现。
+                // Avoid repeating the last scenario across rounds.
                 if (round.Count > 1 && round[0] == currentEntry)
                 {
                     int other = UnityEngine.Random.Range(1, round.Count);
@@ -384,15 +382,14 @@ namespace ScamReady.Scenarios
         {
             if (!IsEmailScenario || definition == null
                 || Session == null || !Session.IsEmailOpen || Session.IsComplete) return;
-            // 配有链接的邮件先进入页面；打开链接不等于已经提交信息。
+            // Opening a link does not submit information.
             if (response == ContactResponse.Proceed && !string.IsNullOrWhiteSpace(definition.Email.ProceedLink))
             {
                 OpenLink(definition.Email.ProceedLink);
                 return;
             }
             if (!Session.ChooseResponse(response, ElapsedSeconds)) return;
-            // 决定、快照与评估完成后统一通知界面，避免显示中间状态。
-            // Reject 只是打开证据提交窗口，不立即进行评分。
+            // Notify views after the result is complete.
             if (Session.IsComplete)
             {
                 Result = ScenarioEvaluator.Evaluate(definition, Session);
@@ -420,7 +417,6 @@ namespace ScamReady.Scenarios
         {
             if (Session == null
                 || page == null || string.IsNullOrWhiteSpace(page.Id)) return;
-            // 主页只提供可信入口，邮件带来的页面必须通过链接访问。
             foreach (var available in VerificationPages)
             {
                 if (available != page || page.IsUnsafe) continue;

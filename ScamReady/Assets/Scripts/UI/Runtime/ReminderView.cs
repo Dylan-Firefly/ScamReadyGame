@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace ScamReady.UI
 {
-    /// <summary>挂在常驻 ReminderUI 上，仅显示或关闭一次提醒，不自动打开邮件。</summary>
     public sealed class ReminderView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -27,7 +26,6 @@ namespace ScamReady.UI
             panelRect = (RectTransform)panel.transform;
             var titleRect = titleText.rectTransform;
             var bodyRect = bodyText.rectTransform;
-            // 保留场景配置的边距和最小高度，长文案只增加所需空间。
             titleTopPadding = -titleRect.offsetMax.y;
             titleBodySpacing = titleRect.offsetMin.y - bodyRect.offsetMax.y;
             bottomPadding = panelRect.rect.height + bodyRect.offsetMin.y;
@@ -63,7 +61,6 @@ namespace ScamReady.UI
             else Hide();
         }
 
-        /// <summary>仅显示提醒面板；显示动效在这里接入，不修改提醒触发或已读状态。</summary>
         public void Show()
         {
             if (!panel.activeSelf) panel.SetActive(true);
@@ -81,7 +78,7 @@ namespace ScamReady.UI
             float height = titleTopPadding + titleHeight + titleBodySpacing + bodyHeight + bottomPadding;
             float heightChange = height - panelRect.rect.height;
 
-            // 保持面板底边不动，向上扩展，避免链接越过面板或盖住底部操作栏。
+            // Grow upward while keeping the bottom edge fixed.
             panelRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
             panelRect.anchoredPosition += Vector2.up * (heightChange * panelRect.pivot.y);
             titleRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, titleHeight);
@@ -92,7 +89,6 @@ namespace ScamReady.UI
                 -titleTopPadding - titleHeight - titleBodySpacing - bodyHeight * (1f - bodyRect.pivot.y));
         }
 
-        /// <summary>仅隐藏提醒面板。玩家关闭提醒仍调用 Controller.DismissReminder。</summary>
         public void Hide()
         {
             if (!panel.activeSelf) return;

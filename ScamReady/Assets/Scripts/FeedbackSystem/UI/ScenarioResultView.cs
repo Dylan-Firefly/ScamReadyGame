@@ -6,7 +6,6 @@ using ScamReady.UI;
 
 namespace ScamReady.Feedback
 {
-    /// <summary>常驻 FeedbackUI 只展示已冻结的结果；重新开始交给流程控制器。</summary>
     public sealed class ScenarioResultView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -132,7 +131,6 @@ namespace ScamReady.Feedback
             RefreshDecisionSummary(result);
         }
 
-        /// <summary>新结算结果首次显示时，根据结果类型播放对应反馈音。</summary>
         private void PlayResultSound(ScenarioEvaluation result)
         {
             if (audioPlayer == null)
@@ -173,7 +171,6 @@ namespace ScamReady.Feedback
                 + (result.IsLegitimateContact ? "\nThis was a genuine notice." : string.Empty);
         }
 
-        /// <summary>仅显示结果窗口；开窗动效和音效在这里接入，不重新评估结果。</summary>
         public void Show()
         {
             if (window.activeSelf) return;
@@ -181,7 +178,6 @@ namespace ScamReady.Feedback
             BringToFront();
         }
 
-        /// <summary>仅隐藏结果窗口。重新开始必须调用 Controller.Restart。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;
@@ -196,7 +192,6 @@ namespace ScamReady.Feedback
 
         private void ResetScroll()
         {
-            // 激活窗口并更新文案后计算高度，长反馈可以滚动阅读。
             Canvas.ForceUpdateCanvases();
             bodyScroll.StopMovement();
             bodyScroll.verticalNormalizedPosition = 1f;

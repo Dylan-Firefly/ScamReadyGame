@@ -2,7 +2,6 @@ using ScamReady.Responses;
 
 namespace ScamReady.Feedback
 {
-    /// <summary>选择反馈分支；Report 的证据档位不等同于判断正确。</summary>
     public enum ScenarioOutcome
     {
         Proceed,
@@ -12,7 +11,6 @@ namespace ScamReady.Feedback
         ReportVerified
     }
 
-    /// <summary>决策时生成一次的只读结果，不引用可继续变化的玩家进度。</summary>
     public sealed class ScenarioEvaluation
     {
         public ContactResponse Response { get; }
@@ -24,7 +22,7 @@ namespace ScamReady.Feedback
         public bool IsLegitimateContact { get; }
         public bool HasCompleteVerification => RequiredEvidenceCount > 0
             && CollectedRequiredEvidenceCount == RequiredEvidenceCount;
-        // 证据完整与判断正确是两件事，不能把充分查验后误报真实通知当作成功。
+        // Complete evidence does not guarantee a correct decision.
         public bool HasSupportedDecision => HasCompleteVerification
             && Response == (IsLegitimateContact ? ContactResponse.Proceed : ContactResponse.Reject);
 

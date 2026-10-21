@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace ScamReady.Scenarios
 {
-    /// <summary>可复用的邮件情境内容。运行时不修改这个资产。</summary>
     [CreateAssetMenu(menuName = "Scam Ready/Email Scenario", fileName = "EmailScenario")]
     public sealed class EmailScenarioDefinition : ScriptableObject
     {
@@ -15,16 +14,16 @@ namespace ScamReady.Scenarios
         [SerializeField] private string title;
         [SerializeField, TextArea(2, 5)] private string setup;
         [SerializeField] private string gameDateText;
-        [SerializeField, Tooltip("合法通知勾选此项，仅用于结算；默认不勾选，兼容现有诈骗情景。")]
+        [SerializeField, Tooltip("Enable for genuine notices. Used during evaluation only.")]
         private bool isLegitimate;
         [SerializeField] private EmailData email = new EmailData();
-        [SerializeField, Tooltip("拖入本关可访问的官网页面资产。当前浏览器提供两个入口。")]
+        [SerializeField, Tooltip("Official sources for this scenario. The browser shows two entries.")]
         private VerificationPageDefinition[] verificationPages = new VerificationPageDefinition[0];
-        [SerializeField, Tooltip("通过正文链接访问的额外页面，不作为浏览器主页的可信入口。")]
+        [SerializeField, Tooltip("Pages reached through message links, outside the trusted homepage sources.")]
         private VerificationPageDefinition[] linkedPages = new VerificationPageDefinition[0];
-        [SerializeField, Tooltip("每条配置指定页面、可点击内容及证据。本关内证据 ID 不重复。")]
+        [SerializeField, Tooltip("Page content and evidence placements. Use unique evidence IDs.")]
         private EvidencePlacement[] evidencePlacements = new EvidencePlacement[0];
-        [SerializeField, Tooltip("充分查验所需的关键证据，影响后续评估，不锁定拒绝按钮。")]
+        [SerializeField, Tooltip("Required evidence for evaluation. Does not lock the report button.")]
         private EvidenceDefinition[] requiredEvidence = new EvidenceDefinition[0];
         [SerializeField] private ReminderConfig reminder = new ReminderConfig();
         [SerializeField] private ScenarioFeedbackConfig feedback = new ScenarioFeedbackConfig();

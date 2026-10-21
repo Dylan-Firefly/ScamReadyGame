@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace ScamReady.Feedback
 {
-    /// <summary>固定分支的可编辑文案；MVP 不配置条件组合或动态规则。</summary>
     [Serializable]
     public sealed class ScenarioFeedbackConfig
     {
@@ -17,7 +16,7 @@ namespace ScamReady.Feedback
             "Safe, with some verification", "You collected {evidenceCount} evidence item(s), but have not collected all required evidence.");
         [SerializeField] private FeedbackMessage reportVerified = new FeedbackMessage(
             "Safe, with a supported decision", "You collected {evidenceCount} evidence item(s) and all {requiredCount} required items before rejecting the scam.");
-        [SerializeField, TextArea(2, 5), Tooltip("打开风险链接后未提交信息的补充反馈。留空则不追加；支持 {unsafeLinkCount}。")]
+        [SerializeField, TextArea(2, 5), Tooltip("Optional warning for risky links opened without submitting. Supports {unsafeLinkCount}.")]
         private string unsafeLinkWarning = "You opened {unsafeLinkCount} untrusted link(s). Opening the message's link was a risky step. You avoided submitting the requested information. Next time, verify through a trusted website or app you open independently.";
 
         public string UnsafeLinkWarning => unsafeLinkWarning;
@@ -40,7 +39,7 @@ namespace ScamReady.Feedback
     public sealed class FeedbackMessage
     {
         [SerializeField] private string title;
-        [SerializeField, TextArea(3, 10), Tooltip("支持 {evidenceCount}、{requiredCount}、{collectedRequiredCount}、{unsafeLinkCount}。")]
+        [SerializeField, TextArea(3, 10), Tooltip("Supports {evidenceCount}, {requiredCount}, {collectedRequiredCount}, {unsafeLinkCount}.")]
         private string body;
 
         public string Title => title;

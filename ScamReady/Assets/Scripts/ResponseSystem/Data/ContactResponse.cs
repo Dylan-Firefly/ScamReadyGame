@@ -1,6 +1,6 @@
 namespace ScamReady.Responses
 {
-    // Stop Contact 是暂停联系，不属于最终回应。
+    // Stop Contact pauses the interaction; it is not a final response.
     public enum ContactResponse
     {
         Proceed,

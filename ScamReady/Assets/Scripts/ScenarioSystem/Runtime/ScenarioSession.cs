@@ -14,7 +14,7 @@ namespace ScamReady.Scenarios
 
     public enum ScenarioEventType
     {
-        // 教程在场景中保存的是枚举编号。已有编号必须固定，新增事件使用新编号。
+        // Keep serialized event IDs stable; assign new IDs to new events.
         EmailReceived = 0,
         EmailOpened = 1,
         EmailClosed = 2,
@@ -33,7 +33,6 @@ namespace ScamReady.Scenarios
         PhoneClosed = 15
     }
 
-    /// <summary>记录操作顺序，后续查验与反馈模块可在此基础上扩展。</summary>
     public sealed class ScenarioEvent
     {
         public int SequenceIndex { get; }
@@ -50,7 +49,6 @@ namespace ScamReady.Scenarios
         }
     }
 
-    /// <summary>一次游玩的状态；关卡资产与 UI 都不另存玩家进度。</summary>
     public sealed class ScenarioSession
     {
         private readonly List<ScenarioEvent> history = new List<ScenarioEvent>();
@@ -147,11 +145,9 @@ namespace ScamReady.Scenarios
                 response != ContactResponse.Reject)
                 return false;
 
-            // Reject 先打开证据提交窗口，不立即结算。
             if (response == ContactResponse.Reject)
                 return OpenEvidenceSubmission(elapsedSeconds);
 
-            // 提交窗口打开期间不能进行其他回应。
             if (IsEvidenceSubmissionOpen)
                 return false;
 
@@ -220,9 +216,9 @@ namespace ScamReady.Scenarios
         private void CompleteDecision(ContactResponse response, double elapsedSeconds)
         {
             Decision = response;
-            // 保存独立副本，最终选择后的收集不会改变当时的查验依据。
+            // Snapshot evidence when the player decides.
             DecisionEvidenceIds = new List<string>(collectedEvidenceIds).AsReadOnly();
-            // 风险操作数量与证据一样，在最终决定时冻结；不会因事后行为升级或改写。
+            // Freeze risky actions at the decision point.
             foreach (var action in history)
                 if (action.Type == ScenarioEventType.UnsafeLinkOpened) DecisionUnsafeLinkCount++;
             DecisionSequenceIndex = history.Count + 1;

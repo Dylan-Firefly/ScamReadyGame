@@ -7,10 +7,6 @@ using UnityEngine.UI;
 
 namespace ScamReady.Evidence
 {
-    /// <summary>
-    /// Reject 时显示已收集证据，允许玩家选择并提交。
-    /// 不单独保存玩家进度，最终提交由 ScenarioController 处理。
-    /// </summary>
     public sealed class EvidenceSubmissionView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -135,7 +131,7 @@ namespace ScamReady.Evidence
                     "Selected Evidence: " + selected;
             }
 
-            // 允许提交零个证据，系统会评估为未验证。
+            // Allow reporting without evidence.
             if (submitButton != null)
                 submitButton.interactable = true;
         }

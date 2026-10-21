@@ -4,7 +4,6 @@ using ScamReady.UI;
 
 namespace ScamReady.Email
 {
-    /// <summary>绑定收件箱列表与详情。挂在常驻 EmailUI 上，关闭 EmailWindow 时保留订阅。</summary>
     public sealed class EmailAppView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -20,7 +19,6 @@ namespace ScamReady.Email
         [Header("Animation")]
         [SerializeField] private UIWindowAnimator windowAnimator;
 
-        // 用于避免同一 ScenarioSession 在多次 Refresh 时重复播放邮件提示音。
         private object lastSession;
         private UnityEngine.UI.ScrollRect bodyScroll;
         private bool resetScroll;
@@ -71,7 +69,6 @@ namespace ScamReady.Email
             }
         }
 
-        /// <summary>新会话首次出现邮件时播放一次提示音，后续状态刷新不重复播放。</summary>
         private void RefreshNotification()
         {
             if (controller.Session == null)
@@ -96,7 +93,6 @@ namespace ScamReady.Email
             else Hide();
         }
 
-        /// <summary>仅显示邮件窗口；开窗动效和音效在这里接入。玩法操作调用 Controller。</summary>
         public void Show()
         {
             if (window.activeSelf) return;
@@ -105,7 +101,6 @@ namespace ScamReady.Email
             audioPlayer?.PlayOpen();
         }
 
-        /// <summary>仅隐藏邮件窗口；关闭动效和音效在这里接入。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;

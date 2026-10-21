@@ -41,13 +41,13 @@ namespace ScamReady.Phone
         [SerializeField] private PhoneDialogLineData[] dialogLines = new PhoneDialogLineData[0];
         [SerializeField] private PhoneOutcomeData[] outcomes = new PhoneOutcomeData[0];
         [SerializeField] private PhoneMessageData[] messages = new PhoneMessageData[0];
-        [SerializeField, Tooltip("浏览器主页中可直接访问的可信页面。")]
+        [SerializeField, Tooltip("Trusted pages available on the browser homepage.")]
         private VerificationPageDefinition[] verificationPages = new VerificationPageDefinition[0];
-        [SerializeField, Tooltip("通过页面链接访问的其他页面。")]
+        [SerializeField, Tooltip("Additional pages reached through links.")]
         private VerificationPageDefinition[] linkedPages = new VerificationPageDefinition[0];
-        [SerializeField, Tooltip("页面中可收集的证据及其来源内容。")]
+        [SerializeField, Tooltip("Collectible evidence and its source content.")]
         private EvidencePlacement[] evidencePlacements = new EvidencePlacement[0];
-        [SerializeField, Tooltip("完成充分查验所需的关键证据。")]
+        [SerializeField, Tooltip("Key evidence required for complete verification.")]
         private EvidenceDefinition[] requiredEvidence = new EvidenceDefinition[0];
 
         public string Id => id;
@@ -137,7 +137,7 @@ namespace ScamReady.Phone
     {
         [SerializeField] private string id;
         [SerializeField, TextArea(2, 8)] private string text;
-        [SerializeField, Tooltip("点击此对话段即可收集为本关所需证据。")]
+        [SerializeField, Tooltip("Allow collecting this dialogue as evidence.")]
         private bool isEvidence;
 
         public string Id => id;
@@ -183,9 +183,9 @@ namespace ScamReady.Phone
         [SerializeField] private string id;
         [SerializeField] private string label;
         [SerializeField] private PhoneInteractionType type;
-        [SerializeField, Tooltip("ShowMessage / OpenLink 后可跳转到的本关消息 ID。")]
+        [SerializeField, Tooltip("Scenario message ID used after ShowMessage or OpenLink.")]
         private string targetMessageId;
-        [SerializeField, Tooltip("OpenLink 仅在游戏内展示，不会打开真实网站。")]
+        [SerializeField, Tooltip("OpenLink uses the in-game browser only.")]
         private string linkAddress;
         [SerializeField, TextArea(2, 5)] private string linkPreview;
         [SerializeField] private PhoneResponse response;

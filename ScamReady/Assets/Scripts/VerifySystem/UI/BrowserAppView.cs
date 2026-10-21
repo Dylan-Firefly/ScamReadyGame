@@ -7,7 +7,6 @@ using ScamReady.UI;
 
 namespace ScamReady.Verification
 {
-    /// <summary>浏览器首页与通用信息页。挂在常驻 BrowserUI 上，所有 UI 引用在 Inspector 绑定。</summary>
     public sealed class BrowserAppView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -16,16 +15,16 @@ namespace ScamReady.Verification
         [SerializeField] private UnityEngine.UI.Button homeButton;
         [SerializeField] private GameObject homePanel;
         [SerializeField] private GameObject pagePanel;
-        [SerializeField, Tooltip("绑定两个官网入口组件，顺序对应关卡的 Verification Pages。")]
+        [SerializeField, Tooltip("Two source entries matching the scenario's page order.")]
         private VerificationLinkView[] links;
         [SerializeField] private TMP_Text addressText;
         [SerializeField] private TMP_Text siteText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text bodyText;
         [SerializeField] private UnityEngine.UI.ScrollRect bodyScroll;
-        [SerializeField, Tooltip("绑定 EvidenceSpot Prefab 的组件，按本关页面配置生成卡片。")]
+        [SerializeField, Tooltip("EvidenceSpot prefab used to create page evidence cards.")]
         private EvidenceSpotView evidenceSpotPrefab;
-        [SerializeField, Tooltip("绑定 BodyScrollView/Viewport/Content，卡片显示在正文之后。")]
+        [SerializeField, Tooltip("BodyScrollView/Viewport/Content; cards appear after the body text.")]
         private Transform evidenceContainer;
         [SerializeField] private GameObject processPanel;
         [SerializeField] private UnityEngine.UI.Button processButton;
@@ -69,7 +68,7 @@ namespace ScamReady.Verification
 
         private void RebuildEvidenceSpots(VerificationPageDefinition page)
         {
-            // 销毁在帧末执行，先隐藏旧卡片，避免布局暂时计算出重复高度。
+            // Hide old cards before deferred destruction updates the layout.
             foreach (var spot in evidenceSpots)
             {
                 spot.gameObject.SetActive(false);
@@ -183,7 +182,6 @@ namespace ScamReady.Verification
             else Hide();
         }
 
-        /// <summary>仅显示浏览器窗口；开窗动效和音效在这里接入。导航操作调用 Controller。</summary>
         public void Show()
         {
             if (window.activeSelf) return;
@@ -192,7 +190,6 @@ namespace ScamReady.Verification
             audioPlayer?.PlayOpen();
         }
 
-        /// <summary>仅隐藏浏览器窗口，保留当前页面和阅读位置。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;
@@ -204,7 +201,6 @@ namespace ScamReady.Verification
 
         private void ResetScroll()
         {
-            // 换页或重开关卡时从顶部阅读；关闭再打开同一页保留阅读位置。
             Canvas.ForceUpdateCanvases();
             bodyScroll.StopMovement();
             bodyScroll.verticalNormalizedPosition = 1f;

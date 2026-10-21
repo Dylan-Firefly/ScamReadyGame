@@ -5,13 +5,12 @@ using UnityEngine;
 
 namespace ScamReady.UI
 {
-    /// <summary>桌面入口与新邮件提示。所有引用在场景 Inspector 中绑定。</summary>
     public sealed class ScenarioDesktopView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
         [SerializeField] private UnityEngine.UI.Button emailButton;
         [SerializeField] private UnityEngine.UI.Button phoneButton;
-        [SerializeField, Tooltip("绑定 DesktopPanel/BrowserShortcut 的按钮。")]
+        [SerializeField, Tooltip("Button on DesktopPanel/BrowserShortcut.")]
         private UnityEngine.UI.Button browserButton;
         [SerializeField] private UnityEngine.UI.Button notificationButton;
         [SerializeField] private UnityEngine.UI.Button restartButton;
@@ -25,7 +24,6 @@ namespace ScamReady.UI
 
         private void OnEnable()
         {
-            // 重新启用时同步全部桌面入口，不假定它们原先的显隐状态一致。
             displayedVisibility = null;
             controller.Changed += Refresh;
             emailButton.onClick.AddListener(controller.OpenEmail);
@@ -88,14 +86,12 @@ namespace ScamReady.UI
             else Hide();
         }
 
-        /// <summary>仅显示桌面情境卡和入口，常驻栏保留。切换应用仍通过 Controller。</summary>
         public void Show()
         {
             displayedVisibility = true;
             SetDesktopElementsActive(true);
         }
 
-        /// <summary>仅隐藏桌面情境卡和入口；切换动效和音效在这里接入。</summary>
         public void Hide()
         {
             if (displayedVisibility == false) return;

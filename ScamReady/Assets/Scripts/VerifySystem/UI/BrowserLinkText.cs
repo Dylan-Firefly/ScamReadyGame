@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 
 namespace ScamReady.Verification
 {
-    /// <summary>把普通文案中的网址显示为可点击链接，仅交给游戏内导航，不访问真实网站。</summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(TextMeshProUGUI))]
     public sealed class BrowserLinkText : MonoBehaviour, IPointerDownHandler, IPointerClickHandler
@@ -18,7 +17,6 @@ namespace ScamReady.Verification
         private string displayedContent;
         private Action<string> openLink;
 
-        /// <summary>首次绑定时添加文字点击组件，已有 TMP 字段和场景引用保持不变。</summary>
         public static void SetText(TMP_Text target, string content, Action<string> onOpenLink)
         {
             var view = target.GetComponent<BrowserLinkText>();
@@ -54,7 +52,7 @@ namespace ScamReady.Verification
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            // 自己接收按下，避免地址文字位于 Button 内时，按下交给父按钮、点击却交给文字而失效。
+            // Handle pointer-down here so the parent button does not consume it.
             if (text != null) text.ForceMeshUpdate();
         }
 

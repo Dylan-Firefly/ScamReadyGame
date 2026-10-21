@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace ScamReady.Evidence
 {
-    /// <summary>挂在常驻 EvidenceUI 上，展示已收集的摘要。所有窗口引用在 Inspector 绑定。</summary>
     public sealed class EvidenceSummaryView : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
@@ -92,14 +91,12 @@ namespace ScamReady.Evidence
             else Hide();
         }
 
-        /// <summary>仅显示摘要窗口；开窗动效和音效在这里接入。玩家打开笔记仍通过 Controller。</summary>
         public void Show()
         {
             if (window.activeSelf) return;
             window.SetActive(true);
         }
 
-        /// <summary>仅隐藏摘要窗口，保留内容和阅读位置。</summary>
         public void Hide()
         {
             if (!window.activeSelf) return;
@@ -108,7 +105,7 @@ namespace ScamReady.Evidence
 
         private void ResetScrollIfNeeded()
         {
-            // 实际打开并完成布局后再重置位置，关闭期间保留重置请求。
+            // Reset scrolling only after the window is visible.
             if (!window.activeInHierarchy || !resetScroll) return;
             Canvas.ForceUpdateCanvases();
             summaryScroll.StopMovement();

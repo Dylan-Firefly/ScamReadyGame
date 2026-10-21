@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace ScamReady.Email
 {
-    /// <summary>邮件内容配置；玩家的阅读状态由 ScenarioSession 保存。</summary>
     [Serializable]
     public sealed class EmailData
     {
@@ -13,7 +12,7 @@ namespace ScamReady.Email
         [SerializeField] private string replyTo;
         [SerializeField] private string subject;
         [SerializeField, TextArea(10, 30)] private string body;
-        [SerializeField, Tooltip("Proceed 要打开的模拟网址；需对应本关页面地址。留空则沿用直接结算。")]
+        [SerializeField, Tooltip("Simulated page opened by Proceed. Leave empty to finish immediately.")]
         private string proceedLink;
         [SerializeField] private string proceedLabel = "Reply and request instructions";
         [SerializeField] private string stopContactLabel = "Close email and verify independently";

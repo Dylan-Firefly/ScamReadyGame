@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 
 namespace ScamReady.UI
 {
-    /// <summary>主菜单的开始、继续与退出；Continue 只控制跳转，不恢复关卡进度。</summary>
     public sealed class MainMenuController : MonoBehaviour
     {
         [SerializeField] private UnityEngine.UI.Button newGameButton;

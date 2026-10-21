@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace ScamReady.Verification
 {
-    /// <summary>一个官网入口。Inspector 绑定自身按钮、入口文字和地址文字。</summary>
     public sealed class VerificationLinkView : MonoBehaviour
     {
         [SerializeField] private UnityEngine.UI.Button button;

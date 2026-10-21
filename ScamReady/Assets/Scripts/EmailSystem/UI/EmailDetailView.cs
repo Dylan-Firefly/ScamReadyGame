@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace ScamReady.Email
 {
-    /// <summary>邮件详情展示与操作区域；会话状态由控制器提供。</summary>
     public sealed class EmailDetailView : MonoBehaviour
     {
         [SerializeField] private TMP_Text senderText;

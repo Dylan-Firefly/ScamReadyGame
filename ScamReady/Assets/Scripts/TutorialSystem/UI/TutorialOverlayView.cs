@@ -5,13 +5,12 @@ using UnityEngine.EventSystems;
 
 namespace ScamReady.Tutorial
 {
-    /// <summary>教程表现与输入遮罩；原按钮保留原有层级和监听，滚动单独转发。</summary>
     public sealed class TutorialOverlayView : MonoBehaviour, ICanvasRaycastFilter,
         IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
     {
         [SerializeField] private RectTransform overlayRoot;
         [SerializeField] private UnityEngine.UI.Image inputBlocker;
-        [SerializeField, Tooltip("依次为左、右、上、下四块遮罩。")]
+        [SerializeField, Tooltip("Dimmer order: left, right, top, bottom.")]
         private RectTransform[] dimmers;
         [SerializeField] private RectTransform focusFrame;
         [SerializeField] private RectTransform guidePanel;
@@ -48,7 +47,6 @@ namespace ScamReady.Tutorial
 
         private void RequestNext()
         {
-            // 确认框的右侧按钮提交跳过；普通提示框的右侧按钮仍是 Next。
             if (confirmingSkip) SkipRequested?.Invoke();
             else NextRequested?.Invoke();
         }
@@ -153,7 +151,7 @@ namespace ScamReady.Tutorial
             }
             else if (!locked && lockedEventSystem != null)
             {
-                // 键盘 Submit 也不能绕过聚焦限制；退出时恢复原有导航设置。
+                // Block keyboard navigation while tutorial input is locked.
                 lockedEventSystem.SetSelectedGameObject(null);
                 lockedEventSystem.sendNavigationEvents = previousNavigation;
                 lockedEventSystem = null;
@@ -271,7 +269,6 @@ namespace ScamReady.Tutorial
             bool inside = RectTransformUtility.RectangleContainsScreenPoint(clickTarget, screenPoint, eventCamera);
             if (inside && currentStep.FocusEvidence && scroll != null && scroll.viewport != null)
                 inside = RectTransformUtility.RectangleContainsScreenPoint(scroll.viewport, screenPoint, eventCamera);
-            // false 让透明输入层放行；四块视觉遮罩与聚焦框都不参与 Raycast。
             return !inside;
         }
 

@@ -4,12 +4,11 @@ using UnityEngine;
 
 namespace ScamReady.Tutorial
 {
-    /// <summary>只读取现有会话推进教程，不替玩家操作，也不改写玩法或评估状态。</summary>
     public sealed class TutorialFlow : MonoBehaviour
     {
         [SerializeField] private ScenarioController controller;
         [SerializeField] private TutorialOverlayView overlay;
-        [SerializeField, Tooltip("绑定当前浏览器生成证据卡片的 Content。")]
+        [SerializeField, Tooltip("Browser content containing generated evidence cards.")]
         private Transform evidenceContainer;
         [SerializeField] private TutorialStep[] steps = new TutorialStep[0];
 
@@ -46,7 +45,7 @@ namespace ScamReady.Tutorial
 
         private void RequestRefresh()
         {
-            // 结束教程情境才解锁 Continue；跳过文字引导或重置不算完成。
+            // Unlock Continue only after completing the tutorial scenario.
             if (controller.Session != null && controller.Session.IsComplete)
                 GameRunProgress.MarkTutorialCompleted();
             refreshRequested = true;
@@ -54,7 +53,7 @@ namespace ScamReady.Tutorial
 
         private void LateUpdate()
         {
-            // 等普通 View 响应完 Changed，再读取动态卡片和窗口，避免依赖订阅顺序。
+            // Wait for views to refresh before finding dynamic targets.
             if (!refreshRequested || controller == null || overlay == null || steps.Length == 0) return;
             refreshRequested = false;
             var session = controller.Session;
@@ -80,7 +79,7 @@ namespace ScamReady.Tutorial
             observedSession = session;
             stepIndex = 0;
             historyStart = session.History.Count;
-            // Do once 与 Session 分开保存；Reset/Play again 换会话时不重复教学。
+            // Keep tutorial completion separate from scenario resets.
             finished = hasStarted;
             showRequested = !finished;
             hasStarted = true;
@@ -137,7 +136,6 @@ namespace ScamReady.Tutorial
         {
             var page = controller.CurrentVerificationPage;
             if (page == null || evidenceContainer == null) return null;
-            // 与浏览器的生成顺序对应，只在绑定的容器内寻找，不访问 View 的私有字段。
             var cards = evidenceContainer.GetComponentsInChildren<EvidenceSpotView>(false);
             int index = 0;
             foreach (var placement in controller.EvidencePlacements)
@@ -153,7 +151,6 @@ namespace ScamReady.Tutorial
 
         private static void RevealEvidence(RectTransform target, UnityEngine.UI.ScrollRect scroll)
         {
-            // 阅读说明完成后，仅把目标卡片移入可见区域，不产生任何玩家行为记录。
             Canvas.ForceUpdateCanvases();
             if (scroll.content == null || scroll.viewport == null) return;
             var bounds = RectTransformUtility.CalculateRelativeRectTransformBounds(scroll.viewport, target);
