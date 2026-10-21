@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e859dde399c43218513a151fe13541e, type: 3}
+  m_Name: S5_OfficialPaymentAndLateFee
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Evidence.EvidenceDefinition
+  id: "S5_E02_OFFICIAL_PAYMENT_AND_LATE_FEE"
+  title: "Official Payment Route and Deadline"
+  summary: "Payments use the available Student Portal, as the email requests. For HU-TF1042, AUD 75 is added on 15 October if the 12 October balance remains unpaid; the original tuition is still owed."

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
+  m_Name: S4_LibraryRecall
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
+  id: "S4_LIBRARY_RECALL"
+  title: "A New Return Date"
+  setup: "You borrowed Student Study Workbook for your coursework and expected to keep it until 29 October. A library email now gives an earlier return date. Check the notice and decide what to do."
+  gameDateText: "1 October  |  10:17 AM"
+  isLegitimate: 1
+  email:
+    id: "S4_EMAIL_LIBRARY_RECALL"
+    sender: "Harbour University Library"
+    from: "library-notices@harbouruniversity.example"
+    replyTo: "library@harbouruniversity.example"
+    subject: "Library recall - Your return date has changed"
+    body: "Dear student,\n\nAnother reader has requested an item you currently have on loan:\n\nStudent Study Workbook\nLoan reference: HU-L1734\nPrevious due date: 29 October\nNew due date: 8 October\n\nPlease return the book by the new due date. This recalled item is not eligible for renewal. Late-return charges may apply after 8 October.\n\nCheck My Library Loans through the university library website, or view the loan record here:\nhttps://library.harbouruniversity.example/account/loans\n\nReturn the book using a library return chute or the service desk. If you have already returned it, check the loan record and contact the library if it has not updated.\n\nRegards,\nBorrowing Services\nHarbour University Library"
+    proceedLink: ""
+    proceedLabel: "Arrange the book return"
+    stopContactLabel: "Return to desktop and verify"
+    ignoreLabel: "Take no further action"
+    rejectLabel: "Reject this notice as a scam"
+  verificationPages:
+  - {fileID: 11400000, guid: 56333381781549fe963f6f811a593b9d, type: 2}
+  - {fileID: 11400000, guid: 0d1dbb11cd454f2d9fc89fd52b90c11e, type: 2}
+  linkedPages: []
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 56333381781549fe963f6f811a593b9d, type: 2}
+    evidence: {fileID: 11400000, guid: 30969d753d044fd4a6d88792ea217b09, type: 2}
+    content: "Student Study Workbook - HU-L1734\nStatus: Recalled\nDue date changed from 29 October to 8 October\nRenewal: Unavailable"
+  - page: {fileID: 11400000, guid: 0d1dbb11cd454f2d9fc89fd52b90c11e, type: 2}
+    evidence: {fileID: 11400000, guid: 1c2425a50b2b41ebb001b07c2b511c38, type: 2}
+    content: "Recall emails can announce an earlier due date. Recalled items cannot be renewed. Late returns cost AUD 2 per day, and unreturned overdue items pause borrowing."
+  requiredEvidence:
+  - {fileID: 11400000, guid: 30969d753d044fd4a6d88792ea217b09, type: 2}
+  - {fileID: 11400000, guid: 1c2425a50b2b41ebb001b07c2b511c38, type: 2}
+  reminder:
+    id: "S4_REMINDER_LIBRARY_RETURN"
+    triggerEvidenceCount: 1
+    title: "Library return reminder"
+    body: "Student Study Workbook, reference HU-L1734, is due back on 8 October following a recall. If you have already returned it, check that your loan record has updated.\n\nhttps://library.harbouruniversity.example/account/loans"
+  feedback:
+    proceed:
+      title: "The book reaches the next reader"
+      body: "You chose to arrange the return through the library. In the days that follow, you drop the book into the return chute before 8 October. Your loan record updates to Returned, no overdue fee is added, and the next reader can collect it.\n\nAt your decision, {collectedRequiredCount} of the {requiredCount} key checks were recorded. The updated loan record and recall rules support the notice. A changed deadline is a reason to verify, rather than a reason by itself to reject a message."
+    ignore:
+      title: "An overdue book interrupts your study plans"
+      body: "You chose to take no further action on the recall.\n\nOn 11 October, you visit the library to borrow another reference for your group assignment. Borrowing is paused: Student Study Workbook is still on loan and is now three days overdue. Your account also shows AUD 6 in late-return fees.\n\nYou need to bring the book back before borrowing again. The email was a genuine notice of the changed due date. The charge came from leaving the recalled book unreturned after 8 October, rather than from leaving the email unanswered."
+    reportUnverified:
+      title: "A genuine recall was mistaken for a scam"
+      body: "You rejected the library notice as a scam without submitting supporting evidence. The official loan record still shows HU-L1734 recalled and due on 8 October.\n\nReporting the email does not remove the book from your loans or cancel its return date. You can avoid replying to an email and still check and handle the obligation through the library independently."
+    reportPartial:
+      title: "The notice matches the library records"
+      body: "You rejected the notice and submitted {evidenceCount} evidence item(s), including {collectedRequiredCount} of the {requiredCount} key items.\n\nThis was a genuine library recall. Compare both the updated loan record and the recall rules: they support the earlier return date, rather than a conclusion that the email is fraudulent. The return requirement remains on your library account."
+    reportVerified:
+      title: "The evidence supports returning the book"
+      body: "You submitted all {requiredCount} key evidence items, but rejected the genuine notice as a scam.\n\nThe record confirms that this particular book has been recalled and is due on 8 October. The policy explains why the date can change and why renewal is unavailable. Your evidence supports the notice; the conclusion did not follow the checks.\n\nYou can return the book through the library without replying to the email. Complete verification is useful when it informs the response, rather than always leading to rejection."
+    unsafeLinkWarning: ""

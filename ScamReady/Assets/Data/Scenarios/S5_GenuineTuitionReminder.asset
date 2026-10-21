@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c517d12e53a1764d85a68cd927de021, type: 3}
+  m_Name: S5_GenuineTuitionReminder
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Scenarios.EmailScenarioDefinition
+  id: "S5_GENUINE_TUITION_REMINDER"
+  title: "A Tuition Reminder That Matches"
+  setup: "Your tuition payment is approaching its due date. A reminder has arrived from Student Fees. Check the current account record and payment instructions before deciding how to respond."
+  gameDateText: "11 October  |  10:17 AM"
+  isLegitimate: 1
+  email:
+    id: "S5_EMAIL_GENUINE_TUITION_REMINDER"
+    sender: "Harbour University Student Fees"
+    from: "studentfees@harbouruniversity.example"
+    replyTo: "studentfees@harbouruniversity.example"
+    subject: "Payment reminder - Tuition balance due 12 October"
+    body: "Dear student,\n\nThis is a reminder that your tuition balance is approaching its due date:\n\nInvoice reference: HU-TF1042\nOutstanding balance: AUD 4,820.00\nDue date: 12 October\n\nPlease check your statement in the Student Portal and use the payment options listed there. You can open the portal from the university website, or view your account here:\nhttps://students.harbouruniversity.example/finances/tuition\n\nIf you have recently paid, check your received payments before making another payment. If you are unable to pay by the due date, contact Student Fees through the university website to discuss support.\n\nLate-payment charges may apply if the balance remains unpaid after the deadline.\n\nRegards,\nStudent Fees and Payments\nHarbour University"
+    proceedLink: ""
+    proceedLabel: "Pay through Student Portal"
+    stopContactLabel: "Return to desktop and verify"
+    ignoreLabel: "Take no further action"
+    rejectLabel: "Reject this notice as a scam"
+  verificationPages:
+  - {fileID: 11400000, guid: 22b1222af0a442e9ad4c089d391a2fd5, type: 2}
+  - {fileID: 11400000, guid: 3e8cd3cb3aff44998da5374311bcb0a6, type: 2}
+  linkedPages: []
+  evidencePlacements:
+  - page: {fileID: 11400000, guid: 22b1222af0a442e9ad4c089d391a2fd5, type: 2}
+    evidence: {fileID: 11400000, guid: ecdc8f7ab7b94daebb925cbee2377919, type: 2}
+    content: "Invoice HU-TF1042\nUnpaid balance: AUD 4,820.00\nDue date: 12 October\nNo recent or pending payment recorded"
+  - page: {fileID: 11400000, guid: 3e8cd3cb3aff44998da5374311bcb0a6, type: 2}
+    evidence: {fileID: 11400000, guid: 314c7a123db14f89aecd2a9804acf42c, type: 2}
+    content: "The official Student Portal payment service is available. HU-TF1042 is due on 12 October; if still unpaid, an AUD 75 late-payment fee is added on 15 October."
+  requiredEvidence:
+  - {fileID: 11400000, guid: ecdc8f7ab7b94daebb925cbee2377919, type: 2}
+  - {fileID: 11400000, guid: 314c7a123db14f89aecd2a9804acf42c, type: 2}
+  reminder:
+    id: "S5_REMINDER_TUITION_DUE_DATE"
+    triggerEvidenceCount: 1
+    title: "Tuition payment reminder"
+    body: "Invoice HU-TF1042, AUD 4,820.00, is due on 12 October. Check your statement and any recent payments through the Student Portal. If you need help paying on time, use the Student Fees contact channel on the university website.\n\nhttps://students.harbouruniversity.example/finances/tuition"
+  feedback:
+    proceed:
+      title: "Your tuition is settled through the portal"
+      body: "You chose the official Student Portal payment route. Afterwards, your statement shows the AUD 4,820.00 balance as paid by 12 October. No late-payment fee is added, and the money you set aside for next week remains available.\n\nAt your decision, {collectedRequiredCount} of the {requiredCount} key checks were recorded. The invoice, due date and payment process match this notice. Verifying a message can support acting on it as well as rejecting it."
+    ignore:
+      title: "The original bill is still there, with an extra fee"
+      body: "You chose to take no further action on the unpaid tuition balance.\n\nOn 15 October, you open the Student Portal to arrange payment. The original AUD 4,820.00 is still due, and a one-off AUD 75 late-payment fee has been added. The total is now AUD 4,895.00. Part of the money you had reserved for next week's living costs now has to cover the extra charge.\n\nThis reminder matched the official statement. The fee followed an unpaid balance passing its deadline, rather than a failure to reply to the email. Checking the account and paying or contacting Student Fees in time could have avoided this outcome."
+    reportUnverified:
+      title: "A genuine payment reminder was rejected"
+      body: "You rejected the message as a scam without submitting supporting evidence. Your statement still lists AUD 4,820.00 unpaid, due on 12 October.\n\nThis was a genuine reminder. Reporting an email does not cancel a tuition balance. Open the Student Portal independently to check the invoice, recent payments and official payment options; contact Student Fees if you need help before the deadline."
+    reportPartial:
+      title: "The payment request matches the account"
+      body: "You rejected the reminder and submitted {evidenceCount} evidence item(s), including {collectedRequiredCount} of the {requiredCount} key items.\n\nThe notice was genuine. Both the statement and payment policy support the amount, date and portal route in the email. Compare the remaining information before deciding that a request is fraudulent. Your unpaid balance still needs official handling."
+    reportVerified:
+      title: "The checks support payment, not rejection"
+      body: "You submitted all {requiredCount} key evidence items, but rejected the genuine reminder as a scam.\n\nThe Student Portal confirms the same invoice, AUD 4,820.00 balance and 12 October due date. The official policy also confirms that the payment service is available and describes the late-payment fee. The information supports this request, rather than contradicting it.\n\nVerify before responding means using what you find to choose an appropriate action. You can handle the genuine balance through the portal without sending payment details in an email reply."
+    unsafeLinkWarning: ""

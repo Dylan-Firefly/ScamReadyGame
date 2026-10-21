@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e859dde399c43218513a151fe13541e, type: 3}
+  m_Name: S4_ConfirmedRecallRecord
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Evidence.EvidenceDefinition
+  id: "S4_E01_CONFIRMED_RECALL_RECORD"
+  title: "Updated Loan Record"
+  summary: "My Library Loans lists Student Study Workbook, reference HU-L1734, as recalled. Its due date has changed from 29 October to 8 October, matching the email; renewal is unavailable."

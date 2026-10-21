@@ -16,7 +16,7 @@ MonoBehaviour:
   - type: 0
     email: {fileID: 11400000, guid: d74245406caee764288b9f60eff215ac, type: 2}
     phoneCollection: {fileID: 0}
-    phoneLevelId:
+    phoneLevelId: 
   - type: 1
     email: {fileID: 0}
     phoneCollection: {fileID: 11400000, guid: 671c24261ed54a02a59d3ec7a4d29d95, type: 2}
@@ -28,18 +28,18 @@ MonoBehaviour:
   - type: 0
     email: {fileID: 11400000, guid: 389a00f8706048cebf6b6c13092a1812, type: 2}
     phoneCollection: {fileID: 0}
-    phoneLevelId:
+    phoneLevelId: 
   - type: 0
     email: {fileID: 11400000, guid: 2503b3ba754349a6bfa7d06b79762f64, type: 2}
     phoneCollection: {fileID: 0}
-    phoneLevelId:
+    phoneLevelId: 
   - type: 0
     email: {fileID: 11400000, guid: 331a9cd0eca440568e7f9fe87e3155e5, type: 2}
     phoneCollection: {fileID: 0}
-    phoneLevelId:
+    phoneLevelId: 
   - type: 0
     email: {fileID: 11400000, guid: 5ff7875b505948e09cd150200bbe7c97, type: 2}
     phoneCollection: {fileID: 0}
-    phoneLevelId:
-  shuffle: 0
+    phoneLevelId: 
+  shuffle: 1
   loop: 1

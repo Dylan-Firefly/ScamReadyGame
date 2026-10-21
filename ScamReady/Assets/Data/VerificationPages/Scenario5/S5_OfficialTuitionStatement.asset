@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce98cae6db03ce47aba606ce2c97e07, type: 3}
+  m_Name: S5_OfficialTuitionStatement
+  m_EditorClassIdentifier: Assembly-CSharp::ScamReady.Verification.VerificationPageDefinition
+  id: "S5_PAGE_OFFICIAL_TUITION_STATEMENT"
+  entryLabel: "Student Tuition Statement"
+  siteName: "Harbour University - Student Accounts"
+  address: "https://students.harbouruniversity.example/finances/tuition"
+  title: "Your Tuition Statement"
+  body: "Account record as of 11 October\n\nInvoice reference: HU-TF1042\nTuition balance: AUD 4,820.00\nDue date: 12 October\nPayment status: Unpaid\nOverdue: No\nRecent payment received: None\nPending payment recorded: None\n\nThe amount and due date are the current account record. Use the university payment options described below to settle this balance.\n\nOfficial payment guidance:\nhttps://www.harbouruniversity.example/students/fees/payment-policy"
+  isUnsafe: 0
+  processLabel: "Process"

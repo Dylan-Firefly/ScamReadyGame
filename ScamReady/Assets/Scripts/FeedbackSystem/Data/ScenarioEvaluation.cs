@@ -2,6 +2,7 @@ using ScamReady.Responses;
 
 namespace ScamReady.Feedback
 {
+    /// <summary>选择反馈分支；Report 的证据档位不等同于判断正确。</summary>
     public enum ScenarioOutcome
     {
         Proceed,
