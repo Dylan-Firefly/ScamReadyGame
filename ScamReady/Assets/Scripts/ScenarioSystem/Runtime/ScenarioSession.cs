@@ -14,22 +14,23 @@ namespace ScamReady.Scenarios
 
     public enum ScenarioEventType
     {
-        EmailReceived,
-        EmailOpened,
-        EmailClosed,
-        PhoneOpened,
-        PhoneClosed,
-        ContactStopped,
-        ResponseChosen,
-        BrowserOpened,
-        BrowserClosed,
-        VerificationPageOpened,
-        EvidenceCollected,
-        EvidenceSummaryOpened,
-        ReminderTriggered,
-        ReminderDismissed,
-        UnsafeLinkOpened,
-        InformationSubmitted
+        // 教程在场景中保存的是枚举编号。已有编号必须固定，新增事件使用新编号。
+        EmailReceived = 0,
+        EmailOpened = 1,
+        EmailClosed = 2,
+        ContactStopped = 3,
+        ResponseChosen = 4,
+        BrowserOpened = 5,
+        BrowserClosed = 6,
+        VerificationPageOpened = 7,
+        EvidenceCollected = 8,
+        EvidenceSummaryOpened = 9,
+        ReminderTriggered = 10,
+        ReminderDismissed = 11,
+        UnsafeLinkOpened = 12,
+        InformationSubmitted = 13,
+        PhoneOpened = 14,
+        PhoneClosed = 15
     }
 
     /// <summary>记录操作顺序，后续查验与反馈模块可在此基础上扩展。</summary>
